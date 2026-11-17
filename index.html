@@ -615,91 +615,81 @@ body{font-family:var(--font-ui);letter-spacing:-.005em}
 .si-x{width:32px;height:32px;border-radius:50%;font-size:20px;color:var(--muted)}
 .steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px;font-size:15px;line-height:1.5}
 .steps li::marker{font-weight:700;color:var(--accent)}
-/* ---------- Krümel, the little companion ---------- */
-.as-fab{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 78px);width:72px;height:72px;z-index:30;padding:0;
-  filter:drop-shadow(0 6px 10px rgba(67,1,7,.22));animation:petBob 3.4s ease-in-out infinite;-webkit-tap-highlight-color:transparent}
-.as-fab:active{transform:scale(.92)}
+/* ---------- Krümel, the little cloud ---------- */
+:root{--cloud:#FFFFFF;--cloud-eye:#2A0E12;--cloud-blush:#FFB3BF;--cloud-shadow:rgba(67,1,7,.10)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--cloud:#FFF4F4;--cloud-eye:#2A0E12;--cloud-blush:#FF9EB0;--cloud-shadow:rgba(0,0,0,.45)}}
+:root[data-theme="dark"]{--cloud:#FFF4F4;--cloud-eye:#2A0E12;--cloud-blush:#FF9EB0;--cloud-shadow:rgba(0,0,0,.45)}
+.as-fab{position:fixed;right:max(14px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 82px);width:74px;height:56px;z-index:30;padding:0;-webkit-tap-highlight-color:transparent}
+.as-fab:active .cloud{transform:scale(.92)}
 .tabbar[hidden] ~ .as-fab{display:none}
-.as-fab .pet-svg,.pet-big .pet-svg{width:100%;height:100%;display:block;overflow:visible}
-.pet-badge{position:absolute;top:2px;right:4px;width:20px;height:20px;border-radius:50%;background:var(--danger);color:#fff;font-size:13px;font-weight:700;display:grid;place-items:center;box-shadow:0 0 0 2px var(--desk)}
-.mod-scroll,.shelf-wrap,.wx-scroll{padding-bottom:100px!important}
-.pet-skin{fill:#FECD00;stroke:#E2A800;stroke-width:1.6}
-.pet-foot{fill:#F5BF00}
-.pe{fill:#2A0E10}
-.pl{fill:none;stroke:#2A0E10;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
-.pm{fill:#7A1020}
-.pet-shadow{fill:rgba(67,1,7,.13)}
-.pet-body{transform-box:fill-box;transform-origin:50% 100%;animation:petBreath 2.8s ease-in-out infinite}
-.pet-eyes{transform-box:fill-box;transform-origin:center;animation:petBlink 4.6s infinite}
-[data-mood="love"] .pet-body{animation:petWiggle .45s ease-in-out 3}
-[data-mood="yum"] .pet-body{animation:petChomp .32s ease-in-out 5}
-[data-mood="wow"] .pet-body{animation:petJump .5s cubic-bezier(.3,1.6,.5,1) 2}
-[data-mood="sleep"] .pet-body{animation:petBreath 4.5s ease-in-out infinite}
-[data-mood="sad"] .pet-body,[data-mood="hungry"] .pet-body,[data-mood="tired"] .pet-body{animation:petBreath 4s ease-in-out infinite}
-@keyframes petBob{0%,100%{translate:0 0}50%{translate:0 -5px}}
-@keyframes petBreath{0%,100%{transform:scale(1,1)}50%{transform:scale(1.03,.97)}}
-@keyframes petBlink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
-@keyframes petWiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}75%{transform:rotate(7deg)}}
-@keyframes petChomp{0%,100%{transform:scale(1,1)}50%{transform:scale(1.07,.92)}}
-@keyframes petJump{0%,100%{transform:translateY(0)}40%{transform:translateY(-16px) scale(1.04,.96)}}
+.mod-scroll,.shelf-wrap,.wx-scroll{padding-bottom:96px!important}
+.cloud{width:100%;height:100%;display:block;overflow:visible;transition:transform .2s;filter:drop-shadow(0 6px 12px var(--cloud-shadow))}
+.c-body{fill:var(--cloud)}
+.c-shadow{fill:var(--cloud-shadow);opacity:.6}
+.c-all{transform-box:fill-box;transform-origin:50% 100%;animation:cFloat 4.2s ease-in-out infinite;transition:transform .4s}
+.c-body{transform-box:fill-box;transform-origin:50% 100%;transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+.c-blush{fill:var(--cloud-blush);opacity:.35;transition:opacity .35s}
+.c-eyes{transform:translate(var(--lx,0),var(--ly,0));transition:transform .45s cubic-bezier(.3,1.3,.5,1)}
+.c-open{transform-box:fill-box;transform-origin:center;animation:cBlink 5.2s infinite;transition:opacity .2s}
+.c-eye{fill:var(--cloud-eye);transform-box:fill-box;transform-origin:center;transition:transform .3s}
+.c-arc{fill:none;stroke:var(--cloud-eye);stroke-width:3.2;stroke-linecap:round;opacity:0;transition:opacity .2s}
+.cloud[data-mood="happy"] .c-open,.cloud[data-mood="love"] .c-open{opacity:0}
+.cloud[data-mood="happy"] .c-arc,.cloud[data-mood="love"] .c-arc{opacity:1}
+.cloud[data-mood="happy"] .c-body{animation:cHop .5s cubic-bezier(.3,1.6,.5,1)}
+.cloud[data-mood="love"] .c-blush{opacity:.9}
+.cloud[data-mood="love"] .c-body{transform:scale(1.05,.95)}
+.cloud[data-mood="listen"] .c-eyes{transform:translate(0,2.5px)}
+.cloud[data-mood="listen"] .c-eye{transform:scale(1.08)}
+.cloud[data-mood="think"] .c-eyes{transform:translate(4px,-4px)}
+.cloud[data-mood="think"] .c-eye{transform:scaleY(.8)}
+.cloud[data-mood="think"] .c-all{animation:cThink 1s ease-in-out infinite}
+.cloud[data-mood="confused"] .c-all{transform:rotate(-6deg)}
+.cloud[data-mood="confused"] .c-eye.r{transform:scaleY(.3)}
+.cloud[data-mood="confused"] .c-eyes{transform:translate(-2px,0)}
+.cloud[data-mood="surprised"] .c-eye{transform:scale(1.3)}
+.cloud[data-mood="sad"] .c-eye{transform:scaleY(.55)}
+.cloud[data-mood="sad"] .c-eyes{transform:translate(0,3px)}
+.cloud[data-mood="sad"] .c-blush{opacity:0}
+.cloud[data-mood="sleepy"] .c-eye{transform:scaleY(.18)}
+.cloud[data-mood="sleepy"] .c-open{animation:none}
+.cloud[data-mood="sleepy"] .c-all{animation-duration:6s}
+@keyframes cFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes cThink{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes cBlink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
+@keyframes cHop{40%{transform:translateY(-7px) scale(1.03,.97)}}
 
 .asst{position:fixed;left:0;right:0;top:0;height:100%;z-index:44;background:var(--desk);display:flex;flex-direction:column;overflow:hidden;
   padding:env(safe-area-inset-top,0px) max(16px,env(safe-area-inset-right,0px)) env(safe-area-inset-bottom,0px) max(16px,env(safe-area-inset-left,0px))}
-.asst>*{width:100%;max-width:640px;margin-inline:auto}
-.as-head{display:flex;align-items:center;gap:8px;padding:12px 0 10px;flex:none}
-.pet-name{flex:0 1 auto;font-family:var(--font-display);font-size:26px;font-weight:700;letter-spacing:-.025em;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pet-lvl{flex:none;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--hl);color:var(--hl-fg)}
-.as-sp{flex:1}
-.as-head .btn,.as-head .icon-round{flex:none}
-.pet-stage{position:relative;flex:none;height:min(30vh,230px);display:flex;align-items:flex-end;justify-content:center;border-radius:28px;overflow:hidden;
-  background:radial-gradient(90% 70% at 50% 100%,color-mix(in srgb,var(--hl) 30%,var(--card)) 0%,var(--card) 70%);box-shadow:0 1px 2px rgba(67,1,7,.05),inset 0 0 0 1px var(--line);transition:height .25s}
-.pet-big{width:min(170px,42vw);aspect-ratio:1;padding:0;margin-bottom:4px;touch-action:manipulation;transition:width .25s}
-.pet-say{position:absolute;top:12px;left:50%;transform:translateX(-50%);max-width:88%;width:max-content;background:var(--accent);color:var(--accent-fg);padding:8px 14px;border-radius:18px;
-  font-size:14px;font-weight:600;line-height:1.35;text-align:center;z-index:2;box-shadow:0 8px 20px -12px var(--shadow);
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.pet-say[hidden]{display:none!important}
-.pet-say.pop{animation:sayPop .28s cubic-bezier(.3,1.5,.5,1)}
-@keyframes sayPop{from{transform:translateX(-50%) scale(.7);opacity:0}}
-.pet-fx{position:absolute;bottom:42%;font-size:24px;pointer-events:none;opacity:0;animation:fxUp 1.6s ease-out forwards;z-index:1}
-@keyframes fxUp{0%{opacity:0;transform:translate(0,10px) scale(.6)}15%{opacity:1}100%{opacity:0;transform:translate(var(--dx),-120px) scale(1.2)}}
-.pet-z{position:absolute;left:calc(50% + 50px);bottom:58%;font-weight:800;color:var(--muted);font-size:18px;pointer-events:none}
-.pet-z i,.pet-z b{font-style:normal;display:inline-block;animation:zz 2.4s infinite}
-.pet-z i{font-size:22px;animation-delay:.4s}.pet-z b{font-size:26px;animation-delay:.8s}
-@keyframes zz{0%,100%{opacity:.2;transform:translateY(0)}50%{opacity:1;transform:translateY(-6px)}}
-.pet-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:12px 2px 10px;flex:none}
-.pet-stat span{font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap}
-.pet-bar{height:8px;border-radius:4px;background:var(--grid);overflow:hidden;margin-top:5px}
-.pet-bar i{display:block;height:100%;border-radius:4px;background:#5FA36A;transition:width .5s}
-.pet-bar i.low{background:var(--danger)}
-.pet-acts,.pet-snacks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;flex:none}
-.pet-snacks{padding-top:8px}
-.pet-act,.pet-snack{height:58px;border-radius:18px;background:var(--card);box-shadow:0 1px 2px rgba(67,1,7,.05),inset 0 0 0 1px var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;font-weight:600;min-width:0}
-.pet-act span,.pet-snack span{font-size:22px;line-height:1}
-.pet-act:active,.pet-snack:active{transform:scale(.95)}
-.pet-act:disabled{opacity:.4}
-.as-list{flex:1;min-height:70px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:12px 0 8px;-webkit-overflow-scrolling:touch}
-.as-msg{max-width:86%;padding:10px 14px;border-radius:20px;font-size:15px;line-height:1.42}
-.as-u{align-self:flex-end;background:var(--accent);color:var(--accent-fg);border-bottom-right-radius:6px}
-.as-a{align-self:flex-start;background:var(--card);box-shadow:0 1px 2px rgba(67,1,7,.06),inset 0 0 0 1px var(--line);border-bottom-left-radius:6px}
+.asst>*{width:100%;max-width:600px;margin-inline:auto}
+.as-head{display:flex;align-items:center;justify-content:space-between;gap:12px;height:56px;flex:none}
+.pet-name{font-family:var(--font-display);font-size:17px;font-weight:600;letter-spacing:-.015em;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:6px 0}
+.as-done{flex:none;font-size:16px;font-weight:600;color:var(--accent);padding:8px 2px}
+.pet-stage{position:relative;flex:none;height:150px;display:flex;align-items:center;justify-content:center;transition:height .3s}
+.pet-big{width:170px;height:126px;padding:0;touch-action:none;-webkit-user-select:none;user-select:none;transition:width .3s,height .3s}
+.pet-heart{position:absolute;left:calc(50% + var(--dx,0px));top:28%;color:#FF7A92;font-size:16px;pointer-events:none;animation:heartUp 1.4s ease-out forwards}
+@keyframes heartUp{0%{opacity:0;transform:translateY(6px) scale(.6)}20%{opacity:1}100%{opacity:0;transform:translateY(-38px) scale(1)}}
+.as-list{flex:1;min-height:60px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px 0 12px;-webkit-overflow-scrolling:touch;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 16px);mask-image:linear-gradient(to bottom,transparent 0,#000 16px)}
+.as-msg{max-width:84%;font-size:15.5px;line-height:1.45}
+.as-u{align-self:flex-end;background:var(--accent);color:var(--accent-fg);padding:9px 15px;border-radius:20px 20px 6px 20px}
+.as-a{align-self:flex-start;background:var(--card);color:var(--fg);padding:11px 15px;border-radius:20px 20px 20px 6px}
 .as-txt{white-space:pre-line;overflow-wrap:anywhere}
-.as-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.as-acts .chip{height:32px;padding:0 12px;font-size:12.5px}
-.as-acts .chip:disabled{opacity:.45}
-.as-wait .as-txt{animation:asPulse 1s ease-in-out infinite}
-@keyframes asPulse{50%{opacity:.35}}
-.as-chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;flex:none;scrollbar-width:none}
+.as-acts{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:8px}
+.as-act{font-size:14px;font-weight:600;color:var(--accent);padding:2px 0}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]) .as-act{color:var(--s1)}}
+.as-act:disabled{opacity:.4}
+.as-wait .as-txt{animation:asPulse 1s ease-in-out infinite;letter-spacing:2px}
+@keyframes asPulse{50%{opacity:.3}}
+.as-chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;flex:none;scrollbar-width:none}
 .as-chips::-webkit-scrollbar{display:none}
-.as-form{display:flex;gap:8px;padding-bottom:12px;flex:none}
-.as-form .input{flex:1;min-width:0}
-.asst.typing .pet-stats,.asst.typing .pet-acts,.asst.typing .pet-snacks{display:none}
-.asst.typing .pet-stage{height:120px}
-.asst.typing .pet-big{width:104px}
-.pet-game{position:absolute;inset:0;z-index:3}
-.pet-hud{position:absolute;left:12px;bottom:10px;font-weight:700;font-size:14px;padding:5px 10px;border-radius:999px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);font-variant-numeric:tabular-nums;white-space:pre}
-.pet-star{position:absolute;top:-44px;font-size:34px;line-height:1;padding:8px;touch-action:none;animation-name:starFall;animation-timing-function:linear;animation-fill-mode:forwards}
-.pet-star.got{animation-play-state:paused;opacity:0;transition:opacity .2s}
-@keyframes starFall{to{transform:translateY(calc(min(30vh,230px) + 70px)) rotate(220deg)}}
-@media (prefers-reduced-motion: reduce){.as-fab,.pet-body,.pet-eyes,.pet-z i,.pet-z b{animation:none!important}}
+.as-chip{flex:none;height:34px;padding:0 14px;border-radius:999px;font-size:13.5px;font-weight:500;color:var(--fg);box-shadow:inset 0 0 0 1px var(--line);white-space:nowrap}
+.as-form{position:relative;flex:none;margin-bottom:12px}
+.as-form .input{box-sizing:border-box;width:100%;height:48px;border-radius:999px;padding:0 54px 0 18px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line)}
+.as-send{position:absolute;right:5px;top:5px;width:38px;height:38px;border-radius:50%;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center}
+.as-send svg{width:18px;height:18px}
+.asst.typing .pet-stage{height:84px}
+.asst.typing .pet-big{width:96px;height:72px}
+@media (prefers-reduced-motion: reduce){.c-all,.c-open,.cloud[data-mood] .c-all,.cloud[data-mood] .c-body{animation:none!important}}
 </style>
 
 <div class="app" id="app" lang="de">
@@ -818,34 +808,15 @@ body{font-family:var(--font-ui);letter-spacing:-.005em}
   <div class="search-head"><input class="input" id="srQ" type="search" placeholder="In allen Notizbüchern suchen" aria-label="Suche"><button class="btn btn-ghost" id="srClose" type="button">Fertig</button></div>
   <div class="sr-list" id="srRes"></div>
 </div>
-<div class="asst" id="asst" hidden role="dialog" aria-label="Dein kleiner Begleiter">
+<div class="asst" id="asst" hidden role="dialog" aria-label="Krümel">
   <div class="as-head">
     <button class="pet-name" id="petName" type="button" title="Namen ändern">Krümel</button>
-    <span class="pet-lvl" id="petLvl">Level 1</span>
-    <span class="as-sp"></span>
-    <button class="icon-round" id="asClear" type="button" aria-label="Verlauf löschen" title="Verlauf löschen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></svg></button>
-    <button class="btn btn-primary btn-sm" id="asClose" type="button">Fertig</button>
+    <button class="as-done" id="asClose" type="button">Fertig</button>
   </div>
-  <div class="pet-stage" id="petStage">
-    <div class="pet-say" id="petSay" hidden></div>
-    <button class="pet-big" type="button" aria-label="Streicheln"></button>
-    <span class="pet-z" id="petZ" hidden>z<i>z</i><b>z</b></span>
-  </div>
-  <div class="pet-stats">
-    <div class="pet-stat"><span>🍎 Satt</span><div class="pet-bar" role="progressbar" aria-label="Satt" aria-valuemin="0" aria-valuemax="100"><i id="bar-food"></i></div></div>
-    <div class="pet-stat"><span>💛 Laune</span><div class="pet-bar" role="progressbar" aria-label="Laune" aria-valuemin="0" aria-valuemax="100"><i id="bar-fun"></i></div></div>
-    <div class="pet-stat"><span>⚡ Energie</span><div class="pet-bar" role="progressbar" aria-label="Energie" aria-valuemin="0" aria-valuemax="100"><i id="bar-energy"></i></div></div>
-  </div>
-  <div class="pet-acts">
-    <button class="pet-act" id="petPet" type="button"><span>🤚</span>Streicheln</button>
-    <button class="pet-act" id="petFeed" type="button"><span>🍎</span>Füttern</button>
-    <button class="pet-act" id="petPlay" type="button"><span>⭐</span>Spielen</button>
-    <button class="pet-act" id="petSleep" type="button">🌙 Schlafen</button>
-  </div>
-  <div class="pet-snacks" id="petSnacks" hidden></div>
+  <div class="pet-stage" id="petStage"><button class="pet-big" type="button" aria-label="Streicheln"></button></div>
   <div class="as-list" id="asList" aria-live="polite"></div>
   <div class="as-chips" id="asChips"></div>
-  <form class="as-form" id="asForm" autocomplete="off"><input class="input" id="asIn" placeholder="Schreib Krümel etwas …" enterkeyhint="send" aria-label="Nachricht an deinen Begleiter"><button class="btn btn-primary" type="submit">Senden</button></form>
+  <form class="as-form" id="asForm" autocomplete="off"><input class="input" id="asIn" placeholder="Schreib Krümel …" enterkeyhint="send" aria-label="Nachricht"><button class="as-send" type="submit" aria-label="Senden"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg></button></form>
 </div>
 <div class="dict-partial" id="dictPartial" hidden></div>
 <form class="sheet" id="formSheet" hidden autocomplete="off"></form>
@@ -3682,7 +3653,7 @@ async function asPlannerQuery(lower, raw) {
   }
   if (/überfällig|vergessen|liegen geblieben/.test(lower)) {
     const over = doc.items.filter(i => i.kind === 'task' && !i.done && i.date < today);
-    return { t: over.length ? `Überfällig:\n${over.map(i => asItemLine(i, true)).join('\n')}` : 'Nichts überfällig. Gut gemacht!' };
+    return { t: over.length ? `Überfällig:\n${over.map(i => asItemLine(i, true)).join('\n')}` : 'Nichts überfällig.' };
   }
   const iso = asParseDate(raw).iso || today;
   const list = doc.items.filter(i => i.date === iso).sort((a, b) => (a.time || '99').localeCompare(b.time || '99'));
@@ -3761,10 +3732,10 @@ async function asWeather(raw) {
   let t = iso === todayISO() && j.current
     ? `In ${p.name} sind es gerade ${Math.round(j.current.temperature_2m)} °C (gefühlt ${Math.round(j.current.apparent_temperature)} °C), ${AS_WMO[j.current.weather_code] || 'wechselhaft'}.\nHeute ${lo} bis ${hi} °C, Regenrisiko ${pp} %.`
     : `${asCap(asDayName(iso))} in ${p.name}: ${AS_WMO[code] || 'wechselhaft'}, ${lo} bis ${hi} °C, Regenrisiko ${pp} %.`;
-  if (pp >= 50 || code >= 61) t += '\nNimm lieber einen Schirm mit. ☂️';
+  if (pp >= 50 || code >= 61) t += '\nNimm lieber einen Schirm mit.';
   else if (code >= 71 && code <= 86) t += '\nEs kann glatt werden, pass auf dich auf.';
-  else if (hi <= 3) t += '\nZieh dich warm an. 🧣';
-  else if (hi >= 25) t += '\nDenk an Sonnencreme und genug Wasser. ☀️';
+  else if (hi <= 3) t += '\nZieh dich warm an.';
+  else if (hi >= 25) t += '\nDenk an Sonnencreme und genug Wasser.';
   return { t, actions: [{ l: 'Wetter öffnen', fn: () => asGo(openWeather) }] };
 }
 async function asHabitDone(lower) {
@@ -3774,7 +3745,7 @@ async function asHabitDone(lower) {
   if (!hits.length) return null;
   hits.forEach(h => h.days[today] = 1); Docs.save('habits');
   const left = doc.habits.filter(h => !h.days[today]).length;
-  return { t: `Abgehakt: ${hits.map(h => h.name).join(', ')}. Serie: ${hits.map(h => `${streak(h)} ${streak(h) === 1 ? 'Tag' : 'Tage'}`).join(', ')}. ${left ? `Noch ${left} offen für heute.` : 'Alle Gewohnheiten für heute geschafft! 🎉'}`,
+  return { t: `Abgehakt: ${hits.map(h => h.name).join(', ')}. Serie: ${hits.map(h => `${streak(h)} ${streak(h) === 1 ? 'Tag' : 'Tage'}`).join(', ')}. ${left ? `Noch ${left} offen für heute.` : 'Alle Gewohnheiten für heute geschafft.'}`,
     actions: [{ l: 'Rückgängig', fn: () => { hits.forEach(h => delete h.days[today]); Docs.save('habits'); asSay('Okay, wieder offen.'); } }] };
 }
 async function asHabitList() {
@@ -3808,14 +3779,14 @@ async function asBrief() {
   const tasks = items.filter(i => i.kind === 'task' && !i.done), over = pl.items.filter(i => i.kind === 'task' && !i.done && i.date < today);
   const lines = [];
   const nowT = `${pad2(new Date().getHours())}:${pad2(new Date().getMinutes())}`, next = ev.find(e => !e.time || e.time >= nowT);
-  if (ev.length) lines.push(`📅 ${ev.length === 1 ? 'Ein Termin' : ev.length + ' Termine'} heute${next ? `, als Nächstes: ${next.time ? next.time + ' ' : ''}${next.title}` : ''}.`);
-  if (tasks.length || over.length) lines.push(`✅ ${tasks.length ? (tasks.length === 1 ? 'Eine Aufgabe' : tasks.length + ' Aufgaben') + ' offen' : 'Keine Aufgabe für heute'}${over.length ? `, ${over.length} überfällig` : ''}.`);
+  if (ev.length) lines.push(`• ${ev.length === 1 ? 'Ein Termin' : ev.length + ' Termine'} heute${next ? `, als Nächstes: ${next.time ? next.time + ' ' : ''}${next.title}` : ''}.`);
+  if (tasks.length || over.length) lines.push(`• ${tasks.length ? (tasks.length === 1 ? 'Eine Aufgabe' : tasks.length + ' Aufgaben') + ' offen' : 'Keine Aufgabe für heute'}${over.length ? `, ${over.length} überfällig` : ''}.`);
   const hl = hb.habits.filter(x => !x.days[today]);
-  if (hb.habits.length) lines.push(hl.length ? `🎯 Noch offen: ${hl.map(x => x.name).join(', ')}.` : '🎯 Alle Gewohnheiten für heute erledigt.');
-  const so = sh.items.filter(i => !i.done).length; if (so) lines.push(`🛒 ${so} ${so === 1 ? 'Sache' : 'Sachen'} auf der Einkaufsliste.`);
-  if (fs.budget) { const spent = fin.e.filter(e => e.t !== 'in').reduce((s, e) => s + e.a, 0); lines.push(`💶 Noch ${euro(Math.max(0, fs.budget - spent))} im Monatsbudget.`); }
+  if (hb.habits.length) lines.push(hl.length ? `• Noch offen: ${hl.map(x => x.name).join(', ')}.` : '• Alle Gewohnheiten für heute erledigt.');
+  const so = sh.items.filter(i => !i.done).length; if (so) lines.push(`• ${so} ${so === 1 ? 'Sache' : 'Sachen'} auf der Einkaufsliste.`);
+  if (fs.budget) { const spent = fin.e.filter(e => e.t !== 'in').reduce((s, e) => s + e.a, 0); lines.push(`• Noch ${euro(Math.max(0, fs.budget - spent))} im Monatsbudget.`); }
   if (!lines.length) lines.push('Heute ist nichts eingetragen. Sag mir einfach, was ansteht, ich trage es ein.');
-  return { t: `${hi} Dein Überblick:\n${lines.join('\n')}` };
+  return { t: `${hi} Dein Tag:\n${lines.join('\n')}` };
 }
 const asHelp = () => `Ich bin ${PET.name} und helfe dir gern! Ich wohne nur auf deinem Gerät. Schreib mir zum Beispiel:
 • „Zahnarzt Freitag um 10 Uhr“ – ich trage den Termin ein
@@ -3829,13 +3800,13 @@ const asHelp = () => `Ich bin ${PET.name} und helfe dir gern! Ich wohne nur auf 
 • „Starte Fokus für Mathe“
 • „Suche Lasagne“ – ich suche in deinen Notizbüchern
 • „Überblick“ – dein Tag auf einen Blick
-Und vergiss nicht: Ich mag Streicheleinheiten, Snacks und Spiele! 💛`;
+Und wenn du magst: Ich lasse mich gern streicheln.`;
 
 /* --- understanding --- */
 async function asAnswer(raw) {
   const lower = raw.toLowerCase().trim(), q = /\?\s*$/.test(raw) || /^(was|wann|welche[rsmn]?|wie|wo|zeig|hab|habe|gibt|steht|stehen|liste|muss|wird|regnet|ist|sind|kann)\b/.test(lower);
   if (/^(hilfe|help|\?|was kannst du|was kann ich (dich )?fragen|befehle)/.test(lower)) return { t: asHelp() };
-  if (/^(danke|dankeschön|vielen dank|thx|merci)/.test(lower)) return { t: 'Gern geschehen! 😊' };
+  if (/^(danke|dankeschön|vielen dank|thx|merci)/.test(lower)) return { t: 'Gern geschehen.' };
   if (/^(überblick|briefing|zusammenfassung|mein tag|tagesüberblick|status)\b/.test(lower) || /^(hallo|hi|hey|moin|servus|guten (morgen|tag|abend)|na)\b[\s!.]*$/.test(lower)) return asBrief();
   // open a section
   const op = lower.match(/^(?:öffne|zeig(?:e)?(?: mir)?|geh(?:e)? zu(?:m|r)?|wechsel(?:e)? zu(?:m|r)?)\s+(?:die |den |das |meine[n]? |mein )?(\S+)\s*$/);
@@ -3874,172 +3845,74 @@ async function asAnswer(raw) {
 }
 
 
-/* =================== KRÜMEL, das kleine Wesen =================== */
-/* A tiny companion that lives in the app. It gets hungry, bored and sleepy over time,
-   loves being petted, fed and played with, cheers when you get things done,
-   and understands short sentences (see asAnswer above). Stored only on this device. */
+/* =================== KRÜMEL, die kleine Wolke =================== */
+/* A quiet companion: a cloud with eyes. It reacts to what you write (listens, thinks,
+   smiles, looks puzzled), likes being petted, and understands short sentences
+   (see asAnswer above). Its name is stored only on this device. */
 const PET_KEY = 'folio:pet';
-const PET = { name: 'Krümel', food: 80, fun: 80, energy: 80, xp: 0, asleep: false, at: Date.now(), rew: { d: '', n: 0 }, met: false, mood: null, moodT: 0, game: null };
-const SNACKS = [{ e: '🍎', n: 'Apfel', f: 16, j: 2 }, { e: '🍓', n: 'Erdbeere', f: 12, j: 5 }, { e: '🥕', n: 'Karotte', f: 18, j: 0 }, { e: '🍪', n: 'Keks', f: 10, j: 10 }];
-function petLoad() {
-  try { Object.assign(PET, JSON.parse(localStorage.getItem(PET_KEY)) || {}); } catch (e) {}
-  // time passes while the app is closed (capped, and it never drops to zero)
-  const mins = clamp((Date.now() - PET.at) / 60000, 0, 60 * 24 * 3);
-  if (PET.asleep) { PET.energy = clamp(PET.energy + mins / 2, 0, 100); PET.food = clamp(PET.food - mins / 30, 5, 100); }
-  else { PET.food = clamp(PET.food - mins / 15, 5, 100); PET.fun = clamp(PET.fun - mins / 12, 5, 100); PET.energy = clamp(PET.energy - mins / 20, 5, 100); }
-  if (PET.asleep && PET.energy >= 100) PET.asleep = false;
-  PET.at = Date.now();
-}
-function petSave() {
-  PET.at = Date.now();
-  const { name, food, fun, energy, xp, asleep, at, rew, met } = PET;
-  try { localStorage.setItem(PET_KEY, JSON.stringify({ name, food, fun, energy, xp, asleep, at, rew, met })); } catch (e) {}
-}
-const petLevel = () => Math.floor(Math.sqrt(PET.xp / 12)) + 1;
-function petXp(n) {
-  const before = petLevel(); PET.xp += n; petSave();
-  if (petLevel() > before) { petMood('wow', 2500); asSay(`Juhu, ich bin jetzt Level ${petLevel()}! Danke, dass du dich so lieb um mich kümmerst. 🌟`); petBurst('⭐', 6); }
-}
-function petBaseMood() {
-  if (PET.asleep) return 'sleep';
-  if (PET.food < 25) return 'hungry';
-  if (PET.energy < 20) return 'tired';
-  if (PET.fun < 25) return 'sad';
-  return 'happy';
-}
-function petMood(m, ms = 1600) { PET.mood = m; clearTimeout(PET.moodT); PET.moodT = setTimeout(() => { PET.mood = null; petPaint(); }, ms); petPaint(); }
-
-/* The creature: a round amber blob with a sprout, drawn as SVG so it stays crisp. */
-function petSVG(mood) {
-  const closed = mood === 'sleep' || mood === 'love' || mood === 'yum';
-  const eyes = closed
-    ? (mood === 'sleep' ? '<path d="M-21 -6q6 4 12 0M9 -6q6 4 12 0" class="pl"/>' : '<path d="M-21 -4q6 -7 12 0M9 -4q6 -7 12 0" class="pl"/>')
-    : `<g class="pet-eyes"><ellipse cx="-15" cy="-6" rx="5.2" ry="${mood === 'tired' ? 3.2 : 6.4}" class="pe"/><ellipse cx="15" cy="-6" rx="5.2" ry="${mood === 'tired' ? 3.2 : 6.4}" class="pe"/>`
-      + `<circle cx="-13.4" cy="-8.4" r="1.9" fill="#fff"/><circle cx="16.6" cy="-8.4" r="1.9" fill="#fff"/></g>`;
-  const brows = mood === 'sad' || mood === 'hungry' ? '<path d="M-21 -17l9 3M21 -17l-9 3" class="pl"/>' : '';
-  const mouths = {
-    happy: '<path d="M-7 7q7 8 14 0" class="pl"/>',
-    love: '<path d="M-8 6q8 11 16 0z" class="pm"/>',
-    wow: '<ellipse cx="0" cy="9" rx="5" ry="6" class="pm"/>',
-    yum: '<path d="M-8 6q8 11 16 0z" class="pm"/><path d="M-2 11q3 5 6 0" fill="#FF8FA3"/>',
-    sad: '<path d="M-6 12q6 -6 12 0" class="pl"/>',
-    hungry: '<ellipse cx="0" cy="10" rx="3.4" ry="4" class="pm"/>',
-    tired: '<path d="M-5 10h10" class="pl"/>',
-    sleep: '<path d="M-4 10q4 3 8 0" class="pl"/>'
-  };
-  return `<svg viewBox="-60 -66 120 120" class="pet-svg" aria-hidden="true">
-    <ellipse cx="0" cy="49" rx="30" ry="5" class="pet-shadow"/>
-    <g class="pet-body">
-      <path d="M0 -40c4 -12 14 -16 22 -14c-4 9 -12 14 -22 14z" fill="#5FA36A"/><path d="M0 -40c-3 -9 -10 -12 -16 -11c3 7 9 11 16 11z" fill="#7CC285"/><path d="M0 -40v-6" stroke="#4E8A58" stroke-width="2.4" stroke-linecap="round"/>
-      <path d="M-44 8c0 -30 18 -48 44 -48s44 18 44 48c0 26 -18 38 -44 38s-44 -12 -44 -38z" class="pet-skin"/>
-      <path d="M-30 -18c6 -12 16 -16 26 -16" stroke="#fff" stroke-opacity=".45" stroke-width="5" stroke-linecap="round" fill="none"/>
-      <ellipse cx="-27" cy="7" rx="7" ry="4.2" fill="#FF8FA3" opacity="${mood === 'love' || mood === 'wow' ? .9 : .55}"/><ellipse cx="27" cy="7" rx="7" ry="4.2" fill="#FF8FA3" opacity="${mood === 'love' || mood === 'wow' ? .9 : .55}"/>
-      ${eyes}${brows}${mouths[mood] || mouths.happy}
-      <ellipse cx="-20" cy="45" rx="10" ry="5.5" class="pet-skin pet-foot"/><ellipse cx="20" cy="45" rx="10" ry="5.5" class="pet-skin pet-foot"/>
-    </g>
+const PET = { name: 'Krümel', mood: 'idle', moodT: 0, typeT: 0, lookT: 0, pets: 0 };
+function petLoad() { try { const v = JSON.parse(localStorage.getItem(PET_KEY)); if (v?.name) PET.name = v.name; } catch (e) {} }
+function petSave() { try { localStorage.setItem(PET_KEY, JSON.stringify({ name: PET.name })); } catch (e) {} }
+function cloudSVG() {
+  return `<svg class="cloud" viewBox="-62 -46 124 92" aria-hidden="true">
+    <ellipse class="c-shadow" cx="0" cy="36" rx="32" ry="3.2"/>
+    <g class="c-all"><g class="c-body">
+      <circle cx="-25" cy="6" r="19"/><circle cx="-3" cy="-9" r="25"/><circle cx="23" cy="2" r="20"/><rect x="-44" y="-2" width="88" height="29" rx="14.5"/>
+      <g class="c-face">
+        <ellipse class="c-blush" cx="-23" cy="15" rx="6" ry="3.2"/><ellipse class="c-blush" cx="23" cy="15" rx="6" ry="3.2"/>
+        <g class="c-eyes"><g class="c-open"><ellipse class="c-eye l" cx="-11" cy="7" rx="3.6" ry="5.4"/><ellipse class="c-eye r" cx="11" cy="7" rx="3.6" ry="5.4"/></g>
+        <path class="c-arc" d="M-15.5 9q4.5-6.5 9 0M6.5 9q4.5-6.5 9 0"/></g>
+      </g>
+    </g></g>
   </svg>`;
 }
+function petIdleMood() { const h = new Date().getHours(); return h >= 23 || h < 6 ? 'sleepy' : 'idle'; }
+function petMood(m, ms) {
+  PET.mood = m; clearTimeout(PET.moodT);
+  if (ms) PET.moodT = setTimeout(() => petMood(petIdleMood()), ms);
+  document.querySelectorAll('.cloud').forEach(c => c.dataset.mood = m);
+}
+function petLook() {
+  // now and then the idle cloud glances around
+  document.querySelectorAll('.cloud').forEach(c => {
+    if (c.dataset.mood !== 'idle') return;
+    const r = Math.random(), x = r < .3 ? -2.5 : r < .6 ? 2.5 : 0, y = Math.random() < .3 ? -1.5 : 0;
+    c.style.setProperty('--lx', x + 'px'); c.style.setProperty('--ly', y + 'px');
+  });
+}
+function petHeart() {
+  const st = $('#petStage'); if (!st) return;
+  const h = el('span', 'pet-heart', st); h.textContent = '♥'; h.style.setProperty('--dx', (Math.random() * 40 - 20) + 'px');
+  setTimeout(() => h.remove(), 1400);
+}
+function petStroke() {
+  petMood('love', 1800);
+  const now = Date.now(); if (now - (PET.lastHeart || 0) > 380) { PET.lastHeart = now; petHeart(); }
+  try { navigator.vibrate?.(8); } catch (e) {}
+}
 function petPaint() {
-  const mood = PET.mood || petBaseMood();
-  const fab = $('#asFab');
-  if (fab) { fab.innerHTML = petSVG(mood) + (petBaseMood() === 'hungry' || petBaseMood() === 'sad' ? '<span class="pet-badge">!</span>' : ''); fab.dataset.mood = mood; fab.setAttribute('aria-label', `${PET.name} öffnen`); }
-  if ($('#asst').hidden) return;
-  const st = $('#petStage .pet-big'); st.innerHTML = petSVG(mood); st.dataset.mood = mood;
-  $('#petName').textContent = PET.name; $('#asIn').placeholder = `Schreib ${PET.name} etwas …`; $('#asst').setAttribute('aria-label', PET.name); $('#petLvl').textContent = 'Level ' + petLevel();
-  [['food', PET.food], ['fun', PET.fun], ['energy', PET.energy]].forEach(([k, v]) => { const b = $('#bar-' + k); b.style.width = Math.round(v) + '%'; b.parentElement.setAttribute('aria-valuenow', Math.round(v)); b.classList.toggle('low', v < 25); });
-  $('#petSleep').textContent = PET.asleep ? '☀️ Wecken' : '🌙 Schlafen';
-  ['petPet', 'petFeed', 'petPlay'].forEach(id => $('#' + id).disabled = PET.asleep || !!PET.game);
-  $('#petZ').hidden = !PET.asleep;
-}
-function petBurst(ch, n = 4) {
-  const st = $('#petStage'); if (!st || $('#asst').hidden) return;
-  for (let i = 0; i < n; i++) { const h = el('span', 'pet-fx', st); h.textContent = ch; h.style.left = (40 + Math.random() * 20) + '%'; h.style.animationDelay = (i * .12) + 's'; h.style.setProperty('--dx', (Math.random() * 80 - 40) + 'px'); setTimeout(() => h.remove(), 1800); }
-}
-function petSpeak(t) { const b = $('#petSay'); b.textContent = t; b.hidden = false; b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
-
-/* --- care --- */
-function petPetting() {
-  if (PET.asleep) return petSpeak('Zzz … 💤');
-  PET.fun = clamp(PET.fun + 7, 0, 100); petMood('love'); petBurst('💛', 4); petXp(1);
-  petSpeak(['Hihi, das kitzelt!', 'Mehr davon! 🥰', 'Ich hab dich lieb!', 'Schnurr …'][Math.floor(Math.random() * 4)]);
-}
-function petFeedMenu() {
-  const row = $('#petSnacks'); row.hidden = !row.hidden; if (row.hidden) return;
-  row.innerHTML = '';
-  SNACKS.forEach(s => { const b = el('button', 'pet-snack', row); b.type = 'button'; b.innerHTML = `<span>${s.e}</span>${s.n}`; b.onclick = () => petFeed(s); });
-}
-function petFeed(s) {
-  $('#petSnacks').hidden = true;
-  if (PET.food >= 95) { petMood('happy'); return petSpeak('Ich bin pappsatt! Vielleicht später. 😊'); }
-  PET.food = clamp(PET.food + s.f, 0, 100); PET.fun = clamp(PET.fun + s.j, 0, 100);
-  petMood('yum', 1800); petBurst(s.e, 3); petXp(2);
-  petSpeak(s.n === 'Keks' ? 'Mmmh, ein Keks! Mein Lieblingssnack! 🍪' : `Mjam, ${s.n === 'Erdbeere' ? 'eine' : 'ein' + (s.n === 'Karotte' ? 'e' : '')} ${s.n}! Danke!`);
-}
-function petSleepToggle() {
-  PET.asleep = !PET.asleep; petSave();
-  if (PET.asleep) petSpeak('Gute Nacht … 🌙'); else { petMood('wow', 1200); petSpeak(PET.energy > 60 ? 'Ausgeschlafen! Was machen wir heute?' : 'Gähn … ich bin noch etwas müde.'); }
-  petPaint();
+  $('#petName').textContent = PET.name;
+  $('#asIn').placeholder = `Schreib ${PET.name} …`;
+  $('#asst').setAttribute('aria-label', PET.name);
+  $('#asFab').setAttribute('aria-label', `${PET.name} öffnen`);
 }
 
-/* --- mini game: catch the falling stars --- */
-function petPlay() {
-  if (PET.asleep || PET.game) return;
-  if (PET.energy < 15) { petMood('tired'); return petSpeak('Ich bin zu müde zum Spielen. Leg mich lieber schlafen. 😴'); }
-  const st = $('#petStage'), area = el('div', 'pet-game', st);
-  const hud = el('div', 'pet-hud', area);
-  const g = PET.game = { score: 0, left: 15, area };
-  const paintHud = () => hud.textContent = `⭐ ${g.score}   ⏱ ${g.left}s`;
-  paintHud(); petSpeak('Fang die Sterne! Schnell!'); petPaint();
-  const spawn = () => {
-    const s = el('button', 'pet-star', area); s.type = 'button'; s.textContent = Math.random() < .15 ? '🌟' : '⭐'; s.setAttribute('aria-label', 'Stern fangen');
-    s.style.left = (6 + Math.random() * 80) + '%'; s.style.animationDuration = (1.6 + Math.random() * 1.2) + 's';
-    const big = s.textContent === '🌟';
-    s.onpointerdown = e => { e.preventDefault(); g.score += big ? 3 : 1; paintHud(); s.classList.add('got'); try { Sound.unlock(); } catch (x) {} setTimeout(() => s.remove(), 200); };
-    s.addEventListener('animationend', () => s.remove());
-  };
-  g.spawnT = setInterval(spawn, 520); spawn();
-  g.tick = setInterval(() => { g.left--; paintHud(); if (g.left <= 0) petGameEnd(); }, 1000);
-}
-function petGameEnd(silent) {
-  const g = PET.game; if (!g) return;
-  clearInterval(g.spawnT); clearInterval(g.tick); g.area.remove(); PET.game = null;
-  if (silent) return petPaint();
-  PET.fun = clamp(PET.fun + 10 + g.score * 2, 0, 100); PET.energy = clamp(PET.energy - 12, 0, 100); petXp(Math.max(2, g.score));
-  petMood(g.score >= 10 ? 'wow' : 'love', 2200); petBurst('⭐', Math.min(8, 2 + Math.floor(g.score / 3)));
-  petSpeak(g.score >= 15 ? `Wow, ${g.score} Punkte! Du bist ja ein Sterne-Profi! 🤩` : g.score >= 6 ? `${g.score} Punkte! Das hat Spaß gemacht!` : `${g.score} ${g.score === 1 ? 'Punkt' : 'Punkte'}. Nochmal? 😄`);
-}
-
-/* --- cheering for real progress in the app --- */
-async function petRewards() {
-  const today = todayISO();
-  const [pl, hb] = await Promise.all([Docs.get('planner', { items: [] }), Docs.get('habits', { habits: [], goals: [] })]);
-  const done = pl.items.filter(i => i.kind === 'task' && i.done && i.date === today).length + hb.habits.filter(h => h.days[today]).length;
-  if (PET.rew.d !== today) PET.rew = { d: today, n: 0 };
-  const fresh = done - PET.rew.n;
-  if (fresh > 0) {
-    PET.rew.n = done; PET.fun = clamp(PET.fun + fresh * 5, 0, 100); petXp(fresh * 4); petMood('wow', 2000); petBurst('🎉', 4);
-    return `Du hast heute schon ${done} ${done === 1 ? 'Sache' : 'Sachen'} erledigt. Ich bin so stolz auf dich! 🎉`;
-  }
-  if (done < PET.rew.n) PET.rew.n = done;
-  petSave(); return '';
-}
-
-/* --- chat UI --- */
+/* --- chat --- */
 function asBubble(role, text, actions) {
   const list = $('#asList'), b = el('div', 'as-msg ' + (role === 'u' ? 'as-u' : 'as-a'), list);
   el('div', 'as-txt', b).textContent = text;
   if (actions?.length) {
     const row = el('div', 'as-acts', b);
-    actions.forEach(a => { const x = el('button', 'chip', row); x.type = 'button'; x.textContent = a.l; x.onclick = () => { row.querySelectorAll('button').forEach(y => y.disabled = true); a.fn(); }; });
+    actions.forEach(a => { const x = el('button', 'as-act', row); x.type = 'button'; x.textContent = a.l; x.onclick = () => { row.querySelectorAll('button').forEach(y => y.disabled = true); a.fn(); }; });
   }
   list.scrollTop = list.scrollHeight;
   return b;
 }
-function asShow(r) {
+function asShow(r, mood) {
   if (!r) return;
   AS.log.push({ r: 'a', t: r.t, at: Date.now() }); asStore();
   asBubble('a', r.t, r.actions);
-  const first = r.t.split('\n')[0]; petSpeak(first.length > 90 ? first.slice(0, first.lastIndexOf(' ', 88)) + ' …' : first);
+  if (mood) petMood(mood, 2200);
 }
 function asSay(t) { asShow({ t }); }
 function asGo(fn) { asClose(); setTimeout(fn, 60); }
@@ -4047,61 +3920,79 @@ async function asSend(text) {
   text = String(text || '').trim(); if (!text || AS.busy) return;
   AS.log.push({ r: 'u', t: text, at: Date.now() }); asStore();
   asBubble('u', text);
-  if (PET.asleep && !/^(aufwachen|wach auf|guten morgen)/i.test(text)) { petSpeak('Zzz … 💤'); asBubble('a', `${PET.name} schläft gerade. Weck mich mit „☀️ Wecken“, dann helfe ich dir.`); return; }
-  if (PET.asleep) { petSleepToggle(); return; }
-  AS.busy = true; petMood('wow', 900);
+  if (/^(verlauf löschen|chat löschen|alles vergessen)/i.test(text)) { AS.log = []; asStore(); $('#asList').innerHTML = ''; return asShow({ t: 'Erledigt, der Verlauf ist leer.' }, 'happy'); }
+  AS.busy = true; petMood('think');
   const wait = asBubble('a', '…'); wait.classList.add('as-wait');
+  const t0 = Date.now();
   try {
-    const r = await asAnswer(text); wait.remove(); asShow(r);
-    if (r?.actions?.some(a => a.l === 'Rückgängig')) { petMood('love', 1600); petBurst('✨', 3); petXp(3); }
-    else petXp(1);
-  } catch (e) { wait.remove(); asSay('Hoppla, da ist etwas schiefgegangen. Versuch es bitte noch einmal.'); }
+    const r = await asAnswer(text);
+    await new Promise(res => setTimeout(res, Math.max(0, 450 - (Date.now() - t0)))); // a moment to "think"
+    wait.remove();
+    if (!r) { petMood('happy', 1500); AS.busy = false; return; }
+    const mood = r.actions?.some(a => a.l === 'Rückgängig') ? 'happy'
+      : /^Hmm/.test(r.t) ? 'confused'
+      : /^(Danke|Gern)/.test(r.t) ? 'love'
+      : /nicht erreich|schiefgegangen|leider/.test(r.t) ? 'sad'
+      : /Schirm/.test(r.t) ? 'sad' : 'idle';
+    asShow(r, mood === 'idle' ? 'happy' : mood);
+  } catch (e) { wait.remove(); asShow({ t: 'Da ist etwas schiefgegangen. Versuch es bitte noch einmal.' }, 'sad'); }
   AS.busy = false;
 }
-function asFit() { const v = window.visualViewport, o = $('#asst'); if (!o || o.hidden) return; o.style.height = v ? v.height + 'px' : ''; o.style.top = v ? v.offsetTop + 'px' : '0'; const l = $('#asList'); if (l) l.scrollTop = l.scrollHeight; }
+function asFit() {
+  const v = window.visualViewport, o = $('#asst'); if (!o || o.hidden) return;
+  o.style.height = v ? v.height + 'px' : ''; o.style.top = v ? v.offsetTop + 'px' : '0';
+  const l = $('#asList'); if (l) l.scrollTop = l.scrollHeight;
+}
 async function asOpen() {
   const o = $('#asst'); o.hidden = false; asFit(); petLoad(); petPaint();
-  const list = $('#asList'); list.innerHTML = ''; $('#petSnacks').hidden = true;
+  const list = $('#asList'); list.innerHTML = '';
   if (!AS.log.length) asLoad();
   const day = todayISO(), recent = AS.log.filter(m => isoD(new Date(m.at)) === day).slice(-20);
   recent.forEach(m => asBubble(m.r, m.t));
   const ch = $('#asChips'); ch.innerHTML = '';
-  ['Überblick', 'Was steht heute an?', 'Regnet es morgen?', 'Einkaufsliste', 'Hilfe'].forEach(t => { const c = el('button', 'chip', ch); c.type = 'button'; c.textContent = t; c.onclick = () => asSend(t); });
-  if (!PET.met) { PET.met = true; petSave(); petMood('wow', 2000); petBurst('💛', 5); asSay(`Hallo! Ich bin ${PET.name} und wohne ab jetzt in deinem Folio. 💛 Du kannst mich streicheln, füttern und mit mir spielen. Und schreib mir einfach, was ich für dich erledigen soll, zum Beispiel „Zahnarzt Freitag um 10 Uhr“. Tipp auf meinen Namen, um mich umzubenennen.`); return; }
-  if (PET.asleep) { petSpeak('Zzz … 💤'); return; }
-  const cheer = await petRewards();
-  if (!recent.length) { const b = await asBrief(); if (cheer) b.t += '\n' + cheer; asShow(b); }
-  else if (cheer) asSay(cheer);
-  else { const m = petBaseMood(); petSpeak(m === 'hungry' ? 'Ich hab Hunger … 🥺' : m === 'sad' ? 'Mir ist langweilig. Spielen wir?' : m === 'tired' ? 'Ich bin sooo müde …' : ['Schön, dass du da bist!', 'Hallo du! 👋', 'Was machen wir?'][Math.floor(Math.random() * 3)]); }
+  ['Überblick', 'Was steht heute an?', 'Wetter morgen', 'Einkaufsliste', 'Hilfe'].forEach(t => { const c = el('button', 'as-chip', ch); c.type = 'button'; c.textContent = t; c.onclick = () => asSend(t); });
+  petMood('surprised', 700);
+  let met = false; try { met = !!localStorage.getItem('folio:pet:met'); localStorage.setItem('folio:pet:met', '1'); } catch (e) {}
+  if (!met) return setTimeout(() => asShow({ t: `Hallo, ich bin ${PET.name}. Sag mir einfach, was ansteht, zum Beispiel „Zahnarzt Freitag um 10 Uhr“ oder „Milch auf die Einkaufsliste“. Und wenn du magst, kannst du mich streicheln.` }, 'happy'), 500);
+  if (!recent.length) setTimeout(async () => asShow(await asBrief(), 'happy'), 450);
 }
 function asClose() {
-  petGameEnd(true); petSave();
-  $('#asst').hidden = true; $('#asIn').blur(); petPaint();
+  $('#asst').hidden = true; $('#asIn').blur(); $('#asst').classList.remove('typing');
   const rer = { planner: () => Docs.cache.has('planner') && renderPlanner(), habits: () => Docs.cache.has('habits') && renderHabits(), finance: () => FI.month && Docs.cache.has('fin-' + FI.month) && renderFinance(), recipes: () => Docs.cache.has('recipes') && renderRecipes(), more: openMore, library: renderHintCard }[S.view];
   try { rer?.(); } catch (e) {}
 }
 function petRename() {
   const n = prompt('Wie soll ich heißen?', PET.name);
   if (n == null) return; const v = n.trim().slice(0, 20); if (!v) return;
-  PET.name = v; petSave(); petPaint(); petMood('love'); petSpeak(`${v}? Was für ein schöner Name! 🥰`);
+  PET.name = v; petSave(); petPaint(); petMood('love', 1800);
 }
+
+/* --- wiring --- */
+$('#asFab').innerHTML = cloudSVG();
+$('#petStage .pet-big').innerHTML = cloudSVG();
 $('#asFab').onclick = asOpen;
 $('#asClose').onclick = asClose;
 $('#petName').onclick = petRename;
-$('#petStage .pet-big').onclick = petPetting;
-$('#petPet').onclick = petPetting;
-$('#petFeed').onclick = petFeedMenu;
-$('#petPlay').onclick = petPlay;
-$('#petSleep').onclick = petSleepToggle;
-$('#asIn').addEventListener('focus', () => $('#asst').classList.add('typing'));
-$('#asIn').addEventListener('blur', () => setTimeout(() => { if (document.activeElement !== $('#asIn')) $('#asst').classList.remove('typing'); setTimeout(() => { const l = $('#asList'); l.scrollTop = l.scrollHeight; }, 300); }, 150));
+(() => {
+  const big = $('#petStage .pet-big'); let down = false, lx = 0, ly = 0;
+  big.addEventListener('pointerdown', e => { down = true; lx = e.clientX; ly = e.clientY; big.setPointerCapture?.(e.pointerId); petStroke(); });
+  big.addEventListener('pointermove', e => { if (!down) return; if (Math.hypot(e.clientX - lx, e.clientY - ly) > 14) { lx = e.clientX; ly = e.clientY; petStroke(); } });
+  const up = () => { down = false; }; big.addEventListener('pointerup', up); big.addEventListener('pointercancel', up);
+})();
+$('#asIn').addEventListener('focus', () => { $('#asst').classList.add('typing'); petMood('listen'); });
+$('#asIn').addEventListener('blur', () => setTimeout(() => {
+  if (document.activeElement === $('#asIn')) return;
+  $('#asst').classList.remove('typing'); if (PET.mood === 'listen') petMood(petIdleMood());
+  setTimeout(() => { const l = $('#asList'); l.scrollTop = l.scrollHeight; }, 300);
+}, 150));
+$('#asIn').addEventListener('input', () => { if (!AS.busy) { petMood('listen'); clearTimeout(PET.typeT); PET.typeT = setTimeout(() => { if (PET.mood === 'listen' && document.activeElement !== $('#asIn')) petMood(petIdleMood()); }, 1500); } });
 $('#asForm').addEventListener('submit', e => { e.preventDefault(); const i = $('#asIn'), t = i.value; i.value = ''; asSend(t); });
-$('#asClear').onclick = () => { AS.log = []; asStore(); $('#asList').innerHTML = ''; asSay('Verlauf gelöscht. Wie kann ich helfen?'); };
 window.visualViewport?.addEventListener('resize', asFit);
 window.visualViewport?.addEventListener('scroll', asFit);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#asst').hidden) asClose(); });
-petLoad(); petPaint();
-setInterval(() => { petLoad(); petSave(); petPaint(); }, 60000);
+petLoad(); petPaint(); petMood(petIdleMood());
+setInterval(petLook, 3800);
+setInterval(() => { if (PET.mood === 'idle' || PET.mood === 'sleepy') petMood(petIdleMood()); }, 60000);
 
 document.querySelectorAll('.tab').forEach(t => t.onclick = () => ({ books: openNotebooks, planner: openPlanner, habits: openHabits, weather: openWeather, more: openMore })[t.dataset.tab]());
 $('#wxAddBtn').onclick = openWxSearch;

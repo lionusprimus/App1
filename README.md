@@ -2,7 +2,7 @@
 
 Notizbücher mit echtem Umblättern, Planer, Ziele, Wetter, Fokus-Timer, Finanzen und Rezepte – als Web-App für den iPhone-Home-Bildschirm.
 
-**Krümel:** Ein kleiner Begleiter wohnt unten rechts in der App. Du kannst ihn streicheln, füttern, mit ihm Sterne fangen und ihn schlafen legen. Er freut sich, wenn du Aufgaben und Gewohnheiten erledigst. Schreib ihm einfach, was er tun soll, zum Beispiel „Zahnarzt Freitag um 10 Uhr“, „Milch auf die Einkaufsliste“, „12 € für Kino ausgegeben“ oder „Regnet es morgen?“. Er versteht kurze deutsche Sätze und arbeitet komplett auf dem Gerät.
+**Krümel:** Eine kleine Wolke mit Augen wohnt unten rechts in der App. Sie zeigt Gefühle: Sie schaut zu, während du schreibst, denkt nach, freut sich, wenn sie etwas erledigt hat, und guckt verwirrt, wenn sie etwas nicht versteht. Du kannst sie antippen oder streicheln. Schreib ihr einfach, was sie tun soll, zum Beispiel „Zahnarzt Freitag um 10 Uhr“, „Milch auf die Einkaufsliste“, „12 € für Kino ausgegeben“ oder „Regnet es morgen?“. Sie versteht kurze deutsche Sätze und arbeitet komplett auf dem Gerät.
 
 **Installieren:** Die Seite in Safari öffnen, auf „Teilen“ tippen und „Zum Home-Bildschirm“ wählen.
 
