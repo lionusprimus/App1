@@ -598,6 +598,16 @@ body{font-family:var(--font-ui);letter-spacing:-.005em}
 .fin-del svg{width:14px;height:14px}
 @keyframes finIn{from{transform:scale(.4);opacity:0}}
 .fin-list .rec-shelf-head{margin-bottom:2px}
+.imp-note{padding:0!important;margin:0}
+.imp-list{max-height:48vh}
+.imp-row{display:grid;grid-template-columns:52px 1fr auto;grid-template-areas:"d t a" "d c c";align-items:center;gap:2px 10px;padding:9px 2px;border-top:1px solid var(--line)}
+.imp-row:first-child{border-top:0}
+.imp-d{grid-area:d;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.imp-t{grid-area:t;min-width:0}
+.imp-t b{display:block;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.imp-row .fr-a{grid-area:a}
+.imp-cat{grid-area:c;justify-self:start;font:inherit;font-size:12.5px;color:var(--muted);background:transparent;border:0;padding:2px 0;-webkit-appearance:none;appearance:none;text-decoration:underline dotted;text-underline-offset:3px}
+.state .btn + .btn{margin-top:-4px}
 .undo-bar{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 92px);transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:70;
   display:flex;align-items:center;gap:14px;max-width:calc(100% - 32px);padding:10px 10px 10px 16px;border-radius:999px;background:rgba(30,20,22,.86);color:#fff;font-size:14px;
   -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 12px 30px -10px rgba(0,0,0,.45);transition:opacity .2s,transform .25s cubic-bezier(.3,1.3,.5,1)}
@@ -3393,10 +3403,149 @@ function finForm(en) {
       const a = num(String(v.a).replace(/\./g, '').replace(',', '.')); if (!(a > 0)) { toast('Bitte einen Betrag größer als 0 eingeben.'); return false; }
       const body2 = { a: Math.round(a * 100) / 100, t: v.t, c: v.c, d: v.d, n: v.n || '' }, mk = v.d.slice(0, 7);
       if (en) { doc.e = doc.e.filter(x => x !== en); Docs.save('fin-' + FI.month); }
-      Docs.get('fin-' + mk, { e: [] }).then(target => { target.e.push({ id: en?.id || uid(), ...body2 }); Docs.save('fin-' + mk); FI.month = mk; renderFinance(); });
+      const fsr = Docs.cache.get('finset'); if (en?.p && fsr && body2.c !== en.c) { (fsr.rules ||= {})[en.p] = body2.c; Docs.save('finset'); }
+      Docs.get('fin-' + mk, { e: [] }).then(target => { target.e.push({ id: en?.id || uid(), ...body2, ...(en?.k ? { k: en.k, p: en.p, src: en.src } : {}) }); Docs.save('fin-' + mk); FI.month = mk; renderFinance(); });
     },
     onDelete: en ? () => finDelete(en) : null });
 }
+/* =================== FINANZEN: Umsätze aus der Bank importieren (CSV) =================== */
+/* Reads the CSV export of a bank account (Sparkasse CSV-CAMT V2 and CSV-MT940, and most
+   other German banks thanks to header detection). Everything happens on this device.
+   Duplicates are skipped by a fingerprint, pending ("vorgemerkt") bookings are left out,
+   and categories you correct are remembered per payee for the next import. */
+function csvRows(text) {
+  const firstLines = text.split(/\r?\n/).slice(0, 40);
+  const head = firstLines.find(l => /betrag|amount|umsatz/i.test(l)) || firstLines[0] || '';
+  const sep = [';', '\t', ','].sort((a, b) => head.split(b).length - head.split(a).length)[0];
+  const rows = []; let row = [], cur = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) { if (c === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += c; continue; }
+    if (c === '"') q = true;
+    else if (c === sep) { row.push(cur); cur = ''; }
+    else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; row.push(cur); rows.push(row); row = []; cur = ''; }
+    else cur += c;
+  }
+  if (cur || row.length) { row.push(cur); rows.push(row); }
+  return rows.map(r => r.map(x => x.trim())).filter(r => r.some(Boolean));
+}
+function csvDate(s) {
+  let m = String(s).match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/);
+  if (m) { let y = +m[3]; if (y < 100) y += 2000; return `${y}-${pad2(+m[2])}-${pad2(+m[1])}`; }
+  m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? `${m[1]}-${m[2]}-${m[3]}` : null;
+}
+function csvAmount(s) {
+  let t = String(s).replace(/[^\d,.\-+]/g, '');
+  if (/,\d{1,2}$/.test(t)) t = t.replace(/\./g, '').replace(',', '.'); else t = t.replace(/,/g, '');
+  const v = parseFloat(t); return Number.isFinite(v) ? v : NaN;
+}
+const CSV_COLS = {
+  date: /^(buchungstag|buchungsdatum|datum|date|booking date|wertstellung)$/i,
+  value: /^(valutadatum|wertstellung|valuta)$/i,
+  amount: /^(betrag|betrag \(eur\)|umsatz|amount|betrag \(€\)|soll\/haben)$/i,
+  payee: /(beguenstigter|begünstigter|zahlungspflichtiger|empfänger|empfaenger|auftraggeber|name|payee|gegenpartei)/i,
+  purpose: /^(verwendungszweck|purpose|buchungsdetails|beschreibung|description)$/i,
+  text: /^(buchungstext|umsatzart|vorgang|transaktionstyp|art)$/i,
+  info: /^(info|status)$/i
+};
+function csvParse(text) {
+  const rows = csvRows(text);
+  const hi = rows.findIndex(r => r.some(c => CSV_COLS.amount.test(c)) && r.some(c => CSV_COLS.date.test(c)));
+  if (hi < 0) throw new Error('In der Datei habe ich keine Spalten für Datum und Betrag gefunden.');
+  const H = rows[hi], col = k => H.findIndex(c => CSV_COLS[k].test(c));
+  const ix = { date: col('date'), amount: col('amount'), payee: col('payee'), purpose: col('purpose'), text: col('text'), info: col('info') };
+  const out = [];
+  rows.slice(hi + 1).forEach(r => {
+    const d = csvDate(r[ix.date]), a = csvAmount(r[ix.amount]);
+    if (!d || !Number.isFinite(a) || a === 0) return;
+    out.push({ d, a, payee: ix.payee >= 0 ? r[ix.payee] || '' : '', purpose: ix.purpose >= 0 ? r[ix.purpose] || '' : '', text: ix.text >= 0 ? r[ix.text] || '' : '', pending: ix.info >= 0 && /vorgemerkt|pending|offen/i.test(r[ix.info] || '') });
+  });
+  return out;
+}
+const FIN_MORE = [
+  ['Essen', /bäckerei|baeckerei|backhaus|mcdonald|burger king|subway|starbucks|kfc|dominos|vapiano|lieferando|wolt|uber eats/i],
+  ['Einkauf', /rewe|edeka|aldi|lidl|penny|netto|kaufland|famila|combi|real |rossmann|\bdm[- ]|müller|mueller|zalando|amazon|otto|h&m|primark|ikea|decathlon/i],
+  ['Wohnen', /miete|stadtwerke|ewe|vodafone kabel|telekom|o2 |1&1|strom|gas|rundfunk|ard zdf/i],
+  ['Transport', /db vertrieb|deutsche bahn|bahn|vwg|nordwestbahn|tankstelle|aral|shell|esso|jet |total|uber|bolt|scooter|tier|lime/i],
+  ['Abos', /spotify|netflix|disney|apple\.com|itunes|google play|youtube|amazon prime|playstation|xbox|nintendo|audible|dazn/i],
+  ['Gesundheit', /apotheke|arzt|zahnarzt|klinik|fitness|mcfit|clever fit|urban sports/i],
+  ['Freizeit', /kino|cinema|cinestar|ticket|eventim|konzert|museum|thalia|hugendubel|steam|schwimmbad/i]
+];
+function csvCategory(e, rules) {
+  const hay = `${e.payee} ${e.purpose} ${e.text}`, key = csvPayeeKey(e);
+  if (rules[key]) return rules[key];
+  if (e.a > 0) return /lohn|gehalt|bezüge|bezuege|ausbildungsverg/i.test(hay) ? 'Gehalt' : /taschengeld|geschenk/i.test(hay) ? 'Geschenk' : /kleinanzeigen|vinted|ebay|verkauf/i.test(hay) ? 'Verkauf' : 'Sonstiges';
+  for (const [c, re] of [...FIN_MORE, ...AS_CATS]) if (re.test(hay)) return c;
+  return 'Sonstiges';
+}
+const csvPayeeKey = e => (e.payee || e.text || '').toLowerCase().replace(/[^a-zäöüß]+/g, ' ').trim().split(' ').slice(0, 3).join(' ');
+function csvName(e) {
+  let n = (e.payee || '').replace(/\s+(gmbh|ag|ab|se|kg|ohg|e\.?k\.?|mbh|co\.?|& co\.? kg|ltd\.?|limited|inc\.?|b\.?v\.?|s\.?a\.?r?\.?l?\.?|sarl|sagt danke)\b.*$/i, '').replace(/\s{2,}/g, ' ').trim();
+  if (!n) n = /bargeld|geldautomat|auszahlung/i.test(e.text + e.purpose) ? 'Bargeld' : (e.text || e.purpose || '').trim();
+  n = n.toLowerCase() === n || n.toUpperCase() === n ? n.toLowerCase().replace(/(^|[\s\-/])(\p{L})/gu, (m, a, b) => a + b.toUpperCase()) : n;
+  return n.slice(0, 40);
+}
+const csvKey = e => [e.d, e.a.toFixed(2), csvPayeeKey(e), (e.purpose || '').replace(/\s+/g, ' ').slice(0, 40).toLowerCase()].join('|');
+async function csvDecode(file) {
+  const buf = await file.arrayBuffer();
+  try { return new TextDecoder('utf-8', { fatal: true }).decode(buf).replace(/^﻿/, ''); }
+  catch (e) { return new TextDecoder('windows-1252').decode(buf); }
+}
+
+function finImport() {
+  const f = $('#formSheet'); f.innerHTML = ''; f.onsubmit = e => e.preventDefault();
+  el('h3', '', f).textContent = 'Umsätze importieren';
+  el('p', 'store-note imp-note', f).textContent = 'Lade die Umsätze deines Kontos als CSV-Datei herunter und wähle sie hier aus. Die Datei bleibt auf deinem Gerät, nichts wird hochgeladen.';
+  const ol = el('ol', 'steps', f);
+  ['Melde dich im Online-Banking der LzO an, am einfachsten auf lzo.com im Browser.', 'Öffne dein Konto und die Umsätze, und wähle den Zeitraum.', 'Tippe auf „Exportieren“ und wähle „CSV-CAMT V2“ (CSV-MT940 geht auch). Die Datei landet in „Dateien“ unter „Downloads“.', 'Hier auf „Datei auswählen“ tippen und die Datei nehmen.'].forEach(t => el('li', '', ol).textContent = t);
+  el('p', 'store-note imp-note', f).textContent = 'Klappt auch mit CSV-Dateien der meisten anderen Banken. Schon vorhandene Umsätze werden übersprungen, du kannst also ruhig überlappende Zeiträume importieren.';
+  const inp = el('input', '', f); inp.type = 'file'; inp.accept = '.csv,text/csv,text/plain'; inp.hidden = true;
+  const r = el('div', 'sheet-actions', f), c = el('button', 'btn btn-ghost', r); c.type = 'button'; c.textContent = 'Abbrechen'; c.onclick = () => closeGenericSheet('#formSheet');
+  const pick = el('button', 'btn btn-primary', r); pick.type = 'button'; pick.textContent = 'Datei auswählen'; pick.onclick = () => inp.click();
+  inp.onchange = async () => {
+    const file = inp.files[0]; if (!file) return;
+    try { finImportPreview(csvParse(await csvDecode(file)), file.name); }
+    catch (e) { toast(e.message || 'Die Datei konnte ich nicht lesen.', 4500); }
+  };
+  openGenericSheet('#formSheet');
+}
+async function finImportPreview(list, fname) {
+  const fs = await Docs.get('finset', { budget: 0 }); fs.rules ||= {};
+  const months = [...new Set(list.map(e => e.d.slice(0, 7)))];
+  const docs = Object.fromEntries(await Promise.all(months.map(async m => [m, await Docs.get('fin-' + m, { e: [] })])));
+  let dup = 0, pend = 0; const seen = new Set();
+  const fresh = list.filter(e => {
+    if (e.pending) { pend++; return false; }
+    const k = csvKey(e); e.k = k;
+    if (seen.has(k) || docs[e.d.slice(0, 7)].e.some(x => x.k === k)) { dup++; return false; }
+    seen.add(k); return true;
+  }).map(e => ({ id: uid(), a: Math.round(Math.abs(e.a) * 100) / 100, t: e.a > 0 ? 'in' : 'out', c: csvCategory(e, fs.rules), d: e.d, n: csvName(e), k: e.k, p: csvPayeeKey(e), src: 'csv' }))
+    .sort((a, b) => b.d.localeCompare(a.d));
+  const f = $('#formSheet'); f.innerHTML = ''; f.classList.add('tl-sheet');
+  el('h3', '', f).textContent = fresh.length ? (fresh.length === 1 ? '1 neuer Umsatz' : `${fresh.length} neue Umsätze`) : 'Nichts Neues';
+  const outSum = fresh.filter(e => e.t === 'out').reduce((s, e) => s + e.a, 0), inSum = fresh.filter(e => e.t === 'in').reduce((s, e) => s + e.a, 0);
+  el('p', 'store-note imp-note', f).textContent = [`Aus „${fname}“.`, fresh.length ? `Ausgaben ${euro(outSum)}, Einnahmen ${euro(inSum)}.` : '', dup ? `${dup} schon vorhanden.` : '', pend ? `${pend} vorgemerkte übersprungen, die kommen beim nächsten Import, sobald sie gebucht sind.` : ''].filter(Boolean).join(' ');
+  const listEl = el('div', 'tl-list imp-list', f);
+  fresh.forEach(e => {
+    const row = el('div', 'imp-row', listEl);
+    row.innerHTML = `<span class="imp-d">${parseD(e.d).toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })}</span><span class="imp-t"><b>${esc(e.n)}</b></span><span class="fr-a ${e.t === 'in' ? 'in' : ''}">${e.t === 'in' ? '+' : '−'}${euro(e.a)}</span>`;
+    const sel = el('select', 'imp-cat', row); sel.setAttribute('aria-label', 'Kategorie für ' + e.n);
+    (e.t === 'in' ? FIN_IN : FIN_CATS).forEach(cn => { const o = el('option', '', sel); o.value = cn; o.textContent = cn; o.selected = cn === e.c; });
+    sel.onchange = () => { e.c = sel.value; e.picked = true; };
+  });
+  const r = el('div', 'sheet-actions', f), c = el('button', 'btn btn-ghost', r); c.type = 'button'; c.textContent = fresh.length ? 'Abbrechen' : 'Schließen';
+  c.onclick = () => { f.classList.remove('tl-sheet'); closeGenericSheet('#formSheet'); };
+  if (!fresh.length) return;
+  const go = el('button', 'btn btn-primary', r); go.type = 'button'; go.textContent = 'Importieren';
+  go.onclick = async () => {
+    fresh.forEach(e => { if (e.picked && e.p) fs.rules[e.p] = e.c; delete e.picked; docs[e.d.slice(0, 7)].e.push(e); });
+    Docs.save('finset'); months.forEach(m => Docs.save('fin-' + m));
+    f.classList.remove('tl-sheet'); closeGenericSheet('#formSheet');
+    FI.month = fresh[0].d.slice(0, 7); renderFinance();
+    showUndo(fresh.length === 1 ? '1 Umsatz importiert' : `${fresh.length} Umsätze importiert`, () => { months.forEach(m => { docs[m].e = docs[m].e.filter(x => !fresh.includes(x)); Docs.save('fin-' + m); }); if (S.view === 'finance') renderFinance(); });
+  };
+}
+
 const finKeep = () => { const sc = $('#finance .mod-scroll'), y = sc.scrollTop; renderFinance(); sc.scrollTop = y; };
 /* delete an entry; a bar offers to bring it back */
 function finDelete(en) {
@@ -3436,7 +3585,7 @@ function renderFinance() {
   hero.innerHTML = `<span class="fh-l">Ausgegeben</span><span class="fh-v">${euro(spent)}</span>` + (fs.budget ? `<div class="fh-bar"><i style="width:${clamp(spent / fs.budget * 100, 0, 100)}%;background:${spent > fs.budget ? '#FF8A93' : '#FECD00'}"></i></div><span class="fh-s">${spent > fs.budget ? euro(spent - fs.budget) + ' über' : euro(fs.budget - spent) + ' übrig von'} ${euro(fs.budget)} Budget</span>` : '<span class="fh-s">Noch kein Budget festgelegt</span>')
     + `<div class="fh-row"><span>Einnahmen<b>${euro(earned)}</b></span><span>Bilanz<b>${euro(earned - spent)}</b></span></div>`;
   const bb = el('button', 'fh-btn', hero); bb.type = 'button'; bb.textContent = fs.budget ? 'Budget ändern' : 'Budget festlegen'; bb.onclick = budgetForm;
-  if (!doc.e.length) { const c = card(b, ''); const st = el('div', 'state center', c); el('h2', '', st).textContent = 'Noch keine Einträge'; el('p', '', st).textContent = 'Trag deine erste Ausgabe ein. Diagramme nach Kategorie und Verlauf erscheinen automatisch.'; const a = el('button', 'btn btn-primary', st); a.type = 'button'; a.textContent = 'Ausgabe eintragen'; a.onclick = () => finForm(null); return; }
+  if (!doc.e.length) { const c = card(b, ''); const st = el('div', 'state center', c); el('h2', '', st).textContent = 'Noch keine Einträge'; el('p', '', st).textContent = 'Trag deine erste Ausgabe ein. Diagramme nach Kategorie und Verlauf erscheinen automatisch.'; const a = el('button', 'btn btn-primary', st); a.type = 'button'; a.textContent = 'Ausgabe eintragen'; a.onclick = () => finForm(null); const ib = el('button', 'btn btn-soft', st); ib.type = 'button'; ib.textContent = 'Umsätze aus der Bank importieren'; ib.onclick = finImport; return; }
   // cumulative chart
   const dim = new Date(y, m, 0).getDate(), lastDay = FI.month === todayISO().slice(0, 7) ? new Date().getDate() : dim;
   const daily = Array.from({ length: dim }, (_, i) => out.filter(e => +e.d.slice(8) === i + 1).reduce((a, e) => a + e.a, 0));
@@ -3455,7 +3604,9 @@ function renderFinance() {
   // list
   const lc = card(b, '', 'fin-list' + (FI.edit ? ' editing' : '')), lh = el('div', 'rec-shelf-head', lc);
   el('h3', '', lh).textContent = 'Einträge';
-  const eb = el('button', 'btn btn-soft btn-sm', lh); eb.type = 'button'; eb.textContent = FI.edit ? 'Fertig' : 'Bearbeiten'; eb.onclick = () => { FI.edit = !FI.edit; finKeep(); };
+  const lhb = el('div', 'rec-shelf-btns', lh);
+  if (!FI.edit) { const ib = el('button', 'btn btn-soft btn-sm', lhb); ib.type = 'button'; ib.textContent = 'Import'; ib.onclick = finImport; }
+  const eb = el('button', 'btn btn-soft btn-sm', lhb); eb.type = 'button'; eb.textContent = FI.edit ? 'Fertig' : 'Bearbeiten'; eb.onclick = () => { FI.edit = !FI.edit; finKeep(); };
   const byDay = {}; doc.e.slice().sort((a, b) => b.d.localeCompare(a.d)).forEach(e => (byDay[e.d] ||= []).push(e));
   Object.entries(byDay).forEach(([d, es]) => {
     el('div', 'fin-day', lc).textContent = parseD(d).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
