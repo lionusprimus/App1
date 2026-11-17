@@ -3500,14 +3500,14 @@ async function csvDecode(file) {
 function finImport() {
   const f = $('#formSheet'); f.innerHTML = ''; f.onsubmit = e => e.preventDefault();
   el('h3', '', f).textContent = 'Umsätze importieren';
-  el('p', 'store-note imp-note', f).textContent = 'Wähle Kontoauszüge als PDF oder einen Umsatz-Export als CSV. Die Dateien bleiben auf deinem Gerät, nichts wird hochgeladen.';
+  el('p', 'store-note imp-note', f).textContent = 'Wähle Kontoauszüge als PDF oder ZIP oder einen Umsatz-Export als CSV. Die Dateien bleiben auf deinem Gerät, nichts wird hochgeladen.';
   const t1 = el('p', 'imp-h', f); t1.textContent = 'Kontoauszüge aus der Sparkassen-App (PDF)';
   const ol = el('ol', 'steps', f);
-  ['In der Sparkassen-App das Postfach bzw. „Kontoauszüge“ öffnen.', 'Einen Auszug öffnen, auf „Teilen“ tippen und „In Dateien sichern“ wählen.', 'Hier auf „Dateien auswählen“ tippen und den Auszug nehmen. Mehrere auf einmal gehen auch.'].forEach(t => el('li', '', ol).textContent = t);
+  ['In der Sparkassen-App das Postfach bzw. „Kontoauszüge“ öffnen.', 'Einen oder mehrere Auszüge teilen und „In Dateien sichern“ wählen. Kommt dabei eine ZIP-Datei heraus, ist das in Ordnung.', 'Hier auf „Dateien auswählen“ tippen und die PDF- oder ZIP-Datei nehmen. Mehrere auf einmal gehen auch.'].forEach(t => el('li', '', ol).textContent = t);
   const t2 = el('p', 'imp-h', f); t2.textContent = 'Oder: Umsätze als CSV';
   el('p', 'store-note imp-note', f).textContent = 'Im Online-Banking auf lzo.com unter „Exportieren & Drucken“ das Format „CSV-CAMT V2“ wählen. Klappt auch mit den meisten anderen Banken.';
   el('p', 'store-note imp-note', f).textContent = 'Schon vorhandene Umsätze werden übersprungen, du kannst also ruhig dieselben Monate noch einmal importieren.';
-  const inp = el('input', '', f); inp.type = 'file'; inp.multiple = true; inp.accept = '.pdf,.csv,application/pdf,text/csv,text/plain'; inp.hidden = true;
+  const inp = el('input', '', f); inp.type = 'file'; inp.multiple = true; inp.accept = '.pdf,.csv,.zip,application/pdf,text/csv,text/plain,application/zip'; inp.hidden = true;
   const r = el('div', 'sheet-actions', f), c = el('button', 'btn btn-ghost', r); c.type = 'button'; c.textContent = 'Abbrechen'; c.onclick = () => closeGenericSheet('#formSheet');
   const pick = el('button', 'btn btn-primary', r); pick.type = 'button'; pick.textContent = 'Dateien auswählen'; pick.onclick = () => inp.click();
   inp.onchange = async () => {
@@ -3597,7 +3597,45 @@ function pdfParse(pages) {
   }
   return { list, check };
 }
+/* --- ZIP files (the Sparkasse app bundles statements in a ZIP) --- */
+/* A small reader for the ZIP format: the central directory lists the files; each is either
+   stored or deflated, and the browser inflates it itself (DecompressionStream). */
+async function unzipFiles(file) {
+  const buf = new Uint8Array(await file.arrayBuffer()), dv = new DataView(buf.buffer);
+  let eocd = -1;
+  for (let i = buf.length - 22; i >= Math.max(0, buf.length - 65557); i--) if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+  if (eocd < 0) throw new Error(`„${file.name}“ ist keine gültige ZIP-Datei.`);
+  const count = dv.getUint16(eocd + 10, true); let p = dv.getUint32(eocd + 16, true);
+  const out = [];
+  for (let n = 0; n < count; n++) {
+    if (dv.getUint32(p, true) !== 0x02014b50) break;
+    const flags = dv.getUint16(p + 8, true), method = dv.getUint16(p + 10, true), csize = dv.getUint32(p + 20, true);
+    const nlen = dv.getUint16(p + 28, true), xlen = dv.getUint16(p + 30, true), clen = dv.getUint16(p + 32, true), local = dv.getUint32(p + 42, true);
+    const nameBytes = buf.subarray(p + 46, p + 46 + nlen);
+    const name = new TextDecoder(flags & 0x800 ? 'utf-8' : 'utf-8').decode(nameBytes);
+    p += 46 + nlen + xlen + clen;
+    const base = name.split('/').pop();
+    if (!base || name.startsWith('__MACOSX/') || base.startsWith('._') || !/\.(pdf|csv|zip)$/i.test(base)) continue;
+    if (flags & 1) throw new Error(`„${base}“ in der ZIP-Datei ist mit einem Passwort geschützt. Bitte die Datei ohne Passwort exportieren.`);
+    const start = local + 30 + dv.getUint16(local + 26, true) + dv.getUint16(local + 28, true), raw = buf.subarray(start, start + csize);
+    let data;
+    if (method === 0) data = raw;
+    else if (method === 8) {
+      if (typeof DecompressionStream === 'undefined') throw new Error('Dieses Gerät kann ZIP-Dateien nicht entpacken. Bitte iOS aktualisieren oder die Auszüge einzeln als PDF sichern.');
+      data = new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+    } else throw new Error(`„${base}“ ist in einem unbekannten Format gepackt.`);
+    const f = new File([data], base, { type: /\.pdf$/i.test(base) ? 'application/pdf' : /\.csv$/i.test(base) ? 'text/csv' : 'application/zip' });
+    if (/\.zip$/i.test(base)) out.push(...await unzipFiles(f)); else out.push(f);
+  }
+  return out;
+}
 async function finImportFiles(files) {
+  const label = files.length === 1 ? files[0].name : `${files.length} Dateien`, flat = [];
+  for (const f of files) {
+    if (/\.zip$/i.test(f.name) || /zip/.test(f.type)) { const inner = await unzipFiles(f); if (!inner.length) throw new Error(`In „${f.name}“ sind keine Kontoauszüge (PDF oder CSV).`); flat.push(...inner); }
+    else flat.push(f);
+  }
+  files = flat;
   const all = []; let check = null, names = [], pdfs = 0;
   for (const file of files) {
     names.push(file.name);
@@ -3609,7 +3647,7 @@ async function finImportFiles(files) {
       if (r.check) check = check ? { ok: check.ok && r.check.ok } : { ok: r.check.ok };
     } else all.push(...csvParse(await csvDecode(file)));
   }
-  finImportPreview(all, names.length === 1 ? names[0] : `${names.length} Dateien`, pdfs ? check : null);
+  finImportPreview(all, label, pdfs ? check : null);
 }
 
 async function finImportPreview(list, fname, check) {
