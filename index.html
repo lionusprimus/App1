@@ -5085,6 +5085,7 @@ const AI_KEY = 'folio:ai';
 const AI_PROVIDERS = {
   gemini: { name: 'Google Gemini', how: 'Kostenlos: Auf aistudio.google.com mit einem Google-Konto anmelden, dann „Get API key“ und „Create API key“. Den Schlüssel hier einfügen.' },
   openrouter: { name: 'OpenRouter', how: 'Kostenlos: Auf openrouter.ai registrieren, unter „Keys“ einen Schlüssel erstellen und hier einfügen. Krümel nutzt nur die kostenlosen Modelle.', base: 'https://openrouter.ai/api/v1', model: 'openrouter/free' },
+  claude: { name: 'Claude', how: 'Auf platform.claude.com (Claude Console) anmelden, unter „API Keys“ einen Schlüssel erstellen und hier einfügen. Claude ist nicht kostenlos: Abgerechnet wird nach Verbrauch über das Guthaben in der Console. Ein normales Claude-Abo zählt dafür nicht; bei Max- und Team-Abos gibt es aber monatliches API-Guthaben, das man in claude.ai unter Einstellungen → Abrechnung mit der Console verknüpfen kann.' },
   custom: { name: 'Anderer', how: 'Jeder OpenAI-kompatible Dienst. Für Groq zum Beispiel die Adresse https://api.groq.com/openai/v1 und als Modell llama-3.3-70b-versatile.' }
 };
 const AI = { cfg: { on: false, provider: 'gemini', key: '', model: '', base: '', auto: '' }, warned: false };
@@ -5292,7 +5293,7 @@ async function aiGeminiModel() {
   return pick;
 }
 function aiErr(status, body) {
-  const e = new Error(status === 429 ? 'limit' : status === 401 || status === 403 || status === 400 && /API key|API_KEY/i.test(body) ? 'key' : 'http ' + status);
+  const e = new Error(/credit balance|billing/i.test(String(body)) ? 'credit' : status === 429 || status === 529 ? 'limit' : status === 401 || status === 403 || status === 400 && /API key|API_KEY/i.test(body) ? 'key' : 'http ' + status);
   e.status = status; e.body = String(body || '').slice(0, 300); return e;
 }
 async function aiFetch(url, opt) {
@@ -5324,6 +5325,32 @@ async function aiRunGemini(turn) {
   }
   return '';
 }
+/* --- Claude (Anthropic Messages API, called straight from the browser with the user's own key) --- */
+const CLAUDE_MODELS = [['claude-opus-5-5', 'Claude Opus 5.5 – am klügsten (Standard) · ca. 4 $ / 20 $ pro Mio. Tokens'], ['claude-sonnet-5-5', 'Claude Sonnet 5.5 – schnell und günstiger · ca. 2 $ / 10 $ pro Mio. Tokens'], ['claude-haiku-5-5', 'Claude Haiku 5.5 – am schnellsten, sehr günstig · ca. 0,10 $ / 0,50 $ pro Mio. Tokens']];
+const claudeModel = () => AI.cfg.model || 'claude-opus-5-5';
+function claudeRequest(body) {
+  const model = body.model, headers = { 'content-type': 'application/json', 'x-api-key': AI.cfg.key, 'anthropic-version': '2026-10-21', 'anthropic-dangerous-direct-browser-access': 'true' };
+  // if a safety check declines a request, the API re-runs it on a suitable fallback model (Opus and Sonnet only)
+  if (!/haiku/.test(model)) { headers['anthropic-beta'] = 'server-side-fallback-2026-07-01'; body.fallbacks = 'default'; }
+  return aiFetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers, body: JSON.stringify(body) });
+}
+async function aiRunClaude(turn) {
+  const model = claudeModel(), hist = aiHistory().map(m => ({ role: m.role, content: m.text }));
+  while (hist.length && hist[0].role !== 'user') hist.shift();
+  const messages = hist, tools = AI_TOOLS.map(t => ({ name: t.name, description: t.description, input_schema: t.parameters || { type: 'object', properties: {} } }));
+  for (let step = 0; step < 6; step++) {
+    // a chatty little helper: low effort keeps replies quick and cheap
+    const j = await claudeRequest({ model, max_tokens: 16000, output_config: { effort: 'low' }, system: aiSystem(), messages, tools });
+    if (j.stop_reason === 'refusal') return '[confused]Dabei kann ich dir leider nicht helfen.';
+    const content = j.content || [], calls = content.filter(b => b.type === 'tool_use');
+    if (j.stop_reason !== 'tool_use' || !calls.length) return content.filter(b => b.type === 'text').map(b => b.text).join('').trim();
+    messages.push({ role: 'assistant', content }); // passed back unchanged, thinking blocks included
+    const results = [];
+    for (const c of calls) { const o = await aiTool(c.name, c.input, turn); turn.add(o); results.push({ type: 'tool_result', tool_use_id: c.id, content: JSON.stringify(o.r) }); }
+    messages.push({ role: 'user', content: results });
+  }
+  return '';
+}
 async function aiRunOpenAI(turn) {
   const pv = AI_PROVIDERS[AI.cfg.provider], base = (AI.cfg.provider === 'custom' ? AI.cfg.base : pv.base).replace(/\/+$/, ''), model = AI.cfg.model || pv.model;
   const messages = [{ role: 'system', content: aiSystem() }, ...aiHistory().map(m => ({ role: m.role, content: m.text }))];
@@ -5348,12 +5375,12 @@ async function aiRunOpenAI(turn) {
 async function aiAnswer(text) {
   const turn = { undos: [], done: false, go: null, goNow: false, add(o) { if (o.undo) this.undos.push(o.undo); if (o.done) this.done = true; } };
   let reply;
-  try { reply = AI.cfg.provider === 'gemini' ? await aiRunGemini(turn) : await aiRunOpenAI(turn); }
+  try { reply = AI.cfg.provider === 'gemini' ? await aiRunGemini(turn) : AI.cfg.provider === 'claude' ? await aiRunClaude(turn) : await aiRunOpenAI(turn); }
   catch (e) {
     if (turn.undos.length) { /* some actions already happened: report them plainly */ reply = '[happy]Erledigt.'; }
     else {
-      if (e.message === 'limit') AI.pause = Date.now() + 10 * 60000;
-      const why = e.message === 'limit' ? 'Mein KI-Kontingent für heute ist aufgebraucht' : e.message === 'key' ? 'Der KI-Schlüssel funktioniert nicht, schau bitte in den Einstellungen nach' : 'Ich erreiche die KI gerade nicht';
+      if (e.message === 'limit' || e.message === 'credit') AI.pause = Date.now() + 10 * 60000;
+      const why = e.message === 'credit' ? 'Auf deinem KI-Konto ist kein Guthaben mehr' : e.message === 'limit' ? 'Mein KI-Kontingent ist gerade aufgebraucht' : e.message === 'key' ? 'Der KI-Schlüssel funktioniert nicht, schau bitte in den Einstellungen nach' : 'Ich erreiche die KI gerade nicht';
       const r = await asAnswer(text);
       if (!r) return null;
       if (!AI.warned || e.message === 'key') { AI.warned = true; r.t = `${why}, deshalb antworte ich im einfachen Modus.\n\n` + r.t; }
@@ -5376,7 +5403,7 @@ function aiSettings() {
   const p = $('#aiPanel'); p.hidden = false; p.innerHTML = '';
   const head = el('div', 'ai-head', p); el('h3', '', head).textContent = 'KI für ' + PET.name;
   const x = el('button', 'as-done', head); x.type = 'button'; x.textContent = 'Fertig'; x.onclick = () => { p.hidden = true; AI.pause = 0; AI.warned = false; aiBadge(); };
-  el('p', 'ai-note', p).textContent = `Mit einem kostenlosen Schlüssel kann ${PET.name} frei mit dir reden und mehr verstehen. Der Schlüssel bleibt nur auf diesem Gerät. Was du ${PET.name} schreibst, geht dann an den Anbieter, und wenn nötig auch passende Daten aus der App, zum Beispiel deine Termine. Bei kostenlosen Angeboten darf der Anbieter Nachrichten oft zur Verbesserung seiner Modelle nutzen.`;
+  el('p', 'ai-note', p).textContent = `Mit einem Schlüssel (kostenlos bei Gemini und OpenRouter, bei Claude nach Verbrauch) kann ${PET.name} frei mit dir reden und mehr verstehen. Der Schlüssel bleibt nur auf diesem Gerät. Was du ${PET.name} schreibst, geht dann an den Anbieter, und wenn nötig auch passende Daten aus der App, zum Beispiel deine Termine. Bei kostenlosen Angeboten darf der Anbieter Nachrichten oft zur Verbesserung seiner Modelle nutzen; bei der kostenpflichtigen Claude-Schnittstelle werden sie laut Anthropic standardmäßig nicht zum Training verwendet.`;
   const sw = el('label', 'ai-row ai-switch', p); el('span', '', sw).textContent = 'KI verwenden';
   const cb = el('input', '', sw); cb.type = 'checkbox'; cb.checked = AI.cfg.on; cb.onchange = () => { AI.cfg.on = cb.checked; aiSave(); };
   const seg = el('div', 'seg ai-seg', p);
@@ -5388,6 +5415,13 @@ function aiSettings() {
     how.textContent = AI_PROVIDERS[AI.cfg.provider].how; f.innerHTML = '';
     field('Schlüssel', 'password', 'key', 'Schlüssel einfügen');
     if (AI.cfg.provider === 'custom') field('Adresse', 'url', 'base', 'https://…/v1');
+    if (AI.cfg.provider === 'claude') {
+      const w = el('label', 'field', f); el('span', '', w).textContent = 'Modell';
+      const sel = el('select', 'input', w); CLAUDE_MODELS.forEach(([v, l]) => { const o = el('option', '', sel); o.value = v; o.textContent = l; o.selected = claudeModel() === v; });
+      sel.onchange = () => { AI.cfg.model = sel.value; aiSave(); };
+      el('p', 'ai-note', f).textContent = 'Eine Nachricht an Krümel kostet grob geschätzt mit Opus 2 bis 6 Cent, mit Sonnet etwa die Hälfte und mit Haiku weniger als 0,1 Cent, weil jedes Mal Krümels Anleitung und Werkzeuge mitgeschickt werden. In der Claude Console kannst du unter „Limits“ ein Monatslimit festlegen.';
+      return;
+    }
     field(AI.cfg.provider === 'custom' ? 'Modell' : 'Modell (leer = automatisch)', 'text', 'model', AI.cfg.provider === 'gemini' ? (AI.cfg.auto || 'automatisch') : AI.cfg.provider === 'openrouter' ? 'openrouter/free' : 'z. B. llama-3.3-70b-versatile');
   };
   Object.entries(AI_PROVIDERS).forEach(([k, v]) => { const b = el('button', '', seg); b.type = 'button'; b.dataset.p = k; b.textContent = v.name; b.onclick = () => { AI.cfg.provider = k; AI.cfg.model = ''; AI.cfg.auto = ''; aiSave(); draw(); }; });
@@ -5398,13 +5432,15 @@ function aiSettings() {
     if (!AI.cfg.key) { out.textContent = 'Bitte zuerst einen Schlüssel einfügen.'; return; }
     out.textContent = 'Teste …'; test.disabled = true;
     try {
-      const j = AI.cfg.provider === 'gemini'
+      const j = AI.cfg.provider === 'claude'
+        ? await claudeRequest({ model: claudeModel(), max_tokens: 1000, output_config: { effort: 'low' }, messages: [{ role: 'user', content: 'Sag nur: ok' }] })
+        : AI.cfg.provider === 'gemini'
         ? await aiFetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(await aiGeminiModel())}:generateContent`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-goog-api-key': AI.cfg.key }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'Sag nur: ok' }] }], generationConfig: { maxOutputTokens: 5 } }) })
         : await aiFetch((AI.cfg.provider === 'custom' ? AI.cfg.base : AI_PROVIDERS[AI.cfg.provider].base).replace(/\/+$/, '') + '/chat/completions', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + AI.cfg.key }, body: JSON.stringify({ model: AI.cfg.model || AI_PROVIDERS[AI.cfg.provider].model, messages: [{ role: 'user', content: 'Sag nur: ok' }], max_tokens: 5 }) });
-      out.textContent = 'Klappt' + (AI.cfg.provider === 'gemini' ? ` (Modell: ${AI.cfg.model || AI.cfg.auto})` : '') + '.';
+      out.textContent = 'Klappt' + (AI.cfg.provider === 'gemini' ? ` (Modell: ${AI.cfg.model || AI.cfg.auto})` : AI.cfg.provider === 'claude' ? ` (${(CLAUDE_MODELS.find(m => m[0] === claudeModel()) || [, claudeModel()])[1].split(' –')[0]})` : '') + '.';
       if (!AI.cfg.on) { AI.cfg.on = true; cb.checked = true; aiSave(); }
       void j;
-    } catch (e) { out.textContent = e.message === 'key' ? 'Der Schlüssel wird nicht akzeptiert.' : e.message === 'limit' ? 'Das Tageslimit ist erreicht, morgen geht es wieder.' : e.name === 'AbortError' ? 'Keine Antwort, versuch es später noch einmal.' : 'Hat nicht geklappt: ' + (e.message || 'unbekannter Fehler'); }
+    } catch (e) { out.textContent = e.message === 'credit' ? 'Der Schlüssel stimmt, aber auf dem Konto ist kein Guthaben. In der Claude Console unter „Billing“ Guthaben aufladen.' : e.message === 'key' ? 'Der Schlüssel wird nicht akzeptiert.' : e.message === 'limit' ? 'Das Tageslimit ist erreicht, morgen geht es wieder.' : e.name === 'AbortError' ? 'Keine Antwort, versuch es später noch einmal.' : 'Hat nicht geklappt: ' + (e.message || 'unbekannter Fehler'); }
     test.disabled = false;
   };
 }
@@ -5769,6 +5805,11 @@ async function imgToJpeg(file, max = 1600) {
 }
 async function aiVision(prompt, dataUrl) {
   const b64data = dataUrl.split(',')[1];
+  if (AI.cfg.provider === 'claude') {
+    const j = await claudeRequest({ model: claudeModel(), max_tokens: 16000, messages: [{ role: 'user', content: [{ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64data } }, { type: 'text', text: prompt }] }] });
+    if (j.stop_reason === 'refusal') throw new Error('Claude wollte das Bild nicht auslesen.');
+    return (j.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+  }
   if (AI.cfg.provider === 'gemini') {
     const model = await aiGeminiModel();
     const j = await aiFetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-goog-api-key': AI.cfg.key },
