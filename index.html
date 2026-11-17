@@ -615,6 +615,91 @@ body{font-family:var(--font-ui);letter-spacing:-.005em}
 .si-x{width:32px;height:32px;border-radius:50%;font-size:20px;color:var(--muted)}
 .steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px;font-size:15px;line-height:1.5}
 .steps li::marker{font-weight:700;color:var(--accent)}
+/* ---------- Krümel, the little companion ---------- */
+.as-fab{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 78px);width:72px;height:72px;z-index:30;padding:0;
+  filter:drop-shadow(0 6px 10px rgba(67,1,7,.22));animation:petBob 3.4s ease-in-out infinite;-webkit-tap-highlight-color:transparent}
+.as-fab:active{transform:scale(.92)}
+.tabbar[hidden] ~ .as-fab{display:none}
+.as-fab .pet-svg,.pet-big .pet-svg{width:100%;height:100%;display:block;overflow:visible}
+.pet-badge{position:absolute;top:2px;right:4px;width:20px;height:20px;border-radius:50%;background:var(--danger);color:#fff;font-size:13px;font-weight:700;display:grid;place-items:center;box-shadow:0 0 0 2px var(--desk)}
+.mod-scroll,.shelf-wrap,.wx-scroll{padding-bottom:100px!important}
+.pet-skin{fill:#FECD00;stroke:#E2A800;stroke-width:1.6}
+.pet-foot{fill:#F5BF00}
+.pe{fill:#2A0E10}
+.pl{fill:none;stroke:#2A0E10;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+.pm{fill:#7A1020}
+.pet-shadow{fill:rgba(67,1,7,.13)}
+.pet-body{transform-box:fill-box;transform-origin:50% 100%;animation:petBreath 2.8s ease-in-out infinite}
+.pet-eyes{transform-box:fill-box;transform-origin:center;animation:petBlink 4.6s infinite}
+[data-mood="love"] .pet-body{animation:petWiggle .45s ease-in-out 3}
+[data-mood="yum"] .pet-body{animation:petChomp .32s ease-in-out 5}
+[data-mood="wow"] .pet-body{animation:petJump .5s cubic-bezier(.3,1.6,.5,1) 2}
+[data-mood="sleep"] .pet-body{animation:petBreath 4.5s ease-in-out infinite}
+[data-mood="sad"] .pet-body,[data-mood="hungry"] .pet-body,[data-mood="tired"] .pet-body{animation:petBreath 4s ease-in-out infinite}
+@keyframes petBob{0%,100%{translate:0 0}50%{translate:0 -5px}}
+@keyframes petBreath{0%,100%{transform:scale(1,1)}50%{transform:scale(1.03,.97)}}
+@keyframes petBlink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes petWiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}75%{transform:rotate(7deg)}}
+@keyframes petChomp{0%,100%{transform:scale(1,1)}50%{transform:scale(1.07,.92)}}
+@keyframes petJump{0%,100%{transform:translateY(0)}40%{transform:translateY(-16px) scale(1.04,.96)}}
+
+.asst{position:fixed;left:0;right:0;top:0;height:100%;z-index:44;background:var(--desk);display:flex;flex-direction:column;overflow:hidden;
+  padding:env(safe-area-inset-top,0px) max(16px,env(safe-area-inset-right,0px)) env(safe-area-inset-bottom,0px) max(16px,env(safe-area-inset-left,0px))}
+.asst>*{width:100%;max-width:640px;margin-inline:auto}
+.as-head{display:flex;align-items:center;gap:8px;padding:12px 0 10px;flex:none}
+.pet-name{flex:0 1 auto;font-family:var(--font-display);font-size:26px;font-weight:700;letter-spacing:-.025em;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pet-lvl{flex:none;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--hl);color:var(--hl-fg)}
+.as-sp{flex:1}
+.as-head .btn,.as-head .icon-round{flex:none}
+.pet-stage{position:relative;flex:none;height:min(30vh,230px);display:flex;align-items:flex-end;justify-content:center;border-radius:28px;overflow:hidden;
+  background:radial-gradient(90% 70% at 50% 100%,color-mix(in srgb,var(--hl) 30%,var(--card)) 0%,var(--card) 70%);box-shadow:0 1px 2px rgba(67,1,7,.05),inset 0 0 0 1px var(--line);transition:height .25s}
+.pet-big{width:min(170px,42vw);aspect-ratio:1;padding:0;margin-bottom:4px;touch-action:manipulation;transition:width .25s}
+.pet-say{position:absolute;top:12px;left:50%;transform:translateX(-50%);max-width:88%;width:max-content;background:var(--accent);color:var(--accent-fg);padding:8px 14px;border-radius:18px;
+  font-size:14px;font-weight:600;line-height:1.35;text-align:center;z-index:2;box-shadow:0 8px 20px -12px var(--shadow);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pet-say[hidden]{display:none!important}
+.pet-say.pop{animation:sayPop .28s cubic-bezier(.3,1.5,.5,1)}
+@keyframes sayPop{from{transform:translateX(-50%) scale(.7);opacity:0}}
+.pet-fx{position:absolute;bottom:42%;font-size:24px;pointer-events:none;opacity:0;animation:fxUp 1.6s ease-out forwards;z-index:1}
+@keyframes fxUp{0%{opacity:0;transform:translate(0,10px) scale(.6)}15%{opacity:1}100%{opacity:0;transform:translate(var(--dx),-120px) scale(1.2)}}
+.pet-z{position:absolute;left:calc(50% + 50px);bottom:58%;font-weight:800;color:var(--muted);font-size:18px;pointer-events:none}
+.pet-z i,.pet-z b{font-style:normal;display:inline-block;animation:zz 2.4s infinite}
+.pet-z i{font-size:22px;animation-delay:.4s}.pet-z b{font-size:26px;animation-delay:.8s}
+@keyframes zz{0%,100%{opacity:.2;transform:translateY(0)}50%{opacity:1;transform:translateY(-6px)}}
+.pet-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:12px 2px 10px;flex:none}
+.pet-stat span{font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap}
+.pet-bar{height:8px;border-radius:4px;background:var(--grid);overflow:hidden;margin-top:5px}
+.pet-bar i{display:block;height:100%;border-radius:4px;background:#5FA36A;transition:width .5s}
+.pet-bar i.low{background:var(--danger)}
+.pet-acts,.pet-snacks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;flex:none}
+.pet-snacks{padding-top:8px}
+.pet-act,.pet-snack{height:58px;border-radius:18px;background:var(--card);box-shadow:0 1px 2px rgba(67,1,7,.05),inset 0 0 0 1px var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;font-weight:600;min-width:0}
+.pet-act span,.pet-snack span{font-size:22px;line-height:1}
+.pet-act:active,.pet-snack:active{transform:scale(.95)}
+.pet-act:disabled{opacity:.4}
+.as-list{flex:1;min-height:70px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:12px 0 8px;-webkit-overflow-scrolling:touch}
+.as-msg{max-width:86%;padding:10px 14px;border-radius:20px;font-size:15px;line-height:1.42}
+.as-u{align-self:flex-end;background:var(--accent);color:var(--accent-fg);border-bottom-right-radius:6px}
+.as-a{align-self:flex-start;background:var(--card);box-shadow:0 1px 2px rgba(67,1,7,.06),inset 0 0 0 1px var(--line);border-bottom-left-radius:6px}
+.as-txt{white-space:pre-line;overflow-wrap:anywhere}
+.as-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.as-acts .chip{height:32px;padding:0 12px;font-size:12.5px}
+.as-acts .chip:disabled{opacity:.45}
+.as-wait .as-txt{animation:asPulse 1s ease-in-out infinite}
+@keyframes asPulse{50%{opacity:.35}}
+.as-chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;flex:none;scrollbar-width:none}
+.as-chips::-webkit-scrollbar{display:none}
+.as-form{display:flex;gap:8px;padding-bottom:12px;flex:none}
+.as-form .input{flex:1;min-width:0}
+.asst.typing .pet-stats,.asst.typing .pet-acts,.asst.typing .pet-snacks{display:none}
+.asst.typing .pet-stage{height:120px}
+.asst.typing .pet-big{width:104px}
+.pet-game{position:absolute;inset:0;z-index:3}
+.pet-hud{position:absolute;left:12px;bottom:10px;font-weight:700;font-size:14px;padding:5px 10px;border-radius:999px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);font-variant-numeric:tabular-nums;white-space:pre}
+.pet-star{position:absolute;top:-44px;font-size:34px;line-height:1;padding:8px;touch-action:none;animation-name:starFall;animation-timing-function:linear;animation-fill-mode:forwards}
+.pet-star.got{animation-play-state:paused;opacity:0;transition:opacity .2s}
+@keyframes starFall{to{transform:translateY(calc(min(30vh,230px) + 70px)) rotate(220deg)}}
+@media (prefers-reduced-motion: reduce){.as-fab,.pet-body,.pet-eyes,.pet-z i,.pet-z b{animation:none!important}}
 </style>
 
 <div class="app" id="app" lang="de">
@@ -661,6 +746,7 @@ body{font-family:var(--font-ui);letter-spacing:-.005em}
     <button class="tab" type="button" role="tab" data-tab="weather" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M8 2v1.4M2 8h1.4M3.8 3.8l1 1M12.2 3.8l-1 1"/><path d="M8.5 20h9a3.6 3.6 0 00.5-7.15A5 5 0 008.6 11.6a4.2 4.2 0 00-.1 8.4z"/></svg>Wetter</button>
     <button class="tab" type="button" role="tab" data-tab="more" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>Mehr</button>
   </nav>
+  <button class="as-fab" id="asFab" type="button" aria-label="Begleiter öffnen"></button>
 
   <section class="view" id="reader" hidden>
     <div class="bar">
@@ -731,6 +817,35 @@ body{font-family:var(--font-ui);letter-spacing:-.005em}
 <div class="search" id="search" hidden>
   <div class="search-head"><input class="input" id="srQ" type="search" placeholder="In allen Notizbüchern suchen" aria-label="Suche"><button class="btn btn-ghost" id="srClose" type="button">Fertig</button></div>
   <div class="sr-list" id="srRes"></div>
+</div>
+<div class="asst" id="asst" hidden role="dialog" aria-label="Dein kleiner Begleiter">
+  <div class="as-head">
+    <button class="pet-name" id="petName" type="button" title="Namen ändern">Krümel</button>
+    <span class="pet-lvl" id="petLvl">Level 1</span>
+    <span class="as-sp"></span>
+    <button class="icon-round" id="asClear" type="button" aria-label="Verlauf löschen" title="Verlauf löschen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></svg></button>
+    <button class="btn btn-primary btn-sm" id="asClose" type="button">Fertig</button>
+  </div>
+  <div class="pet-stage" id="petStage">
+    <div class="pet-say" id="petSay" hidden></div>
+    <button class="pet-big" type="button" aria-label="Streicheln"></button>
+    <span class="pet-z" id="petZ" hidden>z<i>z</i><b>z</b></span>
+  </div>
+  <div class="pet-stats">
+    <div class="pet-stat"><span>🍎 Satt</span><div class="pet-bar" role="progressbar" aria-label="Satt" aria-valuemin="0" aria-valuemax="100"><i id="bar-food"></i></div></div>
+    <div class="pet-stat"><span>💛 Laune</span><div class="pet-bar" role="progressbar" aria-label="Laune" aria-valuemin="0" aria-valuemax="100"><i id="bar-fun"></i></div></div>
+    <div class="pet-stat"><span>⚡ Energie</span><div class="pet-bar" role="progressbar" aria-label="Energie" aria-valuemin="0" aria-valuemax="100"><i id="bar-energy"></i></div></div>
+  </div>
+  <div class="pet-acts">
+    <button class="pet-act" id="petPet" type="button"><span>🤚</span>Streicheln</button>
+    <button class="pet-act" id="petFeed" type="button"><span>🍎</span>Füttern</button>
+    <button class="pet-act" id="petPlay" type="button"><span>⭐</span>Spielen</button>
+    <button class="pet-act" id="petSleep" type="button">🌙 Schlafen</button>
+  </div>
+  <div class="pet-snacks" id="petSnacks" hidden></div>
+  <div class="as-list" id="asList" aria-live="polite"></div>
+  <div class="as-chips" id="asChips"></div>
+  <form class="as-form" id="asForm" autocomplete="off"><input class="input" id="asIn" placeholder="Schreib Krümel etwas …" enterkeyhint="send" aria-label="Nachricht an deinen Begleiter"><button class="btn btn-primary" type="submit">Senden</button></form>
 </div>
 <div class="dict-partial" id="dictPartial" hidden></div>
 <form class="sheet" id="formSheet" hidden autocomplete="off"></form>
@@ -3448,6 +3563,546 @@ $('#tplCancel').onclick = closeTplSheet;
 $('#stkCancel').onclick = () => closeGenericSheet('#stkSheet');
 $('#hintCard').addEventListener('keydown', e => { if (e.key === 'Enter') openWeather(); });
 setupDictation();
+/* =================== ASSISTENT =================== */
+/* A small on-device helper: understands short German sentences and acts on the
+   planner, shopping list, finances, habits, focus timer, weather and search.
+   Nothing leaves the device except the weather request to Open-Meteo. */
+const AS = { log: [], busy: false };
+const AS_KEY = 'folio:asst';
+const AS_WD = ['sonntag', 'montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag'];
+const AS_MON = ['januar', 'februar', 'märz', 'april', 'mai', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'dezember'];
+const AS_NUM = { ein: 1, eine: 1, einem: 1, einer: 1, zwei: 2, drei: 3, vier: 4, fünf: 5, sechs: 6, sieben: 7, acht: 8, neun: 9, zehn: 10 };
+const AS_WMO = { 0: 'klar', 1: 'überwiegend klar', 2: 'teilweise bewölkt', 3: 'bedeckt', 45: 'neblig', 48: 'neblig mit Reif', 51: 'leichter Nieselregen', 53: 'Nieselregen', 55: 'starker Nieselregen', 56: 'gefrierender Nieselregen', 57: 'gefrierender Nieselregen', 61: 'leichter Regen', 63: 'Regen', 65: 'starker Regen', 66: 'gefrierender Regen', 67: 'gefrierender Regen', 71: 'leichter Schneefall', 73: 'Schneefall', 75: 'starker Schneefall', 77: 'Schneegriesel', 80: 'leichte Regenschauer', 81: 'Regenschauer', 82: 'heftige Regenschauer', 85: 'Schneeschauer', 86: 'starke Schneeschauer', 95: 'Gewitter', 96: 'Gewitter mit Hagel', 99: 'Gewitter mit Hagel' };
+const AS_CATS = [
+  ['Essen', /essen|restaurant|pizza|döner|burger|mittag|abendessen|frühstück|café|cafe|kaffee|bäcker|mensa|imbiss|lieferando|sushi|eis\b/i],
+  ['Einkauf', /supermarkt|einkauf|lebensmittel|rewe|edeka|aldi|lidl|penny|netto|kaufland|\bdm\b|rossmann|kleidung|schuhe|amazon|klamotten/i],
+  ['Wohnen', /miete|strom|gas\b|wasser|internet|wohnung|nebenkosten|möbel|ikea/i],
+  ['Transport', /bahn|\bbus\b|ticket|tanken|benzin|diesel|taxi|uber|fahrrad|parken|deutschlandticket|zug/i],
+  ['Abos', /\babo|spotify|netflix|disney|youtube|handyvertrag|vertrag|icloud/i],
+  ['Gesundheit', /apotheke|arzt|medikament|fitness|gym|sport|physio|brille/i],
+  ['Freizeit', /kino|konzert|spiel|game|buch|bücher|museum|ausflug|party|freizeit|schwimmbad|bowling/i]
+];
+const AS_EXAMPLES = ['Was steht heute an?', 'Regnet es morgen?', 'Milch und Eier auf die Einkaufsliste', 'Zahnarzt Freitag um 10 Uhr', '12,50 € für Pizza ausgegeben', 'Hilfe'];
+
+const asCap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+const asClean = s => s.replace(/\s{2,}/g, ' ').replace(/^[\s,:;.\-–]+|[\s,:;.\-–!?]+$/g, '').trim();
+function asLoad() { try { AS.log = JSON.parse(localStorage.getItem(AS_KEY)) || []; } catch (e) { AS.log = []; } }
+function asStore() { try { localStorage.setItem(AS_KEY, JSON.stringify(AS.log.slice(-40))); } catch (e) {} }
+function asDayName(iso) {
+  const t = todayISO();
+  if (iso === t) return 'heute';
+  if (iso === isoD(addDays(new Date(), 1))) return 'morgen';
+  if (iso === isoD(addDays(new Date(), -1))) return 'gestern';
+  return 'am ' + longDate(iso);
+}
+
+/* --- dates and times in German --- */
+function asParseDate(s) {
+  const now = new Date(); let d = null; const hits = [];
+  const take = (re, fn) => { if (d) return; const m = s.match(re); if (!m) return; const r = fn(m); if (r && !isNaN(r)) { d = r; hits.push(m[0]); } };
+  take(/\bvorgestern\b/i, () => addDays(now, -2));
+  take(/\bgestern\b/i, () => addDays(now, -1));
+  take(/\bheute\b(?:\s+(?:morgen|mittag|nachmittag|abend|nacht))?/i, () => now);
+  take(/\bübermorgen\b/i, () => addDays(now, 2));
+  take(/\bmorgen\b(?:\s+(?:früh|vormittag|mittag|nachmittag|abend))?/i, () => addDays(now, 1));
+  take(/\bin\s+(\d+|eine[mr]?|zwei|drei|vier|fünf|sechs|sieben|acht|neun|zehn)\s+(tag(?:en)?|woche(?:n)?)\b/i, m => addDays(now, (+m[1] || AS_NUM[m[1].toLowerCase()] || 1) * (/woch/i.test(m[2]) ? 7 : 1)));
+  take(/\bnächste\s+woche\b/i, () => addDays(now, 7 - ((now.getDay() + 6) % 7)));
+  take(/\b(?:am\s+)?(?:(nächsten|kommenden|diesen)\s+)?(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\b/i, m => {
+    let n = (AS_WD.indexOf(m[2].toLowerCase()) - now.getDay() + 7) % 7; if (n === 0 && /nächsten|kommenden/i.test(m[1] || '')) n = 7; return addDays(now, n);
+  });
+  take(/\b(?:am\s+)?(\d{1,2})\.\s?(\d{1,2})\.(\d{2,4})?/, m => {
+    const dd = +m[1], mm = +m[2]; if (mm < 1 || mm > 12 || dd < 1 || dd > 31) return null;
+    let y = m[3] ? +m[3] : now.getFullYear(); if (y < 100) y += 2000;
+    const x = new Date(y, mm - 1, dd); if (!m[3] && isoD(x) < isoD(addDays(now, -1))) x.setFullYear(y + 1); return x;
+  });
+  take(new RegExp(`\\b(?:am\\s+)?(\\d{1,2})\\.?\\s+(${AS_MON.join('|')})\\b`, 'i'), m => {
+    const x = new Date(now.getFullYear(), AS_MON.indexOf(m[2].toLowerCase()), +m[1]); if (isoD(x) < isoD(addDays(now, -1))) x.setFullYear(x.getFullYear() + 1); return x;
+  });
+  return { iso: d ? isoD(d) : null, hits };
+}
+function asParseTime(s) {
+  const pats = [
+    [/\b(?:um|ab|gegen)?\s*(\d{1,2})[:.](\d{2})\s*(?:uhr)?/i, m => [+m[1], +m[2]]],
+    [/\b(?:um\s+)?halb\s+(\d{1,2})\b/i, m => [(+m[1] + 23) % 24, 30]],
+    [/\b(?:um|ab|gegen)\s+(\d{1,2})(?:\s*uhr)?\b/i, m => [+m[1], 0]],
+    [/\b(\d{1,2})\s*uhr\b/i, m => [+m[1], 0]]
+  ];
+  for (const [re, fn] of pats) {
+    const m = s.match(re); if (!m) continue;
+    let [h, mi] = fn(m); if (h > 23 || mi > 59) continue;
+    const am = /\b(morgens|früh|vormittags?|nachts|in der nacht)\b/i.test(s);
+    if (h > 0 && h < 12 && !am && (/\b(abends?|nachmittags?)\b/i.test(s) || h <= 6)) h += 12;
+    return { time: `${pad2(h)}:${pad2(mi)}`, hit: m[0] };
+  }
+  return { time: '', hit: '' };
+}
+
+/* --- reading amounts --- */
+function asAmount(s) {
+  const m = s.match(/(\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d+(?:[.,]\d{1,2})?)\s*(?:€|euros?\b|eur\b)/i) || s.match(/(?:€|eur)\s*(\d+(?:[.,]\d{1,2})?)/i);
+  if (!m) return null;
+  const raw = m[1], v = /^\d{1,3}(\.\d{3})+/.test(raw) ? num(raw.replace(/\./g, '').replace(',', '.')) : num(raw.replace(',', '.'));
+  return v > 0 ? { v: Math.round(v * 100) / 100, hit: m[0] } : null;
+}
+
+/* --- actions --- */
+async function asAddPlanner(raw) {
+  const doc = await Docs.get('planner', { items: [] });
+  let s = raw.replace(/\bguten morgen\b/i, '');
+  const dt = asParseDate(s); dt.hits.forEach(h => s = s.replace(h, ' '));
+  const tm = asParseTime(s); if (tm.hit) s = s.replace(tm.hit, ' ');
+  const isEvent = /\b(termin|treffen|meeting|arzt|zahnarzt|geburtstag|party|feier|training|probe|unterricht|kino|date|verabredung|konzert|besuch)/i.test(raw) && !/\b(aufgabe|todo|to-do)\b/i.test(raw);
+  s = s.replace(/\b(?:bitte|trag(?:e)?(?:\s+mir)?(?:\s+ein)?|eintragen|notier(?:e)?|plane|neue[nrs]?|einen?|termin|aufgabe|todo|to-do|erinner(?:e|ung)?(?:\s+mich)?(?:\s+daran)?|vergiss nicht|nicht vergessen|ich muss|muss ich|im planer|in den planer|in meinen kalender)\b/gi, ' ');
+  let title = asClean(s);
+  for (let i = 0; i < 4; i++) title = asClean(title.replace(/^(an|am|um|für|dass ich|daran|zu|zum|zur)\s+/i, '').replace(/\s+(am|um|an|für|ein|bitte)$/i, ''));
+  if (!title) return { t: 'Was soll ich eintragen? Schreib zum Beispiel „Zahnarzt Freitag um 10 Uhr“.' };
+  const it = { id: uid(), done: false, title: asCap(title), kind: isEvent ? 'event' : 'task', date: dt.iso || todayISO(), time: tm.time, note: '' };
+  doc.items.push(it); Docs.save('planner');
+  const when = asDayName(it.date) + (it.time ? ` um ${it.time} Uhr` : '');
+  return {
+    t: `Eingetragen: ${it.kind === 'event' ? 'Termin' : 'Aufgabe'} „${it.title}“ ${when}.`,
+    actions: [
+      { l: 'Rückgängig', fn: () => { doc.items = doc.items.filter(x => x !== it); Docs.save('planner'); asSay('Okay, wieder entfernt.'); } },
+      { l: 'Im Planer ansehen', fn: () => asGo(() => { PL.sel = it.date; const d = parseD(it.date); PL.month = new Date(d.getFullYear(), d.getMonth(), 1); openPlanner(); }) }
+    ]
+  };
+}
+function asItemLine(i, showDate) {
+  const d = showDate ? parseD(i.date).toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'numeric' }) + ' ' : '';
+  if (i.kind === 'event') return `• ${d}${i.time ? i.time + ' ' : ''}${i.title}`;
+  return `• ${d}${i.done ? '✓' : '○'} ${i.title}${i.time ? ` (${i.time})` : ''}`;
+}
+async function asPlannerQuery(lower, raw) {
+  const doc = await Docs.get('planner', { items: [] }), today = todayISO();
+  const sortK = i => i.date + (i.time || '99');
+  if (/woche|nächsten tage|bald|demnächst/.test(lower)) {
+    const end = isoD(addDays(new Date(), 7));
+    const list = doc.items.filter(i => i.date >= today && i.date <= end && !(i.kind === 'task' && i.done)).sort((a, b) => sortK(a).localeCompare(sortK(b)));
+    return { t: list.length ? `In den nächsten 7 Tagen:\n${list.map(i => asItemLine(i, true)).join('\n')}` : 'In den nächsten 7 Tagen steht nichts an.', actions: [{ l: 'Planer öffnen', fn: () => asGo(openPlanner) }] };
+  }
+  if (/überfällig|vergessen|liegen geblieben/.test(lower)) {
+    const over = doc.items.filter(i => i.kind === 'task' && !i.done && i.date < today);
+    return { t: over.length ? `Überfällig:\n${over.map(i => asItemLine(i, true)).join('\n')}` : 'Nichts überfällig. Gut gemacht!' };
+  }
+  const iso = asParseDate(raw).iso || today;
+  const list = doc.items.filter(i => i.date === iso).sort((a, b) => (a.time || '99').localeCompare(b.time || '99'));
+  const name = asDayName(iso);
+  let t = list.length ? `${asCap(name)} ${list.length === 1 ? 'steht ein Eintrag' : `stehen ${list.length} Einträge`} an:\n${list.map(i => asItemLine(i)).join('\n')}` : `${asCap(name)} ist nichts geplant.`;
+  if (iso === today) { const over = doc.items.filter(i => i.kind === 'task' && !i.done && i.date < today).length; if (over) t += `\nDazu ${over === 1 ? 'eine überfällige Aufgabe' : over + ' überfällige Aufgaben'}.`; }
+  return { t, actions: [{ l: 'Planer öffnen', fn: () => asGo(() => { PL.sel = iso; const d = parseD(iso); PL.month = new Date(d.getFullYear(), d.getMonth(), 1); openPlanner(); }) }] };
+}
+async function asShopAdd(raw) {
+  const doc = await Docs.get('shopping', { items: [] });
+  const s = raw.replace(/\b(?:auf|zur|in|zu)\s+(?:die\s+|meine\s+|der\s+|unsere\s+|den\s+)?(?:einkaufsliste|einkaufszettel|liste)\b/gi, ' ')
+    .replace(/einkaufsliste:?|einkaufszettel:?/gi, ' ')
+    .replace(/\b(?:bitte|setz(?:e)?|schreib(?:e)?|pack(?:e)?|füg(?:e)?|tu(?:e)?|noch|mir|mal|ich muss|ich brauche|wir brauchen|brauche|kaufen|kaufe|hinzu(?:fügen)?|drauf|setzen|schreiben)\b/gi, ' ');
+  const items = s.split(/,|;|\+|\n|\bund\b/i).map(asClean).filter(x => x.length > 1).map(asCap);
+  if (!items.length) return { t: 'Was soll auf die Einkaufsliste? Zum Beispiel „Milch, Eier und Brot auf die Einkaufsliste“.' };
+  const have = new Set(doc.items.filter(i => !i.done).map(i => i.t.toLowerCase()));
+  const added = items.filter(t => !have.has(t.toLowerCase()));
+  const made = added.map(t => ({ id: uid(), t, done: false, src: '' }));
+  doc.items.unshift(...made); Docs.save('shopping');
+  const skipped = items.length - added.length;
+  if (!made.length) return { t: 'Das steht schon alles auf der Einkaufsliste.' };
+  return {
+    t: `Auf die Einkaufsliste gesetzt: ${added.join(', ')}.${skipped ? ` ${skipped === 1 ? 'Ein Eintrag stand' : skipped + ' Einträge standen'} schon drauf.` : ''}`,
+    actions: [{ l: 'Rückgängig', fn: () => { doc.items = doc.items.filter(x => !made.includes(x)); Docs.save('shopping'); asSay('Okay, wieder entfernt.'); } }, { l: 'Liste öffnen', fn: () => asGo(openRecipes) }]
+  };
+}
+async function asShopList() {
+  const doc = await Docs.get('shopping', { items: [] }), open = doc.items.filter(i => !i.done);
+  return { t: open.length ? `Auf der Einkaufsliste (${open.length}):\n${open.map(i => '• ' + i.t).join('\n')}` : 'Die Einkaufsliste ist leer.', actions: [{ l: 'Liste öffnen', fn: () => asGo(openRecipes) }] };
+}
+async function asFinAdd(raw, lower) {
+  const a = asAmount(raw); if (!a) return null;
+  const isIn = /eingenommen|einnahme|bekommen|verdient|gehalt|\blohn|taschengeld|verkauft|zurückbekommen/.test(lower);
+  const dt = asParseDate(raw), d = dt.iso || todayISO();
+  let cat = isIn ? (/gehalt|lohn/.test(lower) ? 'Gehalt' : /verkauf/.test(lower) ? 'Verkauf' : /geschenk|taschengeld|geschenkt/.test(lower) ? 'Geschenk' : 'Sonstiges') : (AS_CATS.find(([, re]) => re.test(raw))?.[0] || 'Sonstiges');
+  let n = raw.replace(a.hit, ' '); dt.hits.forEach(h => n = n.replace(h, ' '));
+  n = n.replace(/\b(?:ich|habe|hab|hat|haben|heute|für|fürs|beim|bei|im|in|am|an|auf|ausgegeben|bezahlt|gezahlt|gekostet|kostete|ausgabe|einnahme|eingenommen|bekommen|verdient|notier(?:e)?|bitte|euro|eur|von|mit|den|die|das|der|ein|eine|einen)\b/gi, ' ');
+  n = asCap(asClean(n)).slice(0, 40);
+  const mk = d.slice(0, 7), doc = await Docs.get('fin-' + mk, { e: [] }), en = { id: uid(), a: a.v, t: isIn ? 'in' : 'out', c: cat, d, n };
+  doc.e.push(en); Docs.save('fin-' + mk);
+  let t = `Notiert: ${isIn ? 'Einnahme' : 'Ausgabe'} ${euro(a.v)} · ${cat}${n ? ' · ' + n : ''}, ${asDayName(d)}.`;
+  const fs = await Docs.get('finset', { budget: 0 });
+  if (!isIn && fs.budget && mk === todayISO().slice(0, 7)) { const spent = doc.e.filter(e => e.t !== 'in').reduce((s, e) => s + e.a, 0), left = fs.budget - spent; t += left >= 0 ? `\nIm Budget sind diesen Monat noch ${euro(left)} übrig.` : `\nAchtung: Du liegst ${euro(-left)} über deinem Monatsbudget.`; }
+  return { t, actions: [{ l: 'Rückgängig', fn: () => { doc.e = doc.e.filter(x => x !== en); Docs.save('fin-' + mk); asSay('Okay, wieder entfernt.'); } }, { l: 'Finanzen öffnen', fn: () => asGo(() => { FI.month = mk; openFinance(); }) }] };
+}
+async function asFinQuery(lower) {
+  const last = /letzten monat|vormonat|vorigen monat/.test(lower), now = new Date();
+  const md = last ? new Date(now.getFullYear(), now.getMonth() - 1, 1) : now, mk = isoD(md).slice(0, 7);
+  const doc = await Docs.get('fin-' + mk, { e: [] }), fs = await Docs.get('finset', { budget: 0 });
+  const out = doc.e.filter(e => e.t !== 'in'), inn = doc.e.filter(e => e.t === 'in');
+  const spent = out.reduce((s, e) => s + e.a, 0), got = inn.reduce((s, e) => s + e.a, 0);
+  const label = last ? 'Letzten Monat' : 'Diesen Monat';
+  if (!doc.e.length) return { t: `${label} hast du noch nichts eingetragen. Sag zum Beispiel „8 € für Kino ausgegeben“.` };
+  const by = {}; out.forEach(e => by[e.c] = (by[e.c] || 0) + e.a);
+  const top = Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  let t = `${label}: ${euro(spent)} ausgegeben${got ? `, ${euro(got)} eingenommen` : ''}.`;
+  if (top.length) t += `\nAm meisten für: ${top.map(([c, v]) => `${c} (${euro(v)})`).join(', ')}.`;
+  if (fs.budget && !last) t += spent <= fs.budget ? `\nVom Budget (${euro(fs.budget)}) sind noch ${euro(fs.budget - spent)} übrig.` : `\nDu bist ${euro(spent - fs.budget)} über deinem Budget von ${euro(fs.budget)}.`;
+  return { t, actions: [{ l: 'Finanzen öffnen', fn: () => asGo(() => { FI.month = mk; openFinance(); }) }] };
+}
+async function asWeather(raw) {
+  let places = W.places, active = W.active;
+  if (!places?.length) { const s = await WxStore.load(); places = s?.places || []; active = s?.active; }
+  const p = places.find(x => x.key === active) || places[0];
+  if (!p) return { t: 'Du hast noch keinen Ort gespeichert. Füg im Wetter-Tab einen Ort hinzu, dann sage ich dir, wie das Wetter wird.', actions: [{ l: 'Wetter öffnen', fn: () => asGo(openWeather) }] };
+  if (p.lat == null || p.lon == null) return { t: `Für ${p.name} kann ich das Wetter hier nicht abrufen. Schau im Wetter-Tab nach.`, actions: [{ l: 'Wetter öffnen', fn: () => asGo(openWeather) }] };
+  const iso = asParseDate(raw).iso || todayISO();
+  let j;
+  try {
+    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&timezone=auto&forecast_days=8&current=temperature_2m,apparent_temperature,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum`);
+    if (!r.ok) throw new Error(); j = await r.json();
+  } catch (e) { return { t: 'Ich erreiche den Wetterdienst gerade nicht. Bist du online?', actions: [{ l: 'Wetter öffnen', fn: () => asGo(openWeather) }] }; }
+  const i = j.daily.time.indexOf(iso);
+  if (i < 0) return { t: iso < todayISO() ? 'Ich kann nur nach vorne schauen, nicht zurück.' : 'So weit reicht die Vorhersage leider nicht, nur etwa eine Woche.' };
+  const code = j.daily.weather_code[i], lo = Math.round(j.daily.temperature_2m_min[i]), hi = Math.round(j.daily.temperature_2m_max[i]), pp = j.daily.precipitation_probability_max[i] ?? 0;
+  let t = iso === todayISO() && j.current
+    ? `In ${p.name} sind es gerade ${Math.round(j.current.temperature_2m)} °C (gefühlt ${Math.round(j.current.apparent_temperature)} °C), ${AS_WMO[j.current.weather_code] || 'wechselhaft'}.\nHeute ${lo} bis ${hi} °C, Regenrisiko ${pp} %.`
+    : `${asCap(asDayName(iso))} in ${p.name}: ${AS_WMO[code] || 'wechselhaft'}, ${lo} bis ${hi} °C, Regenrisiko ${pp} %.`;
+  if (pp >= 50 || code >= 61) t += '\nNimm lieber einen Schirm mit. ☂️';
+  else if (code >= 71 && code <= 86) t += '\nEs kann glatt werden, pass auf dich auf.';
+  else if (hi <= 3) t += '\nZieh dich warm an. 🧣';
+  else if (hi >= 25) t += '\nDenk an Sonnencreme und genug Wasser. ☀️';
+  return { t, actions: [{ l: 'Wetter öffnen', fn: () => asGo(openWeather) }] };
+}
+async function asHabitDone(lower) {
+  const doc = await Docs.get('habits', { habits: [], goals: [] }), today = todayISO();
+  const words = h => h.name.toLowerCase().split(/[^a-zäöüß0-9]+/).filter(w => w.length > 2);
+  const hits = doc.habits.filter(h => words(h).some(w => lower.includes(w)));
+  if (!hits.length) return null;
+  hits.forEach(h => h.days[today] = 1); Docs.save('habits');
+  const left = doc.habits.filter(h => !h.days[today]).length;
+  return { t: `Abgehakt: ${hits.map(h => h.name).join(', ')}. Serie: ${hits.map(h => `${streak(h)} ${streak(h) === 1 ? 'Tag' : 'Tage'}`).join(', ')}. ${left ? `Noch ${left} offen für heute.` : 'Alle Gewohnheiten für heute geschafft! 🎉'}`,
+    actions: [{ l: 'Rückgängig', fn: () => { hits.forEach(h => delete h.days[today]); Docs.save('habits'); asSay('Okay, wieder offen.'); } }] };
+}
+async function asHabitList() {
+  const doc = await Docs.get('habits', { habits: [], goals: [] }), today = todayISO();
+  if (!doc.habits.length && !doc.goals.length) return { t: 'Du hast noch keine Gewohnheiten oder Ziele angelegt.', actions: [{ l: 'Ziele öffnen', fn: () => asGo(openHabits) }] };
+  const lines = doc.habits.map(h => `• ${h.days[today] ? '✓' : '○'} ${h.name}${streak(h) ? ` (${streak(h)} in Folge)` : ''}`);
+  const goals = doc.goals.map(g => `• ${g.title}: ${fmt(g.cur, 1)} von ${fmt(g.target, 1)} ${g.unit} (${Math.round(g.cur / g.target * 100)} %)`);
+  return { t: [lines.length ? 'Gewohnheiten heute:\n' + lines.join('\n') : '', goals.length ? 'Ziele:\n' + goals.join('\n') : ''].filter(Boolean).join('\n\n'), actions: [{ l: 'Ziele öffnen', fn: () => asGo(openHabits) }] };
+}
+async function asFocus(raw) {
+  const m = raw.match(/\b(?:für|an)\s+(.+)$/i), label = m ? asCap(asClean(m[1])) : '';
+  const mins = raw.match(/(\d{1,3})\s*min/i);
+  asGo(async () => {
+    await openFocus();
+    if (label) FO.label = label;
+    if (mins) { const doc = Docs.cache.get('focus'); doc.set.f = clamp(+mins[1], 1, 180); Docs.save('focus'); FO.mode = 'f'; FO.remain = foLen('f'); }
+    if (!FO.running) foToggle(); else renderFocus();
+  });
+  return null;
+}
+async function asSearch(term) {
+  asGo(async () => { await openSearch(); $('#srQ').value = term; runSearch(); });
+  return null;
+}
+async function asBrief() {
+  const h = new Date().getHours(), today = todayISO();
+  const hi = h < 11 ? 'Guten Morgen!' : h < 18 ? 'Hallo!' : 'Guten Abend!';
+  const [pl, hb, sh, fs] = await Promise.all([Docs.get('planner', { items: [] }), Docs.get('habits', { habits: [], goals: [] }), Docs.get('shopping', { items: [] }), Docs.get('finset', { budget: 0 })]);
+  const fin = await Docs.get('fin-' + today.slice(0, 7), { e: [] });
+  const items = pl.items.filter(i => i.date === today), ev = items.filter(i => i.kind === 'event').sort((a, b) => (a.time || '99').localeCompare(b.time || '99'));
+  const tasks = items.filter(i => i.kind === 'task' && !i.done), over = pl.items.filter(i => i.kind === 'task' && !i.done && i.date < today);
+  const lines = [];
+  const nowT = `${pad2(new Date().getHours())}:${pad2(new Date().getMinutes())}`, next = ev.find(e => !e.time || e.time >= nowT);
+  if (ev.length) lines.push(`📅 ${ev.length === 1 ? 'Ein Termin' : ev.length + ' Termine'} heute${next ? `, als Nächstes: ${next.time ? next.time + ' ' : ''}${next.title}` : ''}.`);
+  if (tasks.length || over.length) lines.push(`✅ ${tasks.length ? (tasks.length === 1 ? 'Eine Aufgabe' : tasks.length + ' Aufgaben') + ' offen' : 'Keine Aufgabe für heute'}${over.length ? `, ${over.length} überfällig` : ''}.`);
+  const hl = hb.habits.filter(x => !x.days[today]);
+  if (hb.habits.length) lines.push(hl.length ? `🎯 Noch offen: ${hl.map(x => x.name).join(', ')}.` : '🎯 Alle Gewohnheiten für heute erledigt.');
+  const so = sh.items.filter(i => !i.done).length; if (so) lines.push(`🛒 ${so} ${so === 1 ? 'Sache' : 'Sachen'} auf der Einkaufsliste.`);
+  if (fs.budget) { const spent = fin.e.filter(e => e.t !== 'in').reduce((s, e) => s + e.a, 0); lines.push(`💶 Noch ${euro(Math.max(0, fs.budget - spent))} im Monatsbudget.`); }
+  if (!lines.length) lines.push('Heute ist nichts eingetragen. Sag mir einfach, was ansteht, ich trage es ein.');
+  return { t: `${hi} Dein Überblick:\n${lines.join('\n')}` };
+}
+const asHelp = () => `Ich bin ${PET.name} und helfe dir gern! Ich wohne nur auf deinem Gerät. Schreib mir zum Beispiel:
+• „Zahnarzt Freitag um 10 Uhr“ – ich trage den Termin ein
+• „Erinnere mich morgen an Müll rausbringen“
+• „Was steht morgen an?“ oder „Was ist diese Woche?“
+• „Milch, Eier und Brot auf die Einkaufsliste“
+• „12,50 € für Pizza ausgegeben“
+• „Wie viel habe ich diesen Monat ausgegeben?“
+• „Regnet es morgen?“
+• „Lesen erledigt“ – ich hake die Gewohnheit ab
+• „Starte Fokus für Mathe“
+• „Suche Lasagne“ – ich suche in deinen Notizbüchern
+• „Überblick“ – dein Tag auf einen Blick
+Und vergiss nicht: Ich mag Streicheleinheiten, Snacks und Spiele! 💛`;
+
+/* --- understanding --- */
+async function asAnswer(raw) {
+  const lower = raw.toLowerCase().trim(), q = /\?\s*$/.test(raw) || /^(was|wann|welche[rsmn]?|wie|wo|zeig|hab|habe|gibt|steht|stehen|liste|muss|wird|regnet|ist|sind|kann)\b/.test(lower);
+  if (/^(hilfe|help|\?|was kannst du|was kann ich (dich )?fragen|befehle)/.test(lower)) return { t: asHelp() };
+  if (/^(danke|dankeschön|vielen dank|thx|merci)/.test(lower)) return { t: 'Gern geschehen! 😊' };
+  if (/^(überblick|briefing|zusammenfassung|mein tag|tagesüberblick|status)\b/.test(lower) || /^(hallo|hi|hey|moin|servus|guten (morgen|tag|abend)|na)\b[\s!.]*$/.test(lower)) return asBrief();
+  // open a section
+  const op = lower.match(/^(?:öffne|zeig(?:e)?(?: mir)?|geh(?:e)? zu(?:m|r)?|wechsel(?:e)? zu(?:m|r)?)\s+(?:die |den |das |meine[n]? |mein )?(\S+)\s*$/);
+  if (op) {
+    const k = op[1], map = [[/notiz|buch|bücher/, openNotebooks], [/planer|kalender|termin/, openPlanner], [/ziel|gewohn/, openHabits], [/wetter/, openWeather], [/rezept|einkauf/, openRecipes], [/finanz|budget|geld/, openFinance], [/fokus|timer|pomodoro/, openFocus], [/backup|sicherung/, () => { openMore(); openBackup(); }], [/mehr/, openMore]];
+    const hit = map.find(([re]) => re.test(k)); if (hit) { asGo(hit[1]); return null; }
+  }
+  // search notebooks
+  const sr = raw.match(/^(?:such(?:e)?|find(?:e)?)\s+(?:nach\s+|in (?:meinen )?notizen\s+(?:nach\s+)?)?(.+)$/i) || raw.match(/wo\s+(?:habe|hab)\s+ich\s+(?:was |etwas )?(?:über |zu |von )?(.+?)\s+(?:notiert|geschrieben|aufgeschrieben)/i);
+  if (sr) return asSearch(asClean(sr[1]));
+  // shopping
+  if (/einkaufsliste|einkaufszettel/.test(lower)) {
+    if (q || /^(einkaufsliste|einkaufszettel)[\s?!.]*$/.test(lower) || /^(zeig|was)/.test(lower)) return asShopList();
+    return asShopAdd(raw);
+  }
+  // money
+  if (q && /ausgegeben|ausgaben|budget|geld|finanzen|kosten|eingenommen|einnahmen/.test(lower)) return asFinQuery(lower);
+  if (asAmount(raw) && /ausgegeben|bezahlt|gezahlt|gekostet|kostet|ausgabe|eingenommen|einnahme|bekommen|verdient|gehalt|lohn|taschengeld|verkauft|für|€|euro/.test(lower)) { const r = await asFinAdd(raw, lower); if (r) return r; }
+  // weather
+  if (/\bwetter\b/.test(lower) || (q && /regen|regnet|sonn|warm|kalt|grad|schirm|schnee|gewitter|temperatur|frost|jacke/.test(lower))) return asWeather(raw);
+  // focus
+  if (/\b(fokus|pomodoro|konzentrier|lernzeit|focus)\b/.test(lower) || /\btimer\b/.test(lower)) return asFocus(raw);
+  // habits and goals
+  if (/\b(erledigt|geschafft|gemacht|abhaken|abgehakt|fertig)\b/.test(lower) && !/\b(aufgabe|termin)\b/.test(lower)) { const r = await asHabitDone(lower); if (r) return r; }
+  if (/gewohnheit|\bziele?\b|streak|serie/.test(lower) && (q || lower.split(/\s+/).length <= 2)) return asHabitList();
+  // planner
+  const dayWord = /\b(heute|morgen|übermorgen|woche|montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag|wochenende|überfällig)\b/.test(lower);
+  if ((q && (/termin|aufgabe|to-?do|plan|vor\b|an\b|ansteh|los\b|überfällig/.test(lower) || dayWord)) || /^(termine|aufgaben|todos?|heute|morgen|diese woche|woche|überfällig)[\s?!.]*$/.test(lower)) return asPlannerQuery(lower, raw);
+  const dt = asParseDate(raw), tm = asParseTime(raw);
+  if (/\b(termin|erinner|aufgabe|todo|to-do|trag|notier|plane|vergiss nicht|nicht vergessen|ich muss)\b/.test(lower) || dt.iso || tm.time) return asAddPlanner(raw);
+  if (/\b(kaufen|kaufe|brauche)\b/.test(lower) && !q) return asShopAdd(raw);
+  return {
+    t: 'Hmm, das verstehe ich noch nicht ganz. Soll ich es als Aufgabe für heute aufschreiben?',
+    actions: [{ l: 'Als Aufgabe für heute', fn: async () => asShow(await asAddPlanner('Aufgabe heute ' + raw)) }, { l: 'In Notizen suchen', fn: () => asSearch(raw) }, { l: 'Was kannst du?', fn: () => asShow({ t: asHelp() }) }]
+  };
+}
+
+
+/* =================== KRÜMEL, das kleine Wesen =================== */
+/* A tiny companion that lives in the app. It gets hungry, bored and sleepy over time,
+   loves being petted, fed and played with, cheers when you get things done,
+   and understands short sentences (see asAnswer above). Stored only on this device. */
+const PET_KEY = 'folio:pet';
+const PET = { name: 'Krümel', food: 80, fun: 80, energy: 80, xp: 0, asleep: false, at: Date.now(), rew: { d: '', n: 0 }, met: false, mood: null, moodT: 0, game: null };
+const SNACKS = [{ e: '🍎', n: 'Apfel', f: 16, j: 2 }, { e: '🍓', n: 'Erdbeere', f: 12, j: 5 }, { e: '🥕', n: 'Karotte', f: 18, j: 0 }, { e: '🍪', n: 'Keks', f: 10, j: 10 }];
+function petLoad() {
+  try { Object.assign(PET, JSON.parse(localStorage.getItem(PET_KEY)) || {}); } catch (e) {}
+  // time passes while the app is closed (capped, and it never drops to zero)
+  const mins = clamp((Date.now() - PET.at) / 60000, 0, 60 * 24 * 3);
+  if (PET.asleep) { PET.energy = clamp(PET.energy + mins / 2, 0, 100); PET.food = clamp(PET.food - mins / 30, 5, 100); }
+  else { PET.food = clamp(PET.food - mins / 15, 5, 100); PET.fun = clamp(PET.fun - mins / 12, 5, 100); PET.energy = clamp(PET.energy - mins / 20, 5, 100); }
+  if (PET.asleep && PET.energy >= 100) PET.asleep = false;
+  PET.at = Date.now();
+}
+function petSave() {
+  PET.at = Date.now();
+  const { name, food, fun, energy, xp, asleep, at, rew, met } = PET;
+  try { localStorage.setItem(PET_KEY, JSON.stringify({ name, food, fun, energy, xp, asleep, at, rew, met })); } catch (e) {}
+}
+const petLevel = () => Math.floor(Math.sqrt(PET.xp / 12)) + 1;
+function petXp(n) {
+  const before = petLevel(); PET.xp += n; petSave();
+  if (petLevel() > before) { petMood('wow', 2500); asSay(`Juhu, ich bin jetzt Level ${petLevel()}! Danke, dass du dich so lieb um mich kümmerst. 🌟`); petBurst('⭐', 6); }
+}
+function petBaseMood() {
+  if (PET.asleep) return 'sleep';
+  if (PET.food < 25) return 'hungry';
+  if (PET.energy < 20) return 'tired';
+  if (PET.fun < 25) return 'sad';
+  return 'happy';
+}
+function petMood(m, ms = 1600) { PET.mood = m; clearTimeout(PET.moodT); PET.moodT = setTimeout(() => { PET.mood = null; petPaint(); }, ms); petPaint(); }
+
+/* The creature: a round amber blob with a sprout, drawn as SVG so it stays crisp. */
+function petSVG(mood) {
+  const closed = mood === 'sleep' || mood === 'love' || mood === 'yum';
+  const eyes = closed
+    ? (mood === 'sleep' ? '<path d="M-21 -6q6 4 12 0M9 -6q6 4 12 0" class="pl"/>' : '<path d="M-21 -4q6 -7 12 0M9 -4q6 -7 12 0" class="pl"/>')
+    : `<g class="pet-eyes"><ellipse cx="-15" cy="-6" rx="5.2" ry="${mood === 'tired' ? 3.2 : 6.4}" class="pe"/><ellipse cx="15" cy="-6" rx="5.2" ry="${mood === 'tired' ? 3.2 : 6.4}" class="pe"/>`
+      + `<circle cx="-13.4" cy="-8.4" r="1.9" fill="#fff"/><circle cx="16.6" cy="-8.4" r="1.9" fill="#fff"/></g>`;
+  const brows = mood === 'sad' || mood === 'hungry' ? '<path d="M-21 -17l9 3M21 -17l-9 3" class="pl"/>' : '';
+  const mouths = {
+    happy: '<path d="M-7 7q7 8 14 0" class="pl"/>',
+    love: '<path d="M-8 6q8 11 16 0z" class="pm"/>',
+    wow: '<ellipse cx="0" cy="9" rx="5" ry="6" class="pm"/>',
+    yum: '<path d="M-8 6q8 11 16 0z" class="pm"/><path d="M-2 11q3 5 6 0" fill="#FF8FA3"/>',
+    sad: '<path d="M-6 12q6 -6 12 0" class="pl"/>',
+    hungry: '<ellipse cx="0" cy="10" rx="3.4" ry="4" class="pm"/>',
+    tired: '<path d="M-5 10h10" class="pl"/>',
+    sleep: '<path d="M-4 10q4 3 8 0" class="pl"/>'
+  };
+  return `<svg viewBox="-60 -66 120 120" class="pet-svg" aria-hidden="true">
+    <ellipse cx="0" cy="49" rx="30" ry="5" class="pet-shadow"/>
+    <g class="pet-body">
+      <path d="M0 -40c4 -12 14 -16 22 -14c-4 9 -12 14 -22 14z" fill="#5FA36A"/><path d="M0 -40c-3 -9 -10 -12 -16 -11c3 7 9 11 16 11z" fill="#7CC285"/><path d="M0 -40v-6" stroke="#4E8A58" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M-44 8c0 -30 18 -48 44 -48s44 18 44 48c0 26 -18 38 -44 38s-44 -12 -44 -38z" class="pet-skin"/>
+      <path d="M-30 -18c6 -12 16 -16 26 -16" stroke="#fff" stroke-opacity=".45" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <ellipse cx="-27" cy="7" rx="7" ry="4.2" fill="#FF8FA3" opacity="${mood === 'love' || mood === 'wow' ? .9 : .55}"/><ellipse cx="27" cy="7" rx="7" ry="4.2" fill="#FF8FA3" opacity="${mood === 'love' || mood === 'wow' ? .9 : .55}"/>
+      ${eyes}${brows}${mouths[mood] || mouths.happy}
+      <ellipse cx="-20" cy="45" rx="10" ry="5.5" class="pet-skin pet-foot"/><ellipse cx="20" cy="45" rx="10" ry="5.5" class="pet-skin pet-foot"/>
+    </g>
+  </svg>`;
+}
+function petPaint() {
+  const mood = PET.mood || petBaseMood();
+  const fab = $('#asFab');
+  if (fab) { fab.innerHTML = petSVG(mood) + (petBaseMood() === 'hungry' || petBaseMood() === 'sad' ? '<span class="pet-badge">!</span>' : ''); fab.dataset.mood = mood; fab.setAttribute('aria-label', `${PET.name} öffnen`); }
+  if ($('#asst').hidden) return;
+  const st = $('#petStage .pet-big'); st.innerHTML = petSVG(mood); st.dataset.mood = mood;
+  $('#petName').textContent = PET.name; $('#asIn').placeholder = `Schreib ${PET.name} etwas …`; $('#asst').setAttribute('aria-label', PET.name); $('#petLvl').textContent = 'Level ' + petLevel();
+  [['food', PET.food], ['fun', PET.fun], ['energy', PET.energy]].forEach(([k, v]) => { const b = $('#bar-' + k); b.style.width = Math.round(v) + '%'; b.parentElement.setAttribute('aria-valuenow', Math.round(v)); b.classList.toggle('low', v < 25); });
+  $('#petSleep').textContent = PET.asleep ? '☀️ Wecken' : '🌙 Schlafen';
+  ['petPet', 'petFeed', 'petPlay'].forEach(id => $('#' + id).disabled = PET.asleep || !!PET.game);
+  $('#petZ').hidden = !PET.asleep;
+}
+function petBurst(ch, n = 4) {
+  const st = $('#petStage'); if (!st || $('#asst').hidden) return;
+  for (let i = 0; i < n; i++) { const h = el('span', 'pet-fx', st); h.textContent = ch; h.style.left = (40 + Math.random() * 20) + '%'; h.style.animationDelay = (i * .12) + 's'; h.style.setProperty('--dx', (Math.random() * 80 - 40) + 'px'); setTimeout(() => h.remove(), 1800); }
+}
+function petSpeak(t) { const b = $('#petSay'); b.textContent = t; b.hidden = false; b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
+
+/* --- care --- */
+function petPetting() {
+  if (PET.asleep) return petSpeak('Zzz … 💤');
+  PET.fun = clamp(PET.fun + 7, 0, 100); petMood('love'); petBurst('💛', 4); petXp(1);
+  petSpeak(['Hihi, das kitzelt!', 'Mehr davon! 🥰', 'Ich hab dich lieb!', 'Schnurr …'][Math.floor(Math.random() * 4)]);
+}
+function petFeedMenu() {
+  const row = $('#petSnacks'); row.hidden = !row.hidden; if (row.hidden) return;
+  row.innerHTML = '';
+  SNACKS.forEach(s => { const b = el('button', 'pet-snack', row); b.type = 'button'; b.innerHTML = `<span>${s.e}</span>${s.n}`; b.onclick = () => petFeed(s); });
+}
+function petFeed(s) {
+  $('#petSnacks').hidden = true;
+  if (PET.food >= 95) { petMood('happy'); return petSpeak('Ich bin pappsatt! Vielleicht später. 😊'); }
+  PET.food = clamp(PET.food + s.f, 0, 100); PET.fun = clamp(PET.fun + s.j, 0, 100);
+  petMood('yum', 1800); petBurst(s.e, 3); petXp(2);
+  petSpeak(s.n === 'Keks' ? 'Mmmh, ein Keks! Mein Lieblingssnack! 🍪' : `Mjam, ${s.n === 'Erdbeere' ? 'eine' : 'ein' + (s.n === 'Karotte' ? 'e' : '')} ${s.n}! Danke!`);
+}
+function petSleepToggle() {
+  PET.asleep = !PET.asleep; petSave();
+  if (PET.asleep) petSpeak('Gute Nacht … 🌙'); else { petMood('wow', 1200); petSpeak(PET.energy > 60 ? 'Ausgeschlafen! Was machen wir heute?' : 'Gähn … ich bin noch etwas müde.'); }
+  petPaint();
+}
+
+/* --- mini game: catch the falling stars --- */
+function petPlay() {
+  if (PET.asleep || PET.game) return;
+  if (PET.energy < 15) { petMood('tired'); return petSpeak('Ich bin zu müde zum Spielen. Leg mich lieber schlafen. 😴'); }
+  const st = $('#petStage'), area = el('div', 'pet-game', st);
+  const hud = el('div', 'pet-hud', area);
+  const g = PET.game = { score: 0, left: 15, area };
+  const paintHud = () => hud.textContent = `⭐ ${g.score}   ⏱ ${g.left}s`;
+  paintHud(); petSpeak('Fang die Sterne! Schnell!'); petPaint();
+  const spawn = () => {
+    const s = el('button', 'pet-star', area); s.type = 'button'; s.textContent = Math.random() < .15 ? '🌟' : '⭐'; s.setAttribute('aria-label', 'Stern fangen');
+    s.style.left = (6 + Math.random() * 80) + '%'; s.style.animationDuration = (1.6 + Math.random() * 1.2) + 's';
+    const big = s.textContent === '🌟';
+    s.onpointerdown = e => { e.preventDefault(); g.score += big ? 3 : 1; paintHud(); s.classList.add('got'); try { Sound.unlock(); } catch (x) {} setTimeout(() => s.remove(), 200); };
+    s.addEventListener('animationend', () => s.remove());
+  };
+  g.spawnT = setInterval(spawn, 520); spawn();
+  g.tick = setInterval(() => { g.left--; paintHud(); if (g.left <= 0) petGameEnd(); }, 1000);
+}
+function petGameEnd(silent) {
+  const g = PET.game; if (!g) return;
+  clearInterval(g.spawnT); clearInterval(g.tick); g.area.remove(); PET.game = null;
+  if (silent) return petPaint();
+  PET.fun = clamp(PET.fun + 10 + g.score * 2, 0, 100); PET.energy = clamp(PET.energy - 12, 0, 100); petXp(Math.max(2, g.score));
+  petMood(g.score >= 10 ? 'wow' : 'love', 2200); petBurst('⭐', Math.min(8, 2 + Math.floor(g.score / 3)));
+  petSpeak(g.score >= 15 ? `Wow, ${g.score} Punkte! Du bist ja ein Sterne-Profi! 🤩` : g.score >= 6 ? `${g.score} Punkte! Das hat Spaß gemacht!` : `${g.score} ${g.score === 1 ? 'Punkt' : 'Punkte'}. Nochmal? 😄`);
+}
+
+/* --- cheering for real progress in the app --- */
+async function petRewards() {
+  const today = todayISO();
+  const [pl, hb] = await Promise.all([Docs.get('planner', { items: [] }), Docs.get('habits', { habits: [], goals: [] })]);
+  const done = pl.items.filter(i => i.kind === 'task' && i.done && i.date === today).length + hb.habits.filter(h => h.days[today]).length;
+  if (PET.rew.d !== today) PET.rew = { d: today, n: 0 };
+  const fresh = done - PET.rew.n;
+  if (fresh > 0) {
+    PET.rew.n = done; PET.fun = clamp(PET.fun + fresh * 5, 0, 100); petXp(fresh * 4); petMood('wow', 2000); petBurst('🎉', 4);
+    return `Du hast heute schon ${done} ${done === 1 ? 'Sache' : 'Sachen'} erledigt. Ich bin so stolz auf dich! 🎉`;
+  }
+  if (done < PET.rew.n) PET.rew.n = done;
+  petSave(); return '';
+}
+
+/* --- chat UI --- */
+function asBubble(role, text, actions) {
+  const list = $('#asList'), b = el('div', 'as-msg ' + (role === 'u' ? 'as-u' : 'as-a'), list);
+  el('div', 'as-txt', b).textContent = text;
+  if (actions?.length) {
+    const row = el('div', 'as-acts', b);
+    actions.forEach(a => { const x = el('button', 'chip', row); x.type = 'button'; x.textContent = a.l; x.onclick = () => { row.querySelectorAll('button').forEach(y => y.disabled = true); a.fn(); }; });
+  }
+  list.scrollTop = list.scrollHeight;
+  return b;
+}
+function asShow(r) {
+  if (!r) return;
+  AS.log.push({ r: 'a', t: r.t, at: Date.now() }); asStore();
+  asBubble('a', r.t, r.actions);
+  const first = r.t.split('\n')[0]; petSpeak(first.length > 90 ? first.slice(0, first.lastIndexOf(' ', 88)) + ' …' : first);
+}
+function asSay(t) { asShow({ t }); }
+function asGo(fn) { asClose(); setTimeout(fn, 60); }
+async function asSend(text) {
+  text = String(text || '').trim(); if (!text || AS.busy) return;
+  AS.log.push({ r: 'u', t: text, at: Date.now() }); asStore();
+  asBubble('u', text);
+  if (PET.asleep && !/^(aufwachen|wach auf|guten morgen)/i.test(text)) { petSpeak('Zzz … 💤'); asBubble('a', `${PET.name} schläft gerade. Weck mich mit „☀️ Wecken“, dann helfe ich dir.`); return; }
+  if (PET.asleep) { petSleepToggle(); return; }
+  AS.busy = true; petMood('wow', 900);
+  const wait = asBubble('a', '…'); wait.classList.add('as-wait');
+  try {
+    const r = await asAnswer(text); wait.remove(); asShow(r);
+    if (r?.actions?.some(a => a.l === 'Rückgängig')) { petMood('love', 1600); petBurst('✨', 3); petXp(3); }
+    else petXp(1);
+  } catch (e) { wait.remove(); asSay('Hoppla, da ist etwas schiefgegangen. Versuch es bitte noch einmal.'); }
+  AS.busy = false;
+}
+function asFit() { const v = window.visualViewport, o = $('#asst'); if (!o || o.hidden) return; o.style.height = v ? v.height + 'px' : ''; o.style.top = v ? v.offsetTop + 'px' : '0'; const l = $('#asList'); if (l) l.scrollTop = l.scrollHeight; }
+async function asOpen() {
+  const o = $('#asst'); o.hidden = false; asFit(); petLoad(); petPaint();
+  const list = $('#asList'); list.innerHTML = ''; $('#petSnacks').hidden = true;
+  if (!AS.log.length) asLoad();
+  const day = todayISO(), recent = AS.log.filter(m => isoD(new Date(m.at)) === day).slice(-20);
+  recent.forEach(m => asBubble(m.r, m.t));
+  const ch = $('#asChips'); ch.innerHTML = '';
+  ['Überblick', 'Was steht heute an?', 'Regnet es morgen?', 'Einkaufsliste', 'Hilfe'].forEach(t => { const c = el('button', 'chip', ch); c.type = 'button'; c.textContent = t; c.onclick = () => asSend(t); });
+  if (!PET.met) { PET.met = true; petSave(); petMood('wow', 2000); petBurst('💛', 5); asSay(`Hallo! Ich bin ${PET.name} und wohne ab jetzt in deinem Folio. 💛 Du kannst mich streicheln, füttern und mit mir spielen. Und schreib mir einfach, was ich für dich erledigen soll, zum Beispiel „Zahnarzt Freitag um 10 Uhr“. Tipp auf meinen Namen, um mich umzubenennen.`); return; }
+  if (PET.asleep) { petSpeak('Zzz … 💤'); return; }
+  const cheer = await petRewards();
+  if (!recent.length) { const b = await asBrief(); if (cheer) b.t += '\n' + cheer; asShow(b); }
+  else if (cheer) asSay(cheer);
+  else { const m = petBaseMood(); petSpeak(m === 'hungry' ? 'Ich hab Hunger … 🥺' : m === 'sad' ? 'Mir ist langweilig. Spielen wir?' : m === 'tired' ? 'Ich bin sooo müde …' : ['Schön, dass du da bist!', 'Hallo du! 👋', 'Was machen wir?'][Math.floor(Math.random() * 3)]); }
+}
+function asClose() {
+  petGameEnd(true); petSave();
+  $('#asst').hidden = true; $('#asIn').blur(); petPaint();
+  const rer = { planner: () => Docs.cache.has('planner') && renderPlanner(), habits: () => Docs.cache.has('habits') && renderHabits(), finance: () => FI.month && Docs.cache.has('fin-' + FI.month) && renderFinance(), recipes: () => Docs.cache.has('recipes') && renderRecipes(), more: openMore, library: renderHintCard }[S.view];
+  try { rer?.(); } catch (e) {}
+}
+function petRename() {
+  const n = prompt('Wie soll ich heißen?', PET.name);
+  if (n == null) return; const v = n.trim().slice(0, 20); if (!v) return;
+  PET.name = v; petSave(); petPaint(); petMood('love'); petSpeak(`${v}? Was für ein schöner Name! 🥰`);
+}
+$('#asFab').onclick = asOpen;
+$('#asClose').onclick = asClose;
+$('#petName').onclick = petRename;
+$('#petStage .pet-big').onclick = petPetting;
+$('#petPet').onclick = petPetting;
+$('#petFeed').onclick = petFeedMenu;
+$('#petPlay').onclick = petPlay;
+$('#petSleep').onclick = petSleepToggle;
+$('#asIn').addEventListener('focus', () => $('#asst').classList.add('typing'));
+$('#asIn').addEventListener('blur', () => setTimeout(() => { if (document.activeElement !== $('#asIn')) $('#asst').classList.remove('typing'); setTimeout(() => { const l = $('#asList'); l.scrollTop = l.scrollHeight; }, 300); }, 150));
+$('#asForm').addEventListener('submit', e => { e.preventDefault(); const i = $('#asIn'), t = i.value; i.value = ''; asSend(t); });
+$('#asClear').onclick = () => { AS.log = []; asStore(); $('#asList').innerHTML = ''; asSay('Verlauf gelöscht. Wie kann ich helfen?'); };
+window.visualViewport?.addEventListener('resize', asFit);
+window.visualViewport?.addEventListener('scroll', asFit);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#asst').hidden) asClose(); });
+petLoad(); petPaint();
+setInterval(() => { petLoad(); petSave(); petPaint(); }, 60000);
+
 document.querySelectorAll('.tab').forEach(t => t.onclick = () => ({ books: openNotebooks, planner: openPlanner, habits: openHabits, weather: openWeather, more: openMore })[t.dataset.tab]());
 $('#wxAddBtn').onclick = openWxSearch;
 $('#wxCancel').onclick = closeWxSearch;
