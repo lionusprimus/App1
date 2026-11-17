@@ -592,6 +592,18 @@ body{font-family:var(--font-ui);letter-spacing:-.005em}
 .cr-p{color:var(--muted);text-align:right;font-size:12px}
 .fin-day{font-size:12px;font-weight:600;color:var(--muted);padding:12px 0 4px}
 .fin-row{display:flex;align-items:center;gap:12px;padding:8px 0;width:100%;text-align:left}
+.fin-row-w{display:flex;align-items:center;gap:10px}
+.fin-row-w .fin-row{flex:1;min-width:0}
+.fin-del{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#FF3B30;color:#fff;animation:finIn .2s ease-out}
+.fin-del svg{width:14px;height:14px}
+@keyframes finIn{from{transform:scale(.4);opacity:0}}
+.fin-list .rec-shelf-head{margin-bottom:2px}
+.undo-bar{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 92px);transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:70;
+  display:flex;align-items:center;gap:14px;max-width:calc(100% - 32px);padding:10px 10px 10px 16px;border-radius:999px;background:rgba(30,20,22,.86);color:#fff;font-size:14px;
+  -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 12px 30px -10px rgba(0,0,0,.45);transition:opacity .2s,transform .25s cubic-bezier(.3,1.3,.5,1)}
+.undo-bar.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.undo-bar span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.undo-bar button{flex:none;height:34px;padding:0 14px;border-radius:999px;background:var(--hl);color:var(--hl-fg);font-weight:700;font-size:13.5px}
 .fr-ic{flex:none;width:36px;height:36px;border-radius:12px;background:var(--desk);display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--accent)}
 .fr-t{flex:1;min-width:0;display:flex;flex-direction:column}
 .fr-t b{font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -3383,7 +3395,24 @@ function finForm(en) {
       if (en) { doc.e = doc.e.filter(x => x !== en); Docs.save('fin-' + FI.month); }
       Docs.get('fin-' + mk, { e: [] }).then(target => { target.e.push({ id: en?.id || uid(), ...body2 }); Docs.save('fin-' + mk); FI.month = mk; renderFinance(); });
     },
-    onDelete: en ? () => { doc.e = doc.e.filter(x => x !== en); Docs.save('fin-' + FI.month); renderFinance(); } : null });
+    onDelete: en ? () => finDelete(en) : null });
+}
+const finKeep = () => { const sc = $('#finance .mod-scroll'), y = sc.scrollTop; renderFinance(); sc.scrollTop = y; };
+/* delete an entry; a bar offers to bring it back */
+function finDelete(en) {
+  const mk = FI.month, doc = Docs.cache.get('fin-' + mk); if (!doc) return;
+  const at = doc.e.indexOf(en); if (at < 0) return;
+  doc.e.splice(at, 1); Docs.save('fin-' + mk); finKeep();
+  showUndo(`${en.n || en.c} gelöscht`, () => { const d = Docs.cache.get('fin-' + mk); d.e.splice(Math.min(at, d.e.length), 0, en); Docs.save('fin-' + mk); if (S.view === 'finance' && FI.month === mk) finKeep(); });
+}
+function showUndo(text, undo) {
+  let bar = $('#undoBar');
+  if (!bar) { bar = el('div', 'undo-bar', document.body); bar.id = 'undoBar'; bar.setAttribute('role', 'status'); }
+  bar.innerHTML = ''; el('span', '', bar).textContent = text;
+  const b = el('button', '', bar); b.type = 'button'; b.textContent = 'Rückgängig';
+  b.onclick = () => { clearTimeout(showUndo.t); bar.classList.remove('on'); undo(); };
+  requestAnimationFrame(() => bar.classList.add('on'));
+  clearTimeout(showUndo.t); showUndo.t = setTimeout(() => bar.classList.remove('on'), 6000);
 }
 function budgetForm() {
   const fs = Docs.cache.get('finset');
@@ -3424,11 +3453,15 @@ function renderFinance() {
   cats.forEach(x => { const r = el('div', 'cat-row', cc); r.innerHTML = `<span class="cr-n">${esc(x.c)}</span><span class="cr-bar"><i style="width:${x.v / max * 100}%"></i></span><span class="cr-v">${euro(x.v)}</span><span class="cr-p">${Math.round(x.v / (spent || 1) * 100)} %</span>`; });
   if (!cats.length) el('p', 'empty-line', cc).textContent = 'Noch keine Ausgaben in diesem Monat.';
   // list
-  const lc = card(b, 'Einträge');
+  const lc = card(b, '', 'fin-list' + (FI.edit ? ' editing' : '')), lh = el('div', 'rec-shelf-head', lc);
+  el('h3', '', lh).textContent = 'Einträge';
+  const eb = el('button', 'btn btn-soft btn-sm', lh); eb.type = 'button'; eb.textContent = FI.edit ? 'Fertig' : 'Bearbeiten'; eb.onclick = () => { FI.edit = !FI.edit; finKeep(); };
   const byDay = {}; doc.e.slice().sort((a, b) => b.d.localeCompare(a.d)).forEach(e => (byDay[e.d] ||= []).push(e));
   Object.entries(byDay).forEach(([d, es]) => {
     el('div', 'fin-day', lc).textContent = parseD(d).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
-    es.forEach(e => { const r = el('button', 'fin-row', lc); r.type = 'button'; r.innerHTML = `<span class="fr-ic">${esc(e.c.slice(0, 2))}</span><span class="fr-t"><b>${esc(e.n || e.c)}</b><span>${esc(e.c)}</span></span><span class="fr-a ${e.t === 'in' ? 'in' : ''}">${e.t === 'in' ? '+' : '−'}${euro(e.a)}</span>`; r.onclick = () => finForm(e); });
+    es.forEach(e => { const w = el('div', 'fin-row-w', lc);
+      if (FI.edit) { const x = el('button', 'fin-del', w); x.type = 'button'; x.setAttribute('aria-label', `${e.n || e.c} löschen`); x.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6.5 12h11"/></svg>'; x.onclick = () => finDelete(e); }
+      const r = el('button', 'fin-row', w); r.type = 'button'; r.innerHTML = `<span class="fr-ic">${esc(e.c.slice(0, 2))}</span><span class="fr-t"><b>${esc(e.n || e.c)}</b><span>${esc(e.c)}</span></span><span class="fr-a ${e.t === 'in' ? 'in' : ''}">${e.t === 'in' ? '+' : '−'}${euro(e.a)}</span>`; r.onclick = () => finForm(e); });
   });
 }
 

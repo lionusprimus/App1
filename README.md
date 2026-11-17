@@ -10,6 +10,8 @@ Notizbücher mit echtem Umblättern, Planer, Ziele, Wetter, Fokus-Timer, Finanze
 
 **Einstellungen:** Über das Zahnrad oben (oder *Mehr → Einstellungen*): Hell, Dunkel oder Automatisch, sieben Farbthemen (Burgunder, Ozean, Wald, Lavendel, Abendrot, Rosé, Graphit), farbiges Hintergrund-Leuchten und Krümel ein- oder ausblenden, dazu Verknüpfungen zu KI, Spotify und Backup.
 
+**Finanzen korrigieren:** In der Liste „Einträge“ auf „Bearbeiten“ tippen und Einträge über das rote Minus entfernen, oder einen Eintrag antippen und im Formular löschen. Danach lässt sich das Löschen ein paar Sekunden lang rückgängig machen.
+
 **Installieren:** Die Seite in Safari öffnen, auf „Teilen“ tippen und „Zum Home-Bildschirm“ wählen.
 
 - Alle Daten bleiben auf dem Gerät (localStorage und IndexedDB). Unter *Mehr → Backup* lässt sich alles als Datei sichern und wiederherstellen.
