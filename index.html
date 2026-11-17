@@ -936,6 +936,7 @@ body{background:var(--desk)}
 .sch-avg{flex:none;font-family:var(--font-display);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
 .sch-avg.good{color:#2F9E6B}.sch-avg.bad{color:var(--danger)}
 .sch-glist{display:flex;flex-direction:column;gap:2px;margin:-4px 0 8px 22px}
+.sch-scale{margin-bottom:-2px}
 .sch-gitem{display:flex;justify-content:space-between;padding:7px 10px;border-radius:10px;background:var(--grid);font-size:13.5px;text-align:left}
 /* ---------- Lernkarten ---------- */
 .cd-ic{font-family:var(--font-display);font-size:20px;font-weight:700}
@@ -4534,19 +4535,20 @@ async function asAnswer(raw) {
     const h = await hwAdd(sub.id, title, dt.iso || schNextLesson(doc, sub.id));
     return { t: `Eingetragen: ${sub.name}, „${title}“, fällig ${asDayName(h.due)}. Steht auch im Planer.`, actions: [{ l: 'Rückgängig', fn: () => hwRemove(h).then(() => asSay('Okay, wieder entfernt.')) }] };
   }
-  if (/\b(note|zensur)\b/.test(lower) && /[1-6]/.test(lower) && !q) {
-    const doc = await schDoc(), sub = schFind(doc, raw), m = raw.match(/\b([1-6](?:[,.]\d)?\s*[+-]?)(?=\s|$|[.,!])/);
-    if (!sub || !m) return { t: 'Schreib zum Beispiel „Note 2- in Mathe (Klausur)“.' };
-    const v = gradeValue(m[1].replace(/\s/g, '')); if (!Number.isFinite(v)) return { t: 'Die Note habe ich nicht verstanden.' };
+  if ((/\b(note|zensur)\b/.test(lower) && /[1-6]/.test(lower) || /\b\d{1,2}\s*punkte?\b/.test(lower)) && !q) {
+    const doc = await schDoc(), sub = schFind(doc, raw), isP = /\bpunkte?\b/.test(lower) || (doc.scale === 'p' && !/\bnote\b/.test(lower));
+    const m = isP ? raw.match(/\b(1[0-5]|[0-9])(?=\s*(punkte?|p\b)|\s|$|[.,!])/i) : raw.match(/\b([1-6](?:[,.]\d)?\s*[+-]?)(?=\s|$|[.,!])/);
+    if (!sub || !m) return { t: isP ? 'Schreib zum Beispiel „12 Punkte in Mathe (Klausur)“.' : 'Schreib zum Beispiel „Note 2- in Mathe (Klausur)“.' };
+    const v = isP ? pointsValue(m[1]) : gradeValue(m[1].replace(/\s/g, '')); if (!Number.isFinite(v)) return { t: 'Das habe ich nicht verstanden.' };
     const k = /klausur|arbeit|klassenarbeit/.test(lower) ? 'klausur' : /mündlich|muendlich/.test(lower) ? 'muendlich' : 'test';
-    const g = { id: uid(), s: sub.id, n: m[1].replace(/\s/g, ''), v: Math.round(v * 100) / 100, k, d: todayISO() }; doc.grades.push(g); Docs.save('school');
+    const g = { id: uid(), s: sub.id, n: m[1].replace(/\s/g, ''), v: Math.round(v * 100) / 100, sys: isP ? 'p' : 'n', k, d: todayISO() }; doc.grades.push(g); Docs.save('school');
     const avg = gradeAvg(doc.grades.filter(x => x.s === sub.id));
-    return { t: `Eingetragen: ${g.n} in ${sub.name} (${GRADE_KIND.find(x => x.v === k).l}). Dein Schnitt in ${sub.name}: ${fmt(avg, 2)}.`, actions: [{ l: 'Rückgängig', fn: () => { doc.grades = doc.grades.filter(x => x !== g); Docs.save('school'); asSay('Okay, wieder entfernt.'); } }] };
+    return { t: `Eingetragen: ${gLabel(g)} in ${sub.name} (${GRADE_KIND.find(x => x.v === k).l}). Dein Schnitt in ${sub.name}: ${fmtG(avg)}${schScale() === 'p' ? ' Punkte' : ''}.`, actions: [{ l: 'Rückgängig', fn: () => { doc.grades = doc.grades.filter(x => x !== g); Docs.save('school'); asSay('Okay, wieder entfernt.'); } }] };
   }
   if (/(schnitt|durchschnitt|meine noten|notenschnitt)/.test(lower)) {
     const doc = await schDoc(); if (!doc.grades.length) return { t: 'Du hast noch keine Noten eingetragen.' };
-    const per = doc.subjects.map(s => ({ s, a: gradeAvg(doc.grades.filter(g => g.s === s.id)) })).filter(x => Number.isFinite(x.a)).sort((a, b) => a.a - b.a);
-    return { t: `Gesamtschnitt: ${fmt(gradeAvg(doc.grades), 2)}\n${per.map(x => `• ${x.s.name}: ${fmt(x.a, 2)}`).join('\n')}`, actions: [{ l: 'Noten öffnen', fn: () => asGo(() => { SCH.tab = 'grades'; openSchool(); }) }] };
+    const P = schScale() === 'p', per = doc.subjects.map(s => ({ s, a: gradeAvg(doc.grades.filter(g => g.s === s.id)) })).filter(x => Number.isFinite(x.a)).sort((a, b) => P ? b.a - a.a : a.a - b.a);
+    return { t: `Gesamtschnitt: ${fmtG(gradeAvg(doc.grades))}${P ? ' Punkte' : ''}\n${per.map(x => `• ${x.s.name}: ${fmtG(x.a)}`).join('\n')}`, actions: [{ l: 'Noten öffnen', fn: () => asGo(() => { SCH.tab = 'grades'; openSchool(); }) }] };
   }
   // countdowns
   if (/wie (viele|lange).*(tage|noch).*bis|countdown|tage bis/.test(lower)) {
@@ -5105,7 +5107,7 @@ const AI_TOOLS = [
   { name: 'schule_tag', description: 'Zeigt den Stundenplan eines Tages und die bald fälligen Hausaufgaben.', parameters: { type: 'object', properties: { datum: { type: 'string', description: 'YYYY-MM-DD' } }, required: ['datum'] } },
   { name: 'hausaufgabe_eintragen', description: 'Trägt eine Hausaufgabe ein (steht dann auch im Planer). Ohne Datum: zur nächsten Stunde des Fachs.', parameters: { type: 'object', properties: { fach: { type: 'string' }, aufgabe: { type: 'string' }, faellig: { type: 'string', description: 'YYYY-MM-DD, optional' } }, required: ['fach', 'aufgabe'] } },
   { name: 'hausaufgaben_anzeigen', description: 'Zeigt offene Hausaufgaben.' },
-  { name: 'note_eintragen', description: 'Trägt eine Schulnote ein, z. B. "2-", "1,5".', parameters: { type: 'object', properties: { fach: { type: 'string' }, note: { type: 'string' }, art: { type: 'string', enum: ['klausur', 'test', 'muendlich'] } }, required: ['fach', 'note'] } },
+  { name: 'note_eintragen', description: 'Trägt eine Schulnote (1 bis 6, z. B. "2-", "1,5") oder Punkte der Oberstufe (0 bis 15) ein.', parameters: { type: 'object', properties: { fach: { type: 'string' }, note: { type: 'string' }, system: { type: 'string', enum: ['note', 'punkte'] }, art: { type: 'string', enum: ['klausur', 'test', 'muendlich'] } }, required: ['fach', 'note'] } },
   { name: 'noten_anzeigen', description: 'Zeigt Noten und Durchschnitte (Klausuren zählen doppelt).' },
   { name: 'stimmung_eintragen', description: 'Trägt die Stimmung des Tages ins Stimmungs-Tagebuch ein: 1 schlecht, 2 nicht so, 3 okay, 4 gut, 5 super.', parameters: { type: 'object', properties: { stufe: { type: 'number' }, notiz: { type: 'string' } }, required: ['stufe'] } },
   { name: 'countdown_eintragen', description: 'Legt einen Countdown auf der Startseite an.', parameters: { type: 'object', properties: { titel: { type: 'string' }, datum: { type: 'string', description: 'YYYY-MM-DD' }, jaehrlich: { type: 'boolean' } }, required: ['titel', 'datum'] } },
@@ -5229,11 +5231,11 @@ async function aiTool(name, a, turn) {
     }
     case 'hausaufgaben_anzeigen': { const doc = await schDoc(); return { r: { offen: doc.hw.filter(h => !h.done).map(h => ({ fach: schSub(doc, h.s).name, aufgabe: h.title, faellig: h.due })) } }; }
     case 'note_eintragen': {
-      const doc = await schDoc(), sub = schFind(doc, a.fach), v = gradeValue(a.note); if (!sub) return { r: { fehler: 'Fach unbekannt', faecher: doc.subjects.map(s => s.name) } }; if (!Number.isFinite(v)) return { r: { fehler: 'Note ungültig' } };
-      const g = { id: uid(), s: sub.id, n: String(a.note), v: Math.round(v * 100) / 100, k: ['klausur', 'test', 'muendlich'].includes(a.art) ? a.art : 'test', d: todayISO() }; doc.grades.push(g); Docs.save('school');
+      const doc = await schDoc(), sub = schFind(doc, a.fach), isP = a.system ? a.system === 'punkte' : /punkt/i.test(a.note) || doc.scale === 'p', v = isP ? pointsValue(a.note) : gradeValue(a.note); if (!sub) return { r: { fehler: 'Fach unbekannt', faecher: doc.subjects.map(s => s.name) } }; if (!Number.isFinite(v)) return { r: { fehler: 'Note ungültig' } };
+      const g = { id: uid(), s: sub.id, n: String(a.note).replace(/\s*punkte?/i, ''), v: Math.round(v * 100) / 100, sys: isP ? 'p' : 'n', k: ['klausur', 'test', 'muendlich'].includes(a.art) ? a.art : 'test', d: todayISO() }; doc.grades.push(g); Docs.save('school');
       return { r: { ok: true, schnitt_fach: Math.round(gradeAvg(doc.grades.filter(x => x.s === sub.id)) * 100) / 100 }, done: true, undo: () => { doc.grades = doc.grades.filter(x => x !== g); Docs.save('school'); } };
     }
-    case 'noten_anzeigen': { const doc = await schDoc(); return { r: { gesamt: Math.round(gradeAvg(doc.grades) * 100) / 100 || null, faecher: doc.subjects.map(s => ({ fach: s.name, noten: doc.grades.filter(g => g.s === s.id).map(g => g.n), schnitt: Math.round(gradeAvg(doc.grades.filter(g => g.s === s.id)) * 100) / 100 || null })).filter(x => x.noten.length) } }; }
+    case 'noten_anzeigen': { const doc = await schDoc(); return { r: { system: schScale() === 'p' ? 'punkte 0-15' : 'noten 1-6', gesamt: Math.round(gradeAvg(doc.grades) * 100) / 100 || null, faecher: doc.subjects.map(s => ({ fach: s.name, noten: doc.grades.filter(g => g.s === s.id).map(gLabel), schnitt: Math.round(gradeAvg(doc.grades.filter(g => g.s === s.id)) * 100) / 100 || null })).filter(x => x.noten.length) } }; }
     case 'stimmung_eintragen': { const v = clamp(Math.round(num(a.stufe) || 3), 1, 5), before = (await moodDoc()).days[todayISO()]; await moodSet(v, a.notiz || undefined); return { r: { ok: true }, done: true, undo: async () => { const d = await moodDoc(); if (before) d.days[todayISO()] = before; else delete d.days[todayISO()]; Docs.save('mood'); } }; }
     case 'countdown_eintragen': { const doc = await cdDoc(); if (!/^\d{4}-\d{2}-\d{2}$/.test(a.datum || '')) return { r: { fehler: 'Datum fehlt' } }; const it = { id: uid(), title: String(a.titel), date: a.datum, yearly: !!a.jaehrlich }; doc.items.push(it); Docs.save('countdowns'); return { r: { ok: true, tage: cdDays(cdNext(it)) }, done: true, undo: () => { doc.items = doc.items.filter(x => x !== it); Docs.save('countdowns'); } }; }
     case 'countdowns_anzeigen': { const doc = await cdDoc(); return { r: { countdowns: doc.items.map(it => ({ titel: it.title, tage: cdDays(cdNext(it)), datum: cdNext(it) })) } }; }
@@ -5518,8 +5520,15 @@ function gradeValue(s) {
   if (m) return +m[1] + (m[2] === '-' ? 0.3 : -0.3);
   const v = parseFloat(t); return v >= 1 && v <= 6 ? v : NaN;
 }
+const schScale = () => Docs.cache.get('school')?.scale || 'n';
+const pointsValue = s => { const v = parseInt(String(s).replace(/[^\d]/g, ''), 10); return /^\s*\d{1,2}\s*(p|punkte?)?\s*$/i.test(String(s)) && v >= 0 && v <= 15 ? v : NaN; };
+const toScale = (v, from, to) => from === to ? v : to === 'p' ? Math.max(0, Math.min(15, 17 - 3 * v)) : (17 - v) / 3;
+const gVal = (g, sc = schScale()) => toScale(g.v, g.sys || 'n', sc);
+const fmtG = (v, sc = schScale()) => Number.isFinite(v) ? fmt(v, sc === 'p' ? 1 : 2) : '–';
+const gGood = (v, sc = schScale()) => sc === 'p' ? v >= 11 : v <= 2.5, gBad = (v, sc = schScale()) => sc === 'p' ? v <= 5 : v >= 4;
+const gLabel = g => (g.sys || 'n') === 'p' ? `${g.n} P.` : g.n;
 const GRADE_KIND = [{ v: 'klausur', l: 'Klausur', w: 2 }, { v: 'test', l: 'Test', w: 1 }, { v: 'muendlich', l: 'Mündlich', w: 1 }];
-function gradeAvg(list) { let s = 0, w = 0; list.forEach(g => { const kw = GRADE_KIND.find(k => k.v === g.k)?.w || 1; s += g.v * kw; w += kw; }); return w ? s / w : NaN; }
+function gradeAvg(list, sc = schScale()) { let s = 0, w = 0; list.forEach(g => { const kw = GRADE_KIND.find(k => k.v === g.k)?.w || 1; s += gVal(g, sc) * kw; w += kw; }); return w ? s / w : NaN; }
 async function schSync() {
   // homework done in the planner counts here as well
   const doc = await schDoc(), pl = await Docs.get('planner', { items: [] });
@@ -5586,13 +5595,15 @@ function hwForm(h) {
 function gradeForm(g) {
   const doc = Docs.cache.get('school');
   if (!doc.subjects.length) return schSubjectsForm();
-  openForm({ title: g ? 'Note bearbeiten' : 'Neue Note', saveLabel: g ? 'Sichern' : 'Hinzufügen',
+  const P = (g ? g.sys || 'n' : schScale()) === 'p';
+  openForm({ title: g ? (P ? 'Punkte bearbeiten' : 'Note bearbeiten') : (P ? 'Neue Punkte' : 'Neue Note'), saveLabel: g ? 'Sichern' : 'Hinzufügen',
     values: g ? { s: g.s, n: g.n, k: g.k, d: g.d } : { s: doc.subjects[0].id, k: 'klausur', d: todayISO() },
-    fields: [{ k: 's', label: 'Fach', type: 'chips', options: subjChips(doc) }, { k: 'n', label: 'Note', type: 'text', required: true, placeholder: 'z. B. 2-, 1,5 oder 3+' },
+    fields: [{ k: 's', label: 'Fach', type: 'chips', options: subjChips(doc) }, { k: 'n', label: P ? 'Punkte (0 bis 15)' : 'Note', type: P ? 'number' : 'text', required: true, placeholder: P ? 'z. B. 11' : 'z. B. 2-, 1,5 oder 3+' },
       { k: 'k', label: 'Art', type: 'chips', options: GRADE_KIND.map(k => ({ v: k.v, l: `${k.l}${k.w > 1 ? ' (zählt doppelt)' : ''}` })) }, { k: 'd', label: 'Datum', type: 'date' }],
     onSave: v => {
-      const val = gradeValue(v.n); if (!Number.isFinite(val)) { toast('Bitte eine Note von 1 bis 6 eingeben, zum Beispiel 2- oder 1,5.'); return false; }
-      const body2 = { s: v.s, n: String(v.n).trim(), v: Math.round(val * 100) / 100, k: v.k, d: v.d || todayISO() };
+      const val = P ? pointsValue(v.n) : gradeValue(v.n);
+      if (!Number.isFinite(val)) { toast(P ? 'Bitte Punkte von 0 bis 15 eingeben.' : 'Bitte eine Note von 1 bis 6 eingeben, zum Beispiel 2- oder 1,5.'); return false; }
+      const body2 = { s: v.s, n: String(v.n).trim(), v: Math.round(val * 100) / 100, sys: P ? 'p' : 'n', k: v.k, d: v.d || todayISO() };
       if (g) Object.assign(g, body2); else doc.grades.push({ id: uid(), ...body2 });
       Docs.save('school'); renderSchool();
     },
@@ -5601,7 +5612,7 @@ function gradeForm(g) {
 function dueLabel(iso) { const t = todayISO(); if (iso < t) return 'überfällig'; if (iso === t) return 'heute'; if (iso === isoD(addDays(new Date(), 1))) return 'morgen'; return parseD(iso).toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'numeric' }); }
 function renderSchool() {
   const doc = Docs.cache.get('school'); if (!doc) return;
-  const action = { plan: { label: 'Stunde', fn: () => doc.subjects.length ? lessonForm(SCH.day || Math.min(5, schWeekday(todayISO()))) : schSubjectsForm() }, hw: { label: 'Aufgabe', fn: () => hwForm(null) }, grades: { label: 'Note', fn: () => gradeForm(null) } }[SCH.tab];
+  const action = { plan: { label: 'Stunde', fn: () => doc.subjects.length ? lessonForm(SCH.day || Math.min(5, schWeekday(todayISO()))) : schSubjectsForm() }, hw: { label: 'Aufgabe', fn: () => hwForm(null) }, grades: { label: doc.scale === 'p' ? 'Punkte' : 'Note', fn: () => gradeForm(null) } }[SCH.tab];
   head('school', 'Schule', 'Stundenplan, Hausaufgaben und Noten', null, true);
   const ab = el('button', 'btn btn-primary hl-btn', $('#school .lib-head .head-r') || $('#school .lib-head')); ab.type = 'button'; ab.innerHTML = ICONS.plus + ' ' + action.label; ab.onclick = action.fn;
   const b = body('school');
@@ -5642,17 +5653,19 @@ function renderSchool() {
     open.forEach(h => row(oc, h));
     if (done.length) { const dc = card(b, `Erledigt · ${done.length}`); done.slice(0, 20).forEach(h => row(dc, h)); }
   } else {
-    const all = doc.grades, avg = gradeAvg(all);
+    const sc0 = schScale(), sw = el('div', 'seg sch-scale', b);
+    [['n', 'Noten 1–6'], ['p', 'Punkte 0–15']].forEach(([k, l]) => { const x = el('button', '', sw); x.type = 'button'; x.textContent = l; x.setAttribute('aria-pressed', sc0 === k); x.onclick = () => { doc.scale = k; Docs.save('school'); renderSchool(); }; });
+    const all = doc.grades, avg = gradeAvg(all), other = sc0 === 'p' ? 'n' : 'p';
     const hc = el('div', 'card fin-hero sch-hero', b);
-    hc.innerHTML = `<span class="fh-l">Gesamtschnitt</span><span class="fh-v">${Number.isFinite(avg) ? fmt(avg, 2) : '–'}</span><span class="fh-s">${all.length ? `${all.length} ${all.length === 1 ? 'Note' : 'Noten'} in ${new Set(all.map(g => g.s)).size} Fächern · Klausuren zählen doppelt` : 'Trag deine erste Note ein.'}</span>`;
+    hc.innerHTML = `<span class="fh-l">Gesamtschnitt${sc0 === 'p' ? ' in Punkten' : ''}</span><span class="fh-v">${fmtG(avg)}</span><span class="fh-s">${all.length ? `${Number.isFinite(avg) ? (sc0 === 'p' ? 'entspricht Note ' : 'entspricht ') + fmtG(toScale(avg, sc0, other), other) + (sc0 === 'p' ? '' : ' Punkten') + ' · ' : ''}${all.length} ${all.length === 1 ? 'Eintrag' : 'Einträge'} · Klausuren zählen doppelt` : (sc0 === 'p' ? 'Trag deine ersten Punkte ein.' : 'Trag deine erste Note ein.')}</span>`;
     const sc = card(b, 'Nach Fach');
-    const subs = doc.subjects.map(s => ({ s, list: all.filter(g => g.s === s.id) })).filter(x => x.list.length).sort((a, c) => gradeAvg(a.list) - gradeAvg(c.list));
+    const subs = doc.subjects.map(s => ({ s, list: all.filter(g => g.s === s.id) })).filter(x => x.list.length).sort((a, c) => (gradeAvg(a.list) - gradeAvg(c.list)) * (sc0 === 'p' ? -1 : 1));
     if (!subs.length) el('p', 'empty-line', sc).textContent = 'Noch keine Noten.';
     subs.forEach(({ s, list }) => {
       const a = gradeAvg(list), op = SCH.open === s.id, r = el('button', 'sch-grade', sc); r.type = 'button';
-      r.innerHTML = `<i style="background:${s.color}"></i><span class="sch-tx"><b>${esc(s.name)}</b><span>${list.length} ${list.length === 1 ? 'Note' : 'Noten'}: ${esc(list.map(g => g.n).join(', '))}</span></span><span class="sch-avg ${a <= 2.5 ? 'good' : a >= 4 ? 'bad' : ''}">${fmt(a, 2)}</span>`;
+      r.innerHTML = `<i style="background:${s.color}"></i><span class="sch-tx"><b>${esc(s.name)}</b><span>${list.length} ${list.length === 1 ? 'Eintrag' : 'Einträge'}: ${esc(list.map(gLabel).join(', '))}</span></span><span class="sch-avg ${gGood(a) ? 'good' : gBad(a) ? 'bad' : ''}">${fmtG(a)}</span>`;
       r.onclick = () => { SCH.open = op ? null : s.id; renderSchool(); };
-      if (op) { const dl = el('div', 'sch-glist', sc); list.slice().sort((x, y) => y.d.localeCompare(x.d)).forEach(g => { const gr = el('button', 'sch-gitem', dl); gr.type = 'button'; gr.innerHTML = `<span>${parseD(g.d).toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })} · ${esc(GRADE_KIND.find(k => k.v === g.k)?.l || '')}</span><b>${esc(g.n)}</b>`; gr.onclick = () => gradeForm(g); }); }
+      if (op) { const dl = el('div', 'sch-glist', sc); list.slice().sort((x, y) => y.d.localeCompare(x.d)).forEach(g => { const gr = el('button', 'sch-gitem', dl); gr.type = 'button'; gr.innerHTML = `<span>${parseD(g.d).toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })} · ${esc(GRADE_KIND.find(k => k.v === g.k)?.l || '')}</span><b>${esc(gLabel(g))}</b>`; gr.onclick = () => gradeForm(g); }); }
     });
   }
 }

@@ -14,7 +14,7 @@ Notizbücher mit echtem Umblättern, Planer, Ziele, Wetter, Fokus-Timer, Finanze
 
 **Umsätze importieren:** In *Finanzen* bei „Einträge“ auf „Import“ tippen und Kontoauszüge als PDF oder ZIP (aus der Sparkassen-App: Auszüge teilen, In Dateien sichern) oder eine CSV-Datei aus dem Online-Banking wählen (Sparkasse: „CSV-CAMT V2“, die meisten anderen Banken klappen auch). Bei PDF-Auszügen rechnet Folio mit den Kontoständen nach, ob alle Umsätze erkannt wurden. Folio sortiert die Umsätze in Kategorien, überspringt schon vorhandene und vorgemerkte Umsätze und merkt sich korrigierte Kategorien pro Empfänger. Die Datei bleibt auf dem Gerät.
 
-**Schule:** Unter *Mehr → Schule* Fächer wählen, Stundenplan eintragen, Hausaufgaben erfassen (sie stehen automatisch auch im Planer) und Noten sammeln. Der Schnitt wird pro Fach und insgesamt berechnet, Klausuren zählen doppelt; „2-“ zählt als 2,3 und „2+“ als 1,7.
+**Schule:** Unter *Mehr → Schule* Fächer wählen, Stundenplan eintragen, Hausaufgaben erfassen (sie stehen automatisch auch im Planer) und Noten sammeln. Der Schnitt wird pro Fach und insgesamt berechnet, Klausuren zählen doppelt; „2-“ zählt als 2,3 und „2+“ als 1,7. Für die Oberstufe lässt sich auf Punkte (0 bis 15) umschalten; Noten und Punkte werden ineinander umgerechnet (Note = (17 − Punkte) / 3).
 
 **Lernkarten:** Unter *Mehr → Lernkarten* Stapel anlegen und Karten als „Vorderseite = Rückseite“ eintragen. Beim Lernen kommen Karten, die du gut kannst, seltener dran.
 
