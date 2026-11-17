@@ -624,7 +624,14 @@ body{font-family:var(--font-ui);letter-spacing:-.005em}
 .tabbar[hidden] ~ .as-fab{display:none}
 .mod-scroll,.shelf-wrap,.wx-scroll{padding-bottom:96px!important}
 .cloud{width:100%;height:100%;display:block;overflow:visible;transition:transform .2s;filter:drop-shadow(0 6px 12px var(--cloud-shadow))}
-.c-body{fill:var(--cloud)}
+.c-refr{opacity:.38}
+.as-fab .c-glass{opacity:.95}
+.c-glass{opacity:.84;filter:drop-shadow(0 0 .7px #fff) drop-shadow(0 0 2.5px rgba(255,255,255,.7))}
+.cg-top{stop-color:#FFFFFF}.cg-mid{stop-color:#FFF8F8}.cg-bot{stop-color:#FFE9EE}
+.c-shine{fill:none;stroke:#fff;stroke-width:3.2;stroke-linecap:round;opacity:.95}
+.c-gloss{fill:#fff;opacity:.55}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .c-glass{opacity:.93}:root:not([data-theme="light"]) .cg-bot{stop-color:#FFD9E2}}
+:root[data-theme="dark"] .c-glass{opacity:.93}
 .c-shadow{fill:var(--cloud-shadow);opacity:.6}
 .c-all{transform-box:fill-box;transform-origin:50% 100%;animation:cFloat 4.2s ease-in-out infinite;transition:transform .4s}
 .c-body{transform-box:fill-box;transform-origin:50% 100%;transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
@@ -690,6 +697,67 @@ body{font-family:var(--font-ui);letter-spacing:-.005em}
 .asst.typing .pet-stage{height:84px}
 .asst.typing .pet-big{width:96px;height:72px}
 @media (prefers-reduced-motion: reduce){.c-all,.c-open,.cloud[data-mood] .c-all,.cloud[data-mood] .c-body{animation:none!important}}
+/* =================== Liquid Glass (Probe) =================== */
+:root{
+  --gl:rgba(255,255,255,.42); --gl-strong:rgba(255,255,255,.62); --gl-edge:rgba(255,255,255,.75); --gl-hi:rgba(255,255,255,.95);
+  --gl-low:rgba(255,255,255,.18); --gl-shadow:0 10px 30px -12px rgba(67,1,7,.22),0 2px 6px -2px rgba(67,1,7,.08);
+  --gl-blur:saturate(190%) blur(26px);
+  --amb1:rgba(254,205,0,.38); --amb2:rgba(217,64,77,.26); --amb3:rgba(67,1,7,.14); --amb4:rgba(255,170,190,.45);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --gl:rgba(255,255,255,.07); --gl-strong:rgba(40,8,12,.6); --gl-edge:rgba(255,255,255,.16); --gl-hi:rgba(255,255,255,.32);
+  --gl-low:rgba(255,255,255,.03); --gl-shadow:0 12px 34px -12px rgba(0,0,0,.7),0 2px 6px -2px rgba(0,0,0,.4);
+  --amb1:rgba(254,205,0,.20); --amb2:rgba(217,64,77,.30); --amb3:rgba(122,10,22,.55); --amb4:rgba(120,30,60,.35)}}
+:root[data-theme="dark"]{
+  --gl:rgba(255,255,255,.07); --gl-strong:rgba(40,8,12,.6); --gl-edge:rgba(255,255,255,.16); --gl-hi:rgba(255,255,255,.32);
+  --gl-low:rgba(255,255,255,.03); --gl-shadow:0 12px 34px -12px rgba(0,0,0,.7),0 2px 6px -2px rgba(0,0,0,.4);
+  --amb1:rgba(254,205,0,.20); --amb2:rgba(217,64,77,.30); --amb3:rgba(122,10,22,.55); --amb4:rgba(120,30,60,.35)}
+
+/* ambient light behind the glass */
+body::before{content:"";position:fixed;inset:-10%;z-index:-1;pointer-events:none;
+  background:radial-gradient(38% 30% at 85% 8%,var(--amb1),transparent 70%),radial-gradient(45% 35% at 5% 35%,var(--amb4),transparent 70%),
+    radial-gradient(40% 32% at 95% 70%,var(--amb2),transparent 70%),radial-gradient(50% 40% at 20% 100%,var(--amb3),transparent 70%),var(--desk)}
+body{background:var(--desk)}
+.app{position:relative;z-index:0}
+
+/* the glass material: frosted fill, bright rim, soft lift */
+.card,.tile,.more-tile,.rc-card,.sr,.chip,.btn-soft,.icon-round,.tabbar,.tools,.as-a,.as-chip,.as-form .input,.seg,.kpi,.wx-chip,.results button,.tpl-pick,.stk,.map-ctl button{
+  background:linear-gradient(160deg,var(--gl-strong),var(--gl) 45%,var(--gl-low))!important;
+  -webkit-backdrop-filter:var(--gl-blur);backdrop-filter:var(--gl-blur);
+  box-shadow:inset 0 1px 0 var(--gl-hi),inset 0 0 0 1px var(--gl-edge),inset 0 -8px 16px -12px rgba(255,255,255,.35),var(--gl-shadow)!important}
+.card,.tile,.more-tile,.rc-card{border-radius:28px}
+.tabbar{border-radius:32px!important;padding:6px!important;margin-inline:4px}
+.tab{border-radius:26px!important}
+.tab[aria-selected="true"],.tool[aria-pressed="true"]{background:rgba(67,1,7,.88)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 12px -4px rgba(67,1,7,.5)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tab[aria-selected="true"],:root:not([data-theme="light"]) .tool[aria-pressed="true"]{background:rgba(254,205,0,.92)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 4px 14px -4px rgba(254,205,0,.45)}}
+.chip[aria-pressed="true"],.seg button[aria-pressed="true"]{background:var(--accent)!important;color:var(--accent-fg)!important}
+.btn-primary,#newBtn,#emptyNew,.hl-btn,.as-send,.as-u{box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -2px 6px rgba(0,0,0,.12),0 8px 20px -10px var(--shadow)!important}
+.cal-d.sel .n{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 10px -4px var(--shadow)}
+
+/* the dark brand cards become tinted glass */
+.hero,.hint,.fin-hero{background:linear-gradient(150deg,rgba(122,10,22,.82),rgba(67,1,7,.78) 55%,rgba(42,0,4,.85))!important;
+  -webkit-backdrop-filter:var(--gl-blur);backdrop-filter:var(--gl-blur);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 0 0 1px rgba(255,255,255,.14),0 18px 40px -18px rgba(67,1,7,.6)!important}
+
+/* sheets and full-screen layers turn into thick glass */
+.scrim{background:rgba(30,0,4,.18);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.sheet{background:linear-gradient(180deg,var(--gl-strong),var(--gl))!important;-webkit-backdrop-filter:saturate(190%) blur(40px);backdrop-filter:saturate(190%) blur(40px);
+  box-shadow:inset 0 1px 0 var(--gl-hi),inset 0 0 0 1px var(--gl-edge),0 -10px 40px -10px rgba(0,0,0,.25)!important;border-radius:34px 34px 0 0!important;margin-inline:8px}
+.sheet .input,.input{background:rgba(255,255,255,.35);box-shadow:inset 0 1px 2px rgba(0,0,0,.06),inset 0 0 0 1px var(--gl-edge)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .input{background:rgba(255,255,255,.06)}}
+.asst,.search,.overview{background:transparent!important}
+.asst::before,.search::before,.overview::before{content:"";position:fixed;inset:0;z-index:-1;background:color-mix(in srgb,var(--desk) 82%,transparent);-webkit-backdrop-filter:saturate(180%) blur(34px);backdrop-filter:saturate(180%) blur(34px)}
+.toast{background:rgba(67,1,7,.78)!important;-webkit-backdrop-filter:var(--gl-blur);backdrop-filter:var(--gl-blur);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 10px 30px -10px rgba(0,0,0,.4)}
+.as-u{border-radius:22px 22px 8px 22px}
+.as-a{border-radius:22px 22px 22px 8px}
+.as-fab .cloud{filter:drop-shadow(0 8px 16px var(--cloud-shadow)) drop-shadow(0 0 1px rgba(255,255,255,.9))}
+.cover{box-shadow:0 1px 1px rgba(0,0,0,.15),0 16px 30px -10px var(--shadow),inset 0 1px 0 rgba(255,255,255,.25),inset 0 0 0 1px rgba(0,0,0,.12)}
+/* the tab bar floats above the content, so pages scroll underneath the glass */
+.tabbar{position:fixed!important;z-index:20;left:50%;transform:translateX(-50%);width:min(calc(100% - 32px),560px);margin:0!important;bottom:calc(env(safe-area-inset-bottom,0px) + 10px)}
+.as-fab{bottom:calc(env(safe-area-inset-bottom,0px) + 86px)}
+.mod-scroll,.shelf-wrap,.wx-scroll{padding-bottom:110px!important}
+.tabbar{background:linear-gradient(160deg,rgba(255,255,255,.82),rgba(255,255,255,.62))!important;-webkit-backdrop-filter:saturate(200%) blur(30px);backdrop-filter:saturate(200%) blur(30px)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tabbar{background:linear-gradient(160deg,rgba(60,16,22,.78),rgba(30,6,10,.7))!important}}
 </style>
 
 <div class="app" id="app" lang="de">
@@ -3853,11 +3921,26 @@ const PET_KEY = 'folio:pet';
 const PET = { name: 'Krümel', mood: 'idle', moodT: 0, typeT: 0, lookT: 0, pets: 0 };
 function petLoad() { try { const v = JSON.parse(localStorage.getItem(PET_KEY)); if (v?.name) PET.name = v.name; } catch (e) {} }
 function petSave() { try { localStorage.setItem(PET_KEY, JSON.stringify({ name: PET.name })); } catch (e) {} }
-function cloudSVG() {
+function cloudSVG(k) {
+  // a cloud made of frosted glass: one solid shape faded as a whole (so the circles never
+  // show their overlaps), a bright rim, a highlight on top and a warm glow at the bottom
+  const shape = '<circle cx="-25" cy="6" r="19"/><circle cx="-3" cy="-9" r="25"/><circle cx="23" cy="2" r="20"/><rect x="-44" y="-2" width="88" height="29" rx="14.5"/>';
   return `<svg class="cloud" viewBox="-62 -46 124 92" aria-hidden="true">
+    <defs>
+      <linearGradient id="cg-${k}" x1="0" y1="-34" x2="0" y2="27" gradientUnits="userSpaceOnUse"><stop offset="0" class="cg-top"/><stop offset=".6" class="cg-mid"/><stop offset="1" class="cg-bot"/></linearGradient>
+      <linearGradient id="cr-${k}" x1="-44" y1="0" x2="44" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FF9EB0"/><stop offset=".5" stop-color="#E9C7FF"/><stop offset="1" stop-color="#FFD66B"/></linearGradient>
+      <linearGradient id="cf-${k}" x1="0" y1="8" x2="0" y2="27" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="1"/></linearGradient>
+      <mask id="cm-${k}"><rect x="-62" y="-46" width="124" height="92" fill="url(#cf-${k})"/></mask>
+      <clipPath id="cc-${k}">${shape}</clipPath>
+    </defs>
     <ellipse class="c-shadow" cx="0" cy="36" rx="32" ry="3.2"/>
     <g class="c-all"><g class="c-body">
-      <circle cx="-25" cy="6" r="19"/><circle cx="-3" cy="-9" r="25"/><circle cx="23" cy="2" r="20"/><rect x="-44" y="-2" width="88" height="29" rx="14.5"/>
+      <g class="c-glass" fill="url(#cg-${k})">${shape}</g>
+      <g clip-path="url(#cc-${k})">
+        <rect class="c-refr" x="-46" y="4" width="92" height="26" fill="url(#cr-${k})" mask="url(#cm-${k})"/>
+        <path class="c-shine" d="M-36 2c0-10 6-17 15-18M-16 -24c4-6 11-9 18-9"/>
+        <ellipse class="c-gloss" cx="-4" cy="-26" rx="12" ry="4" />
+      </g>
       <g class="c-face">
         <ellipse class="c-blush" cx="-23" cy="15" rx="6" ry="3.2"/><ellipse class="c-blush" cx="23" cy="15" rx="6" ry="3.2"/>
         <g class="c-eyes"><g class="c-open"><ellipse class="c-eye l" cx="-11" cy="7" rx="3.6" ry="5.4"/><ellipse class="c-eye r" cx="11" cy="7" rx="3.6" ry="5.4"/></g>
@@ -3968,8 +4051,8 @@ function petRename() {
 }
 
 /* --- wiring --- */
-$('#asFab').innerHTML = cloudSVG();
-$('#petStage .pet-big').innerHTML = cloudSVG();
+$('#asFab').innerHTML = cloudSVG('fab');
+$('#petStage .pet-big').innerHTML = cloudSVG('big');
 $('#asFab').onclick = asOpen;
 $('#asClose').onclick = asClose;
 $('#petName').onclick = petRename;
