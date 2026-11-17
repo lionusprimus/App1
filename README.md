@@ -12,10 +12,10 @@ Notizbücher mit echtem Umblättern, Planer, Ziele, Wetter, Fokus-Timer, Finanze
 
 **Finanzen korrigieren:** In der Liste „Einträge“ auf „Bearbeiten“ tippen und Einträge über das rote Minus entfernen, oder einen Eintrag antippen und im Formular löschen. Danach lässt sich das Löschen ein paar Sekunden lang rückgängig machen.
 
-**Umsätze importieren:** In *Finanzen* bei „Einträge“ auf „Import“ tippen und die CSV-Datei aus dem Online-Banking wählen (Sparkasse: „CSV-CAMT V2“, die meisten anderen Banken klappen auch). Folio sortiert die Umsätze in Kategorien, überspringt schon vorhandene und vorgemerkte Umsätze und merkt sich korrigierte Kategorien pro Empfänger. Die Datei bleibt auf dem Gerät.
+**Umsätze importieren:** In *Finanzen* bei „Einträge“ auf „Import“ tippen und Kontoauszüge als PDF (aus der Sparkassen-App: Auszug öffnen, Teilen, In Dateien sichern) oder eine CSV-Datei aus dem Online-Banking wählen (Sparkasse: „CSV-CAMT V2“, die meisten anderen Banken klappen auch). Bei PDF-Auszügen rechnet Folio mit den Kontoständen nach, ob alle Umsätze erkannt wurden. Folio sortiert die Umsätze in Kategorien, überspringt schon vorhandene und vorgemerkte Umsätze und merkt sich korrigierte Kategorien pro Empfänger. Die Datei bleibt auf dem Gerät.
 
 **Installieren:** Die Seite in Safari öffnen, auf „Teilen“ tippen und „Zum Home-Bildschirm“ wählen.
 
 - Alle Daten bleiben auf dem Gerät (localStorage und IndexedDB). Unter *Mehr → Backup* lässt sich alles als Datei sichern und wiederherstellen.
 - Wetter: [Open-Meteo](https://open-meteo.com) (CC BY 4.0). Karte: [Natural Earth](https://www.naturalearthdata.com) über world-atlas.
-- PDF-Export: jsPDF. Schrift: Literata (SIL Open Font License).
+- PDF-Export: jsPDF. PDF-Import: pdf.js von Mozilla (Apache License 2.0, siehe vendor/pdfjs). Schrift: Literata (SIL Open Font License).
