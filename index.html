@@ -3507,7 +3507,7 @@ function finImport() {
   const t2 = el('p', 'imp-h', f); t2.textContent = 'Oder: Umsätze als CSV';
   el('p', 'store-note imp-note', f).textContent = 'Im Online-Banking auf lzo.com unter „Exportieren & Drucken“ das Format „CSV-CAMT V2“ wählen. Klappt auch mit den meisten anderen Banken.';
   el('p', 'store-note imp-note', f).textContent = 'Schon vorhandene Umsätze werden übersprungen, du kannst also ruhig dieselben Monate noch einmal importieren.';
-  const inp = el('input', '', f); inp.type = 'file'; inp.multiple = true; inp.accept = '.pdf,.csv,.zip,application/pdf,text/csv,text/plain,application/zip'; inp.hidden = true;
+  const inp = el('input', '', f); inp.type = 'file'; inp.multiple = true; inp.hidden = true;
   const r = el('div', 'sheet-actions', f), c = el('button', 'btn btn-ghost', r); c.type = 'button'; c.textContent = 'Abbrechen'; c.onclick = () => closeGenericSheet('#formSheet');
   const pick = el('button', 'btn btn-primary', r); pick.type = 'button'; pick.textContent = 'Dateien auswählen'; pick.onclick = () => inp.click();
   inp.onchange = async () => {
@@ -3631,6 +3631,8 @@ async function unzipFiles(file) {
 }
 async function finImportFiles(files) {
   const label = files.length === 1 ? files[0].name : `${files.length} Dateien`, flat = [];
+  const odd = files.find(f => !/\.(zip|pdf|csv|txt)$/i.test(f.name) && !/zip|pdf|csv|text\/plain/.test(f.type));
+  if (odd) throw new Error(`„${odd.name}“ kann ich nicht lesen. Bitte eine PDF-, ZIP- oder CSV-Datei wählen.`);
   for (const f of files) {
     if (/\.zip$/i.test(f.name) || /zip/.test(f.type)) { const inner = await unzipFiles(f); if (!inner.length) throw new Error(`In „${f.name}“ sind keine Kontoauszüge (PDF oder CSV).`); flat.push(...inner); }
     else flat.push(f);
