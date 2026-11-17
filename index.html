@@ -5728,14 +5728,31 @@ function untisWeekPlan(events) {
   const lessons = Object.values(groups).filter(g => g.weeks.size >= need).map(g => ({ wd: g.wd, from: g.from, to: g.to, code: g.code, room: Object.entries(g.rooms).sort((a, b) => b[1] - a[1])[0]?.[0] || '' }));
   return { lessons, weeks: weeks.size, events: events.length };
 }
+/* Turns a Untis link into calendar addresses. A private iCal link is used as it is. A public
+   link to the timetable web page (…/WebUntis/?school=…#/basic/timetablePublic?type=1&id=…)
+   carries school, element type and id; WebUntis can export that week as iCal (Ical.do). */
+function untisIcalUrls(raw) {
+  let u; try { u = new URL(String(raw).trim().replace(/^webcal:\/\//i, 'https://')); } catch (e) { throw new Error('Das ist kein gültiger Link.'); }
+  if (u.protocol !== 'https:') throw new Error('Das ist kein gültiger Link.');
+  if (/ical/i.test(u.pathname) || /\.ics$/i.test(u.pathname)) return [u.href];
+  const p = new URLSearchParams([u.search.replace(/^\?/, ''), (u.hash.split('?')[1] || '')].filter(Boolean).join('&'));
+  const school = p.get('school'), type = p.get('type') || p.get('elementType') || p.get('elemType'), id = p.get('id') || p.get('elementId') || p.get('elemId');
+  if (!school || !type || !id) throw Object.assign(new Error('nolink'), { nolink: true });
+  const mon = addDays(new Date(), -((new Date().getDay() + 6) % 7));
+  return [0, 7, 14].map(off => `https://${u.host}/WebUntis/Ical.do?school=${encodeURIComponent(school)}&elemType=${encodeURIComponent(type)}&elemId=${encodeURIComponent(id)}&rpt_sd=${isoD(addDays(mon, off))}`);
+}
 async function untisLoadUrl(url) {
-  const u = String(url).trim().replace(/^webcal:\/\//i, 'https://');
-  if (!/^https:\/\//i.test(u)) throw new Error('Das ist kein gültiger Link.');
-  let r;
-  try { r = await fetch(u, { cache: 'no-store' }); }
-  catch (e) { throw Object.assign(new Error('blocked'), { blocked: true }); }
-  if (!r.ok) throw new Error(r.status === 401 || r.status === 403 ? 'Untis hat den Link abgelehnt. Ist er noch gültig?' : 'Untis antwortet gerade nicht (' + r.status + ').');
-  return r.text();
+  const urls = untisIcalUrls(url), texts = [];
+  for (const u of urls) {
+    let r;
+    try { r = await fetch(u, { cache: 'no-store', credentials: 'omit' }); }
+    catch (e) { throw Object.assign(new Error('blocked'), { blocked: true }); }
+    if (!r.ok) { if (texts.length) break; throw new Error(r.status === 401 || r.status === 403 ? 'Untis hat den Link abgelehnt. Ist er noch gültig, und darf der Stundenplan öffentlich abgerufen werden?' : 'Untis antwortet gerade nicht (' + r.status + ').'); }
+    const t = await r.text();
+    if (!/BEGIN:VCALENDAR/i.test(t)) { if (texts.length) break; throw Object.assign(new Error('notics'), { notics: true }); }
+    texts.push(t);
+  }
+  return texts.join('\n');
 }
 function untisSheet() {
   const doc = Docs.cache.get('school'), f = $('#formSheet'); f.innerHTML = ''; f.onsubmit = e => e.preventDefault();
@@ -5743,9 +5760,9 @@ function untisSheet() {
   el('p', 'store-note imp-note', f).textContent = 'Folio übernimmt deine regelmäßigen Stunden als Wochenplan. Dafür brauchst du deinen persönlichen Kalender-Link (iCal) aus Untis.';
   el('p', 'imp-h', f).textContent = 'So findest du den Link';
   const ol = el('ol', 'steps', f);
-  ['In der Untis-App unten auf „Start“ und dann „Kalender“ tippen, oder auf WebUntis im Browser unter dem Stundenplan das Menü mit den drei Punkten öffnen.', 'Den iCal-Link (Kalender abonnieren) kopieren.', 'Hier einfügen und „Laden“ tippen.'].forEach(t => el('li', '', ol).textContent = t);
+  ['In der Untis-App unten auf „Start“ und dann „Kalender“ tippen, oder auf WebUntis im Browser unter dem Stundenplan das Menü mit den drei Punkten öffnen.', 'Den Link kopieren: am besten den privaten iCal-Link, der öffentliche Link zum Stundenplan geht aber auch.', 'Hier einfügen und „Laden“ tippen.'].forEach(t => el('li', '', ol).textContent = t);
   const w = el('label', 'field', f); el('span', '', w).textContent = 'iCal-Link';
-  const inp = el('input', 'input', w); inp.placeholder = 'https://…webuntis.com/WebUntis/Ical.do?…'; inp.value = doc.untisUrl || ''; inp.autocomplete = 'off'; inp.spellcheck = false;
+  const inp = el('input', 'input', w); inp.placeholder = 'Link aus Untis einfügen'; inp.value = doc.untisUrl || ''; inp.autocomplete = 'off'; inp.spellcheck = false;
   const msg = el('p', 'imp-check warn', f); msg.hidden = true;
   const file = el('input', '', f); file.type = 'file'; file.hidden = true;
   const r = el('div', 'sheet-actions', f), fb = el('button', 'btn btn-soft', r); fb.type = 'button'; fb.textContent = '.ics-Datei wählen'; fb.onclick = () => file.click();
@@ -5755,7 +5772,7 @@ function untisSheet() {
     try { const txt = await untisLoadUrl(inp.value); doc.untisUrl = inp.value.trim(); Docs.save('school'); untisPreview(txt, true); }
     catch (e) {
       msg.hidden = false;
-      msg.textContent = e.blocked ? 'Untis lässt Folio den Link leider nicht direkt abrufen (das entscheidet der Untis-Server). Nimm stattdessen eine Kalenderdatei: In WebUntis im Browser unter dem Stundenplan über die drei Punkte den Stundenplan als iCal/.ics exportieren und hier mit „.ics-Datei wählen“ öffnen.' : e.message;
+      msg.textContent = e.blocked ? 'Untis lässt Folio den Link leider nicht direkt abrufen (das entscheidet der Untis-Server). Nimm stattdessen eine Kalenderdatei: In WebUntis im Browser unter dem Stundenplan über die drei Punkte den Stundenplan als iCal/.ics exportieren und hier mit „.ics-Datei wählen“ öffnen.' : e.nolink ? 'In diesem Link stehen Schule und Klasse nicht drin. Öffne in WebUntis den Stundenplan deiner Klasse und kopiere den Link aus der Adresszeile (er enthält „school=“ und „id=“), oder nimm den privaten iCal-Link.' : e.notics ? 'Unter diesem Link kommt kein Kalender zurück, sondern eine Webseite. Probier den privaten iCal-Link oder eine .ics-Datei.' : e.message;
       go.disabled = false; go.textContent = 'Laden';
     }
   };
