@@ -937,6 +937,7 @@ body{background:var(--desk)}
 .sch-avg.good{color:#2F9E6B}.sch-avg.bad{color:var(--danger)}
 .sch-glist{display:flex;flex-direction:column;gap:2px;margin:-4px 0 8px 22px}
 .sch-scale{margin-bottom:-2px}
+.untis-shot{gap:8px;justify-content:center;height:48px;align-self:stretch;width:100%}
 .sch-foot{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .untis-map{max-height:44vh}
 .untis-row{display:grid;grid-template-columns:auto 1fr;grid-template-areas:"c n" "s s";gap:4px 10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
@@ -5754,42 +5755,124 @@ async function untisLoadUrl(url) {
   }
   return texts.join('\n');
 }
+/* --- Stundenplan aus einem Screenshot (liest die KI) --- */
+const BELL = { 1: ['08:00', '08:45'], 2: ['08:50', '09:35'], 3: ['09:55', '10:40'], 4: ['10:45', '11:30'], 5: ['11:50', '12:35'], 6: ['12:40', '13:25'], 7: ['13:45', '14:30'], 8: ['14:35', '15:20'], 9: ['15:25', '16:10'], 10: ['16:15', '17:00'] };
+async function imgToJpeg(file, max = 1600) {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+    const k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight)), c = document.createElement('canvas');
+    c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+    const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(img, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', 0.85);
+  } finally { URL.revokeObjectURL(url); }
+}
+async function aiVision(prompt, dataUrl) {
+  const b64data = dataUrl.split(',')[1];
+  if (AI.cfg.provider === 'gemini') {
+    const model = await aiGeminiModel();
+    const j = await aiFetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-goog-api-key': AI.cfg.key },
+      body: JSON.stringify({ contents: [{ role: 'user', parts: [{ inline_data: { mime_type: 'image/jpeg', data: b64data } }, { text: prompt }] }], generationConfig: { temperature: 0, maxOutputTokens: 4000, responseMimeType: 'application/json' } }) });
+    return (j.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('');
+  }
+  const pv = AI_PROVIDERS[AI.cfg.provider], base = (AI.cfg.provider === 'custom' ? AI.cfg.base : pv.base).replace(/\/+$/, '');
+  const j = await aiFetch(base + '/chat/completions', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + AI.cfg.key },
+    body: JSON.stringify({ model: AI.cfg.model || pv.model, temperature: 0, max_tokens: 4000, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: dataUrl } }] }] }) });
+  return String(j.choices?.[0]?.message?.content || '');
+}
+const SHOT_PROMPT = `Das Bild ist ein Screenshot eines Schul-Stundenplans (zum Beispiel aus der App Untis oder WebUntis).
+Lies jede Unterrichtsstunde ab und antworte NUR mit JSON in genau dieser Form:
+{"stunden":[{"tag":1,"std":1,"von":"08:00","bis":"08:45","fach":"M","raum":"A101"}]}
+Regeln:
+- tag: 1 = Montag, 2 = Dienstag, 3 = Mittwoch, 4 = Donnerstag, 5 = Freitag, 6 = Samstag.
+- std: die Nummer der Schulstunde, falls sichtbar, sonst null.
+- von/bis: Uhrzeit im Format HH:MM, falls im Bild sichtbar (oft in der linken Spalte), sonst null. Erfinde keine Uhrzeiten.
+- fach: das Fach-Kürzel oder der Fachname genau so, wie es im Bild steht.
+- raum: der Raum, falls sichtbar, sonst "".
+- Ein Block über mehrere Stunden (Doppelstunde) wird als eine Stunde mit von = Beginn und bis = Ende angegeben, oder als mehrere einzelne Stunden, wenn nur Stundennummern sichtbar sind.
+- Ausgefallene oder durchgestrichene Stunden trotzdem mit angeben, das ist der normale Wochenplan.
+- Pausen, Lehrernamen und Klassennamen nicht als Fach angeben.`;
+function shotLessons(json) {
+  let data; try { data = JSON.parse(json); } catch (e) { const m = String(json).match(/\{[\s\S]*\}/); data = m ? JSON.parse(m[0]) : null; }
+  const list = Array.isArray(data) ? data : data?.stunden || data?.lessons || [];
+  const hm = s => { const m = String(s || '').match(/(\d{1,2})[:.](\d{2})/); return m ? `${pad2(+m[1])}:${m[2]}` : ''; };
+  const out = [];
+  list.forEach(l => {
+    const wd = +l.tag || +l.day; if (!(wd >= 1 && wd <= 6)) return;
+    const code = String(l.fach || l.subject || '').trim(); if (!code) return;
+    let from = hm(l.von || l.from), to = hm(l.bis || l.to);
+    const std = +l.std || +l.period;
+    if ((!from || !to) && BELL[std]) { from ||= BELL[std][0]; to ||= BELL[std][1]; }
+    out.push({ wd, from, to, code, room: String(l.raum || l.room || '').trim(), std });
+  });
+  // merge consecutive single periods of the same subject into one block (double lessons)
+  out.sort((a, b) => a.wd - b.wd || a.from.localeCompare(b.from));
+  const merged = [];
+  out.forEach(l => { const p = merged[merged.length - 1]; if (p && p.wd === l.wd && p.code === l.code && p.room === l.room && l.std && p.std && l.std === p.lastStd + 1) { p.to = l.to; p.lastStd = l.std; } else merged.push({ ...l, lastStd: l.std }); });
+  return merged.map(({ wd, from, to, code, room }) => ({ wd, from, to, code, room }));
+}
+async function untisFromShot(file, statusEl) {
+  if (!aiConfigured()) {
+    statusEl.hidden = false; statusEl.textContent = `Für Screenshots braucht ${PET.name} die KI. Schalte sie über den Glitzer-Knopf in ${PET.name}s Fenster ein (kostenlos mit Gemini), dann klappt es.`;
+    return;
+  }
+  statusEl.hidden = false; statusEl.className = 'imp-check ok'; statusEl.textContent = `${PET.name} liest den Stundenplan … das dauert ein paar Sekunden.`;
+  try {
+    const lessons = shotLessons(await aiVision(SHOT_PROMPT, await imgToJpeg(file)));
+    if (!lessons.length) throw new Error('Ich konnte auf dem Bild keine Stunden erkennen. Am besten klappt ein Screenshot der Wochenansicht.');
+    untisPreviewPlan({ lessons, weeks: 1, fromShot: true }, false);
+  } catch (e) {
+    statusEl.className = 'imp-check warn';
+    statusEl.textContent = e.message === 'limit' ? 'Das KI-Kontingent für heute ist aufgebraucht. Morgen geht es wieder.' : e.message === 'key' ? 'Der KI-Schlüssel funktioniert nicht, schau bitte in den KI-Einstellungen nach.' : (e.message || 'Das hat nicht geklappt.');
+  }
+}
+
 function untisSheet() {
   const doc = Docs.cache.get('school'), f = $('#formSheet'); f.innerHTML = ''; f.onsubmit = e => e.preventDefault();
   el('h3', '', f).textContent = 'Stundenplan aus Untis';
-  el('p', 'store-note imp-note', f).textContent = 'Folio übernimmt deine regelmäßigen Stunden als Wochenplan. Dafür brauchst du deinen persönlichen Kalender-Link (iCal) aus Untis.';
-  el('p', 'imp-h', f).textContent = 'So findest du den Link';
-  const ol = el('ol', 'steps', f);
-  ['In der Untis-App unten auf „Start“ und dann „Kalender“ tippen, oder auf WebUntis im Browser unter dem Stundenplan das Menü mit den drei Punkten öffnen.', 'Den Link kopieren: am besten den privaten iCal-Link, der öffentliche Link zum Stundenplan geht aber auch.', 'Hier einfügen und „Laden“ tippen.'].forEach(t => el('li', '', ol).textContent = t);
-  const w = el('label', 'field', f); el('span', '', w).textContent = 'iCal-Link';
-  const inp = el('input', 'input', w); inp.placeholder = 'Link aus Untis einfügen'; inp.value = doc.untisUrl || ''; inp.autocomplete = 'off'; inp.spellcheck = false;
+  el('p', 'store-note imp-note', f).textContent = 'Folio übernimmt deine regelmäßigen Stunden als Wochenplan. Du hast zwei Wege:';
   const msg = el('p', 'imp-check warn', f); msg.hidden = true;
-  const file = el('input', '', f); file.type = 'file'; file.hidden = true;
-  const r = el('div', 'sheet-actions', f), fb = el('button', 'btn btn-soft', r); fb.type = 'button'; fb.textContent = '.ics-Datei wählen'; fb.onclick = () => file.click();
-  const go = el('button', 'btn btn-primary', r); go.type = 'button'; go.textContent = 'Laden';
+  // 1) screenshot
+  el('p', 'imp-h', f).textContent = 'Mit einem Screenshot (am einfachsten)';
+  el('p', 'store-note imp-note', f).textContent = `Mach in der Untis-App einen Screenshot der Wochenansicht und wähle ihn hier aus. ${PET.name}s KI liest die Stunden ab, das Bild geht dafür an den KI-Anbieter.`;
+  const shot = el('input', '', f); shot.type = 'file'; shot.accept = 'image/*'; shot.hidden = true;
+  const sb = el('button', 'btn btn-primary untis-shot', f); sb.type = 'button'; sb.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><rect x="3" y="5" width="18" height="15" rx="3"/><circle cx="12" cy="12.5" r="3.5"/><path d="M8.5 5l1.5-2h4l1.5 2"/></svg> Screenshot wählen'; sb.onclick = () => shot.click();
+  shot.onchange = () => { const fl = shot.files[0]; if (fl) untisFromShot(fl, msg); shot.value = ''; msg.scrollIntoView?.({ block: 'nearest' }); };
+  // 2) link
+  el('p', 'imp-h', f).textContent = 'Mit dem Link aus Untis';
+  el('p', 'store-note imp-note', f).textContent = 'In der Untis-App unter „Start“ → „Kalender“ oder in WebUntis über die drei Punkte unter dem Stundenplan den Link kopieren: am besten den privaten iCal-Link, der öffentliche Link zum Stundenplan geht aber auch.';
+  const row = el('div', 'sch-add', f), inp = el('input', 'input', row); inp.placeholder = 'Link aus Untis einfügen'; inp.value = doc.untisUrl || ''; inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', 'Link aus Untis');
+  const go = el('button', 'btn btn-soft', row); go.type = 'button'; go.textContent = 'Laden';
   go.onclick = async () => {
-    msg.hidden = true; go.disabled = true; go.textContent = 'Lade …';
+    msg.hidden = true; msg.className = 'imp-check warn'; go.disabled = true; go.textContent = 'Lade …';
     try { const txt = await untisLoadUrl(inp.value); doc.untisUrl = inp.value.trim(); Docs.save('school'); untisPreview(txt, true); }
     catch (e) {
       msg.hidden = false;
-      msg.textContent = e.blocked ? 'Untis lässt Folio den Link leider nicht direkt abrufen (das entscheidet der Untis-Server). Nimm stattdessen eine Kalenderdatei: In WebUntis im Browser unter dem Stundenplan über die drei Punkte den Stundenplan als iCal/.ics exportieren und hier mit „.ics-Datei wählen“ öffnen.' : e.nolink ? 'In diesem Link stehen Schule und Klasse nicht drin. Öffne in WebUntis den Stundenplan deiner Klasse und kopiere den Link aus der Adresszeile (er enthält „school=“ und „id=“), oder nimm den privaten iCal-Link.' : e.notics ? 'Unter diesem Link kommt kein Kalender zurück, sondern eine Webseite. Probier den privaten iCal-Link oder eine .ics-Datei.' : e.message;
+      msg.textContent = e.blocked ? 'Untis lässt Folio den Link leider nicht direkt abrufen (das entscheidet der Untis-Server). Nimm am besten den Screenshot oben.' : e.nolink ? 'In diesem Link stehen Schule und Klasse nicht drin. Öffne in WebUntis den Stundenplan deiner Klasse und kopiere den Link aus der Adresszeile (er enthält „school=“ und „id=“), oder nimm den Screenshot oben.' : e.notics ? 'Unter diesem Link kommt kein Kalender zurück, sondern eine Webseite. Probier den privaten iCal-Link oder den Screenshot oben.' : e.message;
       go.disabled = false; go.textContent = 'Laden';
     }
   };
+  const file = el('input', '', f); file.type = 'file'; file.hidden = true;
   file.onchange = async () => { const fl = file.files[0]; if (!fl) return; try { untisPreview(await csvDecode(fl), false); } catch (e) { toast('Die Datei konnte ich nicht lesen.', 4000); } };
+  const r = el('div', 'sheet-actions', f), fb = el('button', 'btn btn-ghost', r); fb.type = 'button'; fb.textContent = '.ics-Datei wählen'; fb.onclick = () => file.click();
+  const cx = el('button', 'btn btn-ghost', r); cx.type = 'button'; cx.textContent = 'Abbrechen'; cx.onclick = () => closeGenericSheet('#formSheet');
   openGenericSheet('#formSheet');
 }
 function untisPreview(text, fromLink) {
-  const doc = Docs.cache.get('school'), ev = icsParse(text);
+  const ev = icsParse(text);
   if (!ev.length) { toast('In der Datei habe ich keine Stunden gefunden.', 4000); return; }
   const plan = untisWeekPlan(ev);
   if (!plan.lessons.length) { toast('Ich habe keine regelmäßigen Stunden gefunden.', 4000); return; }
+  untisPreviewPlan(plan, fromLink);
+}
+function untisPreviewPlan(plan, fromLink) {
+  const doc = Docs.cache.get('school');
   const codes = [...new Set(plan.lessons.map(l => l.code))].sort();
   const map = {};
   codes.forEach(c => { const g = untisGuess(c), ex = doc.subjects.find(s => s.name.toLowerCase() === g.toLowerCase()); map[c] = ex ? ex.id : 'new:' + g; });
   const f = $('#formSheet'); f.innerHTML = ''; f.classList.add('tl-sheet');
   el('h3', '', f).textContent = `${plan.lessons.length} Stunden pro Woche gefunden`;
-  el('p', 'store-note imp-note', f).textContent = `Aus ${plan.weeks} ${plan.weeks === 1 ? 'Woche' : 'Wochen'}. Prüfe kurz, welches Fach hinter welchem Kürzel steckt.`;
+  el('p', 'store-note imp-note', f).textContent = plan.fromShot ? `Aus deinem Screenshot gelesen. Prüfe kurz die Fächer, und schau danach im Stundenplan, ob Zeiten und Räume stimmen. Fehlende Uhrzeiten habe ich mit üblichen Schulstunden ergänzt.` : `Aus ${plan.weeks} ${plan.weeks === 1 ? 'Woche' : 'Wochen'}. Prüfe kurz, welches Fach hinter welchem Kürzel steckt.`;
   const list = el('div', 'tl-list untis-map', f);
   codes.forEach(c => {
     const row = el('div', 'untis-row', list), n = plan.lessons.filter(l => l.code === c).length;
