@@ -914,6 +914,109 @@ body{background:var(--desk)}
 .mod-scroll,.shelf-wrap,.wx-scroll{padding-bottom:110px!important}
 .tabbar{background:linear-gradient(160deg,rgba(255,255,255,.82),rgba(255,255,255,.62))!important;-webkit-backdrop-filter:saturate(200%) blur(30px);backdrop-filter:saturate(200%) blur(30px)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tabbar{background:linear-gradient(160deg,color-mix(in srgb,var(--card) 82%,transparent),color-mix(in srgb,var(--desk) 74%,transparent))!important}}
+/* ---------- Schule ---------- */
+.sch-les{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line);width:100%;text-align:left}
+.card h3 + .sch-les,.card .sub + .sch-les,.sch-days + .sch-les{border-top:0}
+.sch-les > i{flex:none;width:4px;align-self:stretch;border-radius:2px}
+.sch-time{flex:none;width:48px;display:flex;flex-direction:column;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+.sch-time small{font-size:11.5px;color:var(--muted);font-weight:500}
+.sch-tx{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0}
+.sch-tx b{font-size:15.5px;font-weight:600}
+.sch-tx span{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sch-due{margin:10px 0 0;padding:10px 12px;border-radius:14px;background:color-mix(in srgb,var(--hl) 22%,transparent);font-size:13.5px;font-weight:600}
+.sch-days{margin-bottom:6px}
+.sch-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.it.late .it-s{color:var(--danger)}
+.sch-add{display:flex;gap:8px}
+.sch-add .input{flex:1;min-width:0}
+.sch-hero .fh-v{font-variant-numeric:tabular-nums}
+.sch-grade{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line);width:100%;text-align:left}
+.card h3 + .sch-grade{border-top:0}
+.sch-grade > i{flex:none;width:10px;height:10px;border-radius:50%}
+.sch-avg{flex:none;font-family:var(--font-display);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.sch-avg.good{color:#2F9E6B}.sch-avg.bad{color:var(--danger)}
+.sch-glist{display:flex;flex-direction:column;gap:2px;margin:-4px 0 8px 22px}
+.sch-gitem{display:flex;justify-content:space-between;padding:7px 10px;border-radius:10px;background:var(--grid);font-size:13.5px;text-align:left}
+/* ---------- Lernkarten ---------- */
+.cd-ic{font-family:var(--font-display);font-size:20px;font-weight:700}
+.cd-start{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:24px 18px}
+.cd-start b{font-family:var(--font-display);font-size:24px;letter-spacing:-.02em}
+.cd-start span{color:var(--muted);font-size:14px}
+.cd-start .btn{margin-top:10px;min-width:180px;justify-content:center;height:50px;font-size:16px}
+.cd-row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line);width:100%;text-align:left;font-size:14.5px}
+.card h3 + .cd-row{border-top:0}
+.cd-row b{font-weight:600;overflow-wrap:anywhere}.cd-row span{color:var(--muted);overflow-wrap:anywhere}.cd-row small{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.cd-card{position:relative;width:100%;aspect-ratio:1.45;max-height:46vh;perspective:1200px;padding:0;margin-top:6px}
+.cd-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;border-radius:28px;background:var(--card);
+  box-shadow:inset 0 1px 0 var(--gl-hi,#fff),inset 0 0 0 1px var(--line),0 18px 40px -20px var(--shadow);backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:transform .5s cubic-bezier(.3,1.1,.4,1);text-align:center}
+.cd-face small{position:absolute;top:16px;left:20px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.cd-face b{font-family:var(--font-display);font-size:clamp(22px,7vw,34px);font-weight:700;letter-spacing:-.02em;overflow-wrap:anywhere}
+.cd-face em{font-style:normal;font-size:13px;color:var(--muted)}
+.cd-back{transform:rotateY(180deg)}
+.cd-card.flip .cd-front{transform:rotateY(-180deg)}
+.cd-card.flip .cd-back{transform:rotateY(0)}
+.cd-acts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.cd-acts[hidden]{display:none}
+.cd-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 4px;border-radius:18px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line)}
+.cd-btn b{font-size:14.5px}.cd-btn span{font-size:11px;color:var(--muted)}
+.cd-again b{color:var(--danger)}.cd-hard b{color:#C77700}.cd-good b{color:#2F9E6B}.cd-easy b{color:#2a78d6}
+/* ---------- Finanzen: Sparziele / Abos ---------- */
+.sav-card .rec-shelf-head,.rec-card h3{margin-bottom:6px}
+.rec-card .kpis{margin:6px 0 4px}
+/* ---------- Stimmung ---------- */
+.mood-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:6px 0 4px}
+.mood-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0;border-radius:16px;font-size:11.5px;font-weight:600;color:var(--muted)}
+.mood-btn[aria-pressed="true"]{color:var(--fg)}
+.mood-face{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--mc) 32%,transparent);transition:transform .2s}
+.mood-face .cloud{width:42px;height:32px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.12))}
+.mood-btn[aria-pressed="true"] .mood-face{background:var(--mc);transform:scale(1.08)}
+.cloud.still .c-all,.cloud.still .c-open,.cloud.still .c-body{animation:none!important}
+.mood-btn:not([aria-pressed="true"]) .cloud{opacity:.9}
+.mood-note{margin:8px 0 2px;width:100%;box-sizing:border-box}
+.mood-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:12px;max-width:340px}
+.mood-grid i{aspect-ratio:1;border-radius:6px;background:var(--grid)}
+.mood-grid i.t{box-shadow:0 0 0 2px var(--fg)}
+/* ---------- Countdowns ---------- */
+.cd-strip{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 14px;margin:0 -2px;scrollbar-width:none}
+.cd-strip::-webkit-scrollbar{display:none}
+.cd-chip{flex:none;min-width:104px;max-width:150px;display:flex;flex-direction:column;align-items:flex-start;gap:0;padding:12px 14px;border-radius:22px;text-align:left;background:var(--card);box-shadow:inset 0 0 0 1px var(--line)}
+.cd-chip b{font-family:var(--font-display);font-size:28px;font-weight:700;line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.cd-chip span{font-size:11.5px;color:var(--muted)}
+.cd-chip em{font-style:normal;font-size:13.5px;font-weight:600;margin-top:2px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cd-chip.now{background:var(--hl)!important;color:var(--hl-fg)}
+.cd-add{min-width:84px;align-items:center;justify-content:center;color:var(--muted)}
+.cd-add b{font-weight:400}
+/* ---------- Sperre ---------- */
+.lock{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--desk) 88%,transparent);-webkit-backdrop-filter:saturate(180%) blur(40px);backdrop-filter:saturate(180%) blur(40px);transition:opacity .25s}
+.lock[hidden]{display:none}
+.lock.out{opacity:0}
+html.locked .app,html.locked .as-fab{visibility:hidden}
+.lock-in{display:flex;flex-direction:column;align-items:center;gap:16px;padding:24px}
+.lock-cloud{width:110px;height:82px}
+.lock-in > b{font-family:var(--font-display);font-size:20px;font-weight:700}
+.lock-dots{display:flex;gap:14px;height:16px}
+.lock-dots i{width:14px;height:14px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--fg);transition:background .15s}
+.lock-dots i.on{background:var(--fg)}
+.lock-dots.shake{animation:lockShake .4s}
+@keyframes lockShake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+.lock-pad{display:grid;grid-template-columns:repeat(3,72px);gap:14px;margin-top:6px}
+.lock-key{width:72px;height:72px;border-radius:50%;font-size:28px;font-weight:500;background:var(--card);box-shadow:inset 0 0 0 1px var(--line)}
+.lock-key.none{visibility:hidden}
+.lock-key:active{background:var(--grid)}
+/* ---------- Platte des Tages ---------- */
+.rotd{display:flex;align-items:center;gap:14px;padding:14px}
+.rotd-cover{flex:none;width:58px;height:58px;border-radius:8px;background:linear-gradient(150deg,var(--b1),var(--b3)) center/cover;box-shadow:0 6px 14px -6px rgba(0,0,0,.4)}
+.rotd-tx{flex:1;display:flex;flex-direction:column;min-width:0}
+.rotd-tx small{font-size:11.5px;font-weight:700;color:var(--s1);text-transform:uppercase;letter-spacing:.06em}
+.rotd-tx b{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rotd-tx span{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ---------- Mikrofon im Chat ---------- */
+.as-form .input{padding-right:96px!important}
+.as-mic{position:absolute;right:50px;top:5px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
+.as-mic svg{width:20px;height:20px}
+.as-mic[aria-pressed="true"]{color:#fff;background:#FF3B30;animation:micPulse 1.2s ease-in-out infinite}
+.as-mic[hidden]{display:none}
+@keyframes micPulse{50%{box-shadow:0 0 0 6px rgba(255,59,48,.2)}}
 /* manual dark mode: the same rules as the system dark mode */
 :root[data-theme="light"] .as-act{color:var(--s1)}
 :root[data-theme="dark"] .cg-bot{stop-color:#FFD9E2}
@@ -963,6 +1066,7 @@ html.no-pet .as-fab{display:none!important}
     </header>
     <div class="shelf-wrap">
       <div class="hint" id="hintCard" hidden role="button" tabindex="0" aria-label="Wetter öffnen"></div>
+      <div class="cd-strip" id="cdRow"></div>
       <div class="store-note" id="storeNote">Bibliothek wird geladen …</div>
       <div class="shelf" id="shelf"></div>
       <div class="empty" id="empty" hidden>
@@ -990,6 +1094,8 @@ html.no-pet .as-fab{display:none!important}
   <section class="view" id="focus" hidden><header class="lib-head"></header><div class="mod-scroll"><div class="mod-body"></div></div></section>
   <section class="view" id="finance" hidden><header class="lib-head"></header><div class="mod-scroll"><div class="mod-body"></div></div></section>
   <section class="view" id="recipes" hidden><header class="lib-head"></header><div class="mod-scroll"><div class="mod-body"></div></div></section>
+  <section class="view" id="school" hidden><header class="lib-head"></header><div class="mod-scroll"><div class="mod-body"></div></div></section>
+  <section class="view" id="cards" hidden><header class="lib-head"></header><div class="mod-scroll"><div class="mod-body"></div></div></section>
   <section class="view" id="settings" hidden><header class="lib-head"></header><div class="mod-scroll"><div class="mod-body"></div></div></section>
   <section class="view" id="records" hidden><header class="lib-head"></header><div class="mod-scroll"><div class="mod-body"></div></div></section>
   <nav class="tabbar" id="tabbar" role="tablist" aria-label="Bereiche">
@@ -1081,7 +1187,7 @@ html.no-pet .as-fab{display:none!important}
   <div class="as-list" id="asList" aria-live="polite"></div>
   <div class="as-chips" id="asChips"></div>
   <div class="ai-panel" id="aiPanel" hidden></div>
-  <form class="as-form" id="asForm" autocomplete="off"><input class="input" id="asIn" placeholder="Schreib Krümel …" enterkeyhint="send" aria-label="Nachricht"><button class="as-send" type="submit" aria-label="Senden"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg></button></form>
+  <form class="as-form" id="asForm" autocomplete="off"><input class="input" id="asIn" placeholder="Schreib Krümel …" enterkeyhint="send" aria-label="Nachricht"><button class="as-mic" id="asMic" type="button" aria-label="Diktieren" aria-pressed="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21"/></svg></button><button class="as-send" type="submit" aria-label="Senden"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg></button></form>
 </div>
 <div class="dict-partial" id="dictPartial" hidden></div>
 <form class="sheet" id="formSheet" hidden autocomplete="off"></form>
@@ -2312,7 +2418,7 @@ async function openWeather() {
   if (W.active) startPlace(false);
 }
 function openNotebooks() {
-  showView('library'); renderHintCard();
+  showView('library'); renderHintCard(); renderCountdowns();
 }
 function renderWxShell() {
   const pl = $('#wxPlaces'); pl.textContent = '';
@@ -3112,8 +3218,8 @@ function openForm(cfg) {
 }
 
 /* --- navigation --- */
-const VIEWS = ['library', 'planner', 'weather', 'habits', 'more', 'focus', 'finance', 'recipes', 'records', 'settings'];
-const TAB_OF = { library: 'books', planner: 'planner', weather: 'weather', habits: 'habits', more: 'more', focus: 'more', finance: 'more', recipes: 'more', records: 'more' };
+const VIEWS = ['library', 'planner', 'weather', 'habits', 'more', 'focus', 'finance', 'recipes', 'records', 'settings', 'school', 'cards'];
+const TAB_OF = { library: 'books', planner: 'planner', weather: 'weather', habits: 'habits', more: 'more', focus: 'more', finance: 'more', recipes: 'more', records: 'more', school: 'more', cards: 'more' };
 function showView(v) {
   VIEWS.forEach(x => { const e = document.getElementById(x); if (e) e.hidden = x !== v; });
   document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.tab === TAB_OF[v]));
@@ -3210,7 +3316,7 @@ function renderPlanner() {
 
 /* =================== ZIELE (Gewohnheiten + Ziele) =================== */
 const HAB_COLORS = [{ c: '#430107', n: 'Burgunder' }, { c: '#C99A00', n: 'Amber' }, { c: '#2a78d6', n: 'Blau' }, { c: '#2F6B4A', n: 'Grün' }, { c: '#D9404D', n: 'Rot' }];
-async function openHabits() { showView('habits'); await Docs.get('habits', { habits: [], goals: [] }); renderHabits(); }
+async function openHabits() { showView('habits'); await Promise.all([Docs.get('habits', { habits: [], goals: [] }), Docs.get('mood', { days: {} })]); renderHabits(); }
 function streak(h) { let n = 0, d = new Date(); if (!h.days[isoD(d)]) d = addDays(d, -1); while (h.days[isoD(d)]) { n++; d = addDays(d, -1); } return n; }
 function habitForm(h) {
   openForm({ title: h ? 'Gewohnheit bearbeiten' : 'Neue Gewohnheit', saveLabel: h ? 'Sichern' : 'Hinzufügen', values: h ? { name: h.name, color: h.color } : { color: HAB_COLORS[0].c },
@@ -3231,6 +3337,7 @@ function ring(pct, size, color, label) {
 function renderHabits() {
   head('habits', 'Ziele', 'Gewohnheiten und Ziele', { label: 'Neu', fn: () => habitForm(null) });
   const b = body('habits'), doc = Docs.cache.get('habits'), today = todayISO();
+  renderMood(b);
   const hc = card(b, 'Heute');
   if (!doc.habits.length) { const st = el('div', 'state', hc); el('p', '', st).textContent = 'Lege eine Gewohnheit an, die du täglich abhaken willst, zum Beispiel lesen, Sport oder Wasser trinken.'; const a = el('button', 'btn btn-primary btn-sm', st); a.type = 'button'; a.textContent = 'Gewohnheit anlegen'; a.onclick = () => habitForm(null); }
   const monday = addDays(new Date(), -((new Date().getDay() + 6) % 7));
@@ -3276,7 +3383,7 @@ function renderHabits() {
 /* =================== MEHR =================== */
 async function openMore() {
   showView('more');
-  head('more', 'Mehr', 'Fokus, Finanzen, Rezepte und Musik');
+  head('more', 'Mehr', 'Schule, Fokus, Finanzen und mehr');
   const b = body('more');
   const [fo, rc, sh] = await Promise.all([Docs.get('focus', { sessions: [], set: { f: 25, s: 5, l: 15 } }), Docs.get('recipes', { r: [] }), Docs.get('shopping', { items: [] })]);
   const fin = await Docs.get('fin-' + todayISO().slice(0, 7), { e: [] }), fs = await Docs.get('finset', { budget: 0 });
@@ -3287,7 +3394,10 @@ async function openMore() {
     { v: 'finance', t: 'Finanzen', s: fs.budget ? `${euro(Math.max(0, fs.budget - spent))} Budget übrig` : `Diesen Monat ${euro(spent)} ausgegeben`, ic: '<rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18M16 14.5h2"/>', fn: openFinance },
     { v: 'recipes', t: 'Rezepte', s: `${rc.r.length} ${rc.r.length === 1 ? 'Rezept' : 'Rezepte'} · ${sh.items.filter(i => !i.done).length} auf der Einkaufsliste`, ic: '<path d="M6 3v8a3 3 0 006 0V3M9 3v18M17 21V3c-2.5 1-4 3.5-4 7v3h4"/>', fn: openRecipes }
   ];
-  const recs = await Docs.get('records', { albums: [] });
+  const recs = await Docs.get('records', { albums: [] }), sch = await Docs.get('school', { subjects: [], plan: {}, hw: [], grades: [] }), cds = await Docs.get('cards', { decks: [] });
+  const hwOpen = sch.hw.filter(h => !h.done).length, cdDue = cds.decks.reduce((n, d) => n + d.cards.filter(c => !c.due || c.due <= todayISO()).length, 0);
+  tiles.unshift({ v: 'school', t: 'Schule', s: sch.subjects.length ? (hwOpen ? `${hwOpen} offene ${hwOpen === 1 ? 'Hausaufgabe' : 'Hausaufgaben'}` : 'Stundenplan, Hausaufgaben, Noten') : 'Stundenplan, Hausaufgaben und Noten', ic: '<path d="M3 9l9-5 9 5-9 5-9-5z"/><path d="M7 11.2V16c0 1.2 2.2 2.5 5 2.5s5-1.3 5-2.5v-4.8M21 9v5"/>', fn: openSchool },
+    { v: 'cards', t: 'Lernkarten', s: cds.decks.length ? (cdDue ? `${cdDue} Karten heute fällig` : 'Alles gelernt') : 'Karteikarten, die sich anpassen', ic: '<rect x="3" y="6" width="14" height="11" rx="2"/><path d="M7 3.5h12a2 2 0 012 2V14"/>', fn: openCards });
   tiles.splice(3, 0, { v: 'records', t: 'Plattenspieler', s: recs.albums.length ? `${recs.albums.length} ${recs.albums.length === 1 ? 'Platte' : 'Platten'} im Regal` : 'Deine Playlists und Alben als Schallplatten', ic: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3"/><path d="M12 6.5a5.5 5.5 0 015.5 5.5"/>', fn: openRecords });
   tiles.push({ v: 'settings', t: 'Einstellungen', s: 'Design, Farben und Verbindungen', ic: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>', fn: openSettings });
   tiles.push({ v: 'backup', t: 'Backup', s: STANDALONE ? 'Alles sichern oder wiederherstellen' : 'Alles sichern, zum Beispiel für die iPhone-App', ic: '<path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v2.5A1.5 1.5 0 005.5 21h13a1.5 1.5 0 001.5-1.5V17"/>', fn: openBackup });
@@ -3730,6 +3840,7 @@ function renderFinance() {
   hero.innerHTML = `<span class="fh-l">Ausgegeben</span><span class="fh-v">${euro(spent)}</span>` + (fs.budget ? `<div class="fh-bar"><i style="width:${clamp(spent / fs.budget * 100, 0, 100)}%;background:${spent > fs.budget ? '#FF8A93' : '#FECD00'}"></i></div><span class="fh-s">${spent > fs.budget ? euro(spent - fs.budget) + ' über' : euro(fs.budget - spent) + ' übrig von'} ${euro(fs.budget)} Budget</span>` : '<span class="fh-s">Noch kein Budget festgelegt</span>')
     + `<div class="fh-row"><span>Einnahmen<b>${euro(earned)}</b></span><span>Bilanz<b>${euro(earned - spent)}</b></span></div>`;
   const bb = el('button', 'fh-btn', hero); bb.type = 'button'; bb.textContent = fs.budget ? 'Budget ändern' : 'Budget festlegen'; bb.onclick = budgetForm;
+  renderSavings(b);
   if (!doc.e.length) { const c = card(b, ''); const st = el('div', 'state center', c); el('h2', '', st).textContent = 'Noch keine Einträge'; el('p', '', st).textContent = 'Trag deine erste Ausgabe ein. Diagramme nach Kategorie und Verlauf erscheinen automatisch.'; const a = el('button', 'btn btn-primary', st); a.type = 'button'; a.textContent = 'Ausgabe eintragen'; a.onclick = () => finForm(null); const ib = el('button', 'btn btn-soft', st); ib.type = 'button'; ib.textContent = 'Umsätze aus der Bank importieren'; ib.onclick = finImport; return; }
   // cumulative chart
   const dim = new Date(y, m, 0).getDate(), lastDay = FI.month === todayISO().slice(0, 7) ? new Date().getDate() : dim;
@@ -3746,6 +3857,7 @@ function renderFinance() {
   const max = cats[0]?.v || 1;
   cats.forEach(x => { const r = el('div', 'cat-row', cc); r.innerHTML = `<span class="cr-n">${esc(x.c)}</span><span class="cr-bar"><i style="width:${x.v / max * 100}%"></i></span><span class="cr-v">${euro(x.v)}</span><span class="cr-p">${Math.round(x.v / (spent || 1) * 100)} %</span>`; });
   if (!cats.length) el('p', 'empty-line', cc).textContent = 'Noch keine Ausgaben in diesem Monat.';
+  renderRecurring(b);
   // list
   const lc = card(b, '', 'fin-list' + (FI.edit ? ' editing' : '')), lh = el('div', 'rec-shelf-head', lc);
   el('h3', '', lh).textContent = 'Einträge';
@@ -4038,7 +4150,7 @@ const OM = {
 };
 
 /* --- backup: export everything to one file, and restore it --- */
-const DOC_NAMES = ['weather', 'planner', 'habits', 'focus', 'finset', 'recipes', 'shopping', 'records'];
+const DOC_NAMES = ['weather', 'planner', 'habits', 'focus', 'finset', 'recipes', 'shopping', 'records', 'school', 'cards', 'mood', 'countdowns'];
 async function blobToB64(b) { return new Promise(res => { const f = new FileReader(); f.onload = () => res(f.result); f.readAsDataURL(b); }); }
 async function exportBackup() {
   const out = { app: 'folio', v: 1, at: new Date().toISOString(), nbs: [], docs: {} };
@@ -4357,10 +4469,25 @@ async function asBrief() {
   if (hb.habits.length) lines.push(hl.length ? `• Noch offen: ${hl.map(x => x.name).join(', ')}.` : '• Alle Gewohnheiten für heute erledigt.');
   const so = sh.items.filter(i => !i.done).length; if (so) lines.push(`• ${so} ${so === 1 ? 'Sache' : 'Sachen'} auf der Einkaufsliste.`);
   if (fs.budget) { const spent = fin.e.filter(e => e.t !== 'in').reduce((s, e) => s + e.a, 0); lines.push(`• Noch ${euro(Math.max(0, fs.budget - spent))} im Monatsbudget.`); }
+  try {
+    const sd = await schDoc(), les = schLessons(sd, today), hwSoon = sd.hw.filter(h => !h.done && h.due <= isoD(addDays(new Date(), 1)));
+    if (les.length) lines.push(`• Schule: ${les.map(l => schSub(sd, l.s).name).join(', ')}.`);
+    if (hwSoon.length) lines.push(`• Hausaufgaben bis morgen: ${hwSoon.map(h => schSub(sd, h.s).name).join(', ')}.`);
+    const cdd = await cdDoc(), soon = cdd.items.map(it => ({ it, d: cdDays(cdNext(it)) })).filter(x => x.d >= 0 && x.d <= 14).sort((a, b) => a.d - b.d)[0];
+    if (soon) lines.push(soon.d === 0 ? `• Heute: ${soon.it.title}!` : `• Noch ${soon.d} ${soon.d === 1 ? 'Tag' : 'Tage'} bis ${soon.it.title}.`);
+    const cdk = await cardsDoc(), due = cdk.decks.reduce((n, d) => n + d.cards.filter(isDue).length, 0);
+    if (due) lines.push(`• ${due} Lernkarten sind fällig.`);
+  } catch (e) {}
   if (!lines.length) lines.push('Heute ist nichts eingetragen. Sag mir einfach, was ansteht, ich trage es ein.');
   return { t: `${hi} Dein Tag:\n${lines.join('\n')}` };
 }
 const asHelp = () => `Ich bin ${PET.name} und helfe dir gern! Ich wohne nur auf deinem Gerät. Schreib mir zum Beispiel:
+• „Was habe ich morgen in der Schule?“
+• „Hausaufgabe Mathe Buch S. 42 bis Freitag“
+• „Note 2- in Englisch Klausur“ oder „Mein Schnitt“
+• „Wie viele Tage bis Weihnachten?“
+• „Mir geht’s gut“ – fürs Stimmungs-Tagebuch
+• „Musik-Tipp“ oder „Lernkarten“
 • „Zahnarzt Freitag um 10 Uhr“ – ich trage den Termin ein
 • „Erinnere mich morgen an Müll rausbringen“
 • „Was steht morgen an?“ oder „Was ist diese Woche?“
@@ -4384,8 +4511,73 @@ async function asAnswer(raw) {
   // open a section
   const op = lower.match(/^(?:öffne|zeig(?:e)?(?: mir)?|geh(?:e)? zu(?:m|r)?|wechsel(?:e)? zu(?:m|r)?)\s+(?:die |den |das |meine[n]? |mein )?(\S+)\s*$/);
   if (op) {
-    const k = op[1], map = [[/notiz|buch|bücher/, openNotebooks], [/planer|kalender|termin/, openPlanner], [/ziel|gewohn/, openHabits], [/wetter/, openWeather], [/rezept|einkauf/, openRecipes], [/finanz|budget|geld/, openFinance], [/fokus|timer|pomodoro/, openFocus], [/backup|sicherung/, () => { openMore(); openBackup(); }], [/einstellung|design|farbe/, openSettings], [/mehr/, openMore]];
+    const k = op[1], map = [[/notiz|buch|bücher/, openNotebooks], [/planer|kalender|termin/, openPlanner], [/ziel|gewohn/, openHabits], [/wetter/, openWeather], [/rezept|einkauf/, openRecipes], [/finanz|budget|geld/, openFinance], [/fokus|timer|pomodoro/, openFocus], [/backup|sicherung/, () => { openMore(); openBackup(); }], [/einstellung|design|farbe/, openSettings], [/schule|stundenplan|hausaufgab|noten/, openSchool], [/lernkarte|karteikarte|vokabel/, openCards], [/mehr/, openMore]];
     const hit = map.find(([re]) => re.test(k)); if (hit) { asGo(hit[1]); return null; }
+  }
+  // school
+  if (/stundenplan|welche fächer|was habe ich (heute|morgen) in der schule|schule (heute|morgen)/.test(lower)) {
+    const doc = await schDoc(), iso = asParseDate(raw).iso || todayISO(), ls = schLessons(doc, iso);
+    if (!doc.subjects.length) return { t: 'Du hast noch keine Fächer eingetragen.', actions: [{ l: 'Schule öffnen', fn: () => asGo(openSchool) }] };
+    return { t: ls.length ? `${asCap(asDayName(iso))} hast du:\n${ls.map(l => `• ${l.from ? l.from + ' ' : ''}${schSub(doc, l.s).name}${l.room ? ' (' + l.room + ')' : ''}`).join('\n')}` : `${asCap(asDayName(iso))} ist kein Unterricht eingetragen.`, actions: [{ l: 'Stundenplan', fn: () => asGo(() => { SCH.tab = 'plan'; openSchool(); }) }] };
+  }
+  if (/hausaufgabe|hausi\b|hausis\b/.test(lower)) {
+    const doc = await schDoc();
+    if (q || /^(meine )?hausaufgaben[\s?!.]*$/.test(lower)) {
+      const open = doc.hw.filter(h => !h.done).sort((a, b) => a.due.localeCompare(b.due));
+      return { t: open.length ? `Offene Hausaufgaben:\n${open.map(h => `• ${schSub(doc, h.s).name}: ${h.title} (${dueLabel(h.due)})`).join('\n')}` : 'Du hast keine offenen Hausaufgaben.', actions: [{ l: 'Aufgaben öffnen', fn: () => asGo(() => { SCH.tab = 'hw'; openSchool(); }) }] };
+    }
+    const sub = schFind(doc, raw);
+    if (!sub) return { t: doc.subjects.length ? `In welchem Fach? Schreib zum Beispiel „Hausaufgabe ${doc.subjects[0].name} Buch S. 42 bis Freitag“.` : 'Leg zuerst deine Fächer in der Schule an.', actions: [{ l: 'Schule öffnen', fn: () => asGo(openSchool) }] };
+    const dt = asParseDate(raw); let title = raw; dt.hits.forEach(h => title = title.replace(h, ' '));
+    title = title.replace(new RegExp(sub.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), ' ').replace(/\b(hausaufgaben?|hausis?|in|für|bis|zum|zu|auf|neue|eine?n?|bitte|trag(e)?( ein)?|aufschreiben)\b/gi, ' ');
+    title = asCap(asClean(title)) || 'Hausaufgabe';
+    const h = await hwAdd(sub.id, title, dt.iso || schNextLesson(doc, sub.id));
+    return { t: `Eingetragen: ${sub.name}, „${title}“, fällig ${asDayName(h.due)}. Steht auch im Planer.`, actions: [{ l: 'Rückgängig', fn: () => hwRemove(h).then(() => asSay('Okay, wieder entfernt.')) }] };
+  }
+  if (/\b(note|zensur)\b/.test(lower) && /[1-6]/.test(lower) && !q) {
+    const doc = await schDoc(), sub = schFind(doc, raw), m = raw.match(/\b([1-6](?:[,.]\d)?\s*[+-]?)(?=\s|$|[.,!])/);
+    if (!sub || !m) return { t: 'Schreib zum Beispiel „Note 2- in Mathe (Klausur)“.' };
+    const v = gradeValue(m[1].replace(/\s/g, '')); if (!Number.isFinite(v)) return { t: 'Die Note habe ich nicht verstanden.' };
+    const k = /klausur|arbeit|klassenarbeit/.test(lower) ? 'klausur' : /mündlich|muendlich/.test(lower) ? 'muendlich' : 'test';
+    const g = { id: uid(), s: sub.id, n: m[1].replace(/\s/g, ''), v: Math.round(v * 100) / 100, k, d: todayISO() }; doc.grades.push(g); Docs.save('school');
+    const avg = gradeAvg(doc.grades.filter(x => x.s === sub.id));
+    return { t: `Eingetragen: ${g.n} in ${sub.name} (${GRADE_KIND.find(x => x.v === k).l}). Dein Schnitt in ${sub.name}: ${fmt(avg, 2)}.`, actions: [{ l: 'Rückgängig', fn: () => { doc.grades = doc.grades.filter(x => x !== g); Docs.save('school'); asSay('Okay, wieder entfernt.'); } }] };
+  }
+  if (/(schnitt|durchschnitt|meine noten|notenschnitt)/.test(lower)) {
+    const doc = await schDoc(); if (!doc.grades.length) return { t: 'Du hast noch keine Noten eingetragen.' };
+    const per = doc.subjects.map(s => ({ s, a: gradeAvg(doc.grades.filter(g => g.s === s.id)) })).filter(x => Number.isFinite(x.a)).sort((a, b) => a.a - b.a);
+    return { t: `Gesamtschnitt: ${fmt(gradeAvg(doc.grades), 2)}\n${per.map(x => `• ${x.s.name}: ${fmt(x.a, 2)}`).join('\n')}`, actions: [{ l: 'Noten öffnen', fn: () => asGo(() => { SCH.tab = 'grades'; openSchool(); }) }] };
+  }
+  // countdowns
+  if (/wie (viele|lange).*(tage|noch).*bis|countdown|tage bis/.test(lower)) {
+    const doc = await cdDoc(), dt = asParseDate(raw);
+    if (/countdown/.test(lower) && dt.iso && !q) {
+      let title = raw; dt.hits.forEach(h => title = title.replace(h, ' ')); title = asCap(asClean(title.replace(/\b(countdown|neuer?|bis|zum|zur|für|am|bitte)\b/gi, ' '))) || 'Countdown';
+      const it = { id: uid(), title, date: dt.iso, yearly: /geburtstag|jahrestag/i.test(title) }; doc.items.push(it); Docs.save('countdowns');
+      return { t: `Countdown angelegt: noch ${cdDays(cdNext(it))} Tage bis ${title}. Er steht auf der Startseite.`, actions: [{ l: 'Rückgängig', fn: () => { doc.items = doc.items.filter(x => x !== it); Docs.save('countdowns'); asSay('Okay, wieder entfernt.'); } }] };
+    }
+    const hit = doc.items.find(it => lower.includes(it.title.toLowerCase())) || doc.items.find(it => it.title.toLowerCase().split(/\s+/).some(w => w.length > 3 && lower.includes(w)));
+    if (hit) { const d = cdDays(cdNext(hit)); return { t: d === 0 ? `${hit.title} ist heute!` : `Noch ${d} ${d === 1 ? 'Tag' : 'Tage'} bis ${hit.title}.` }; }
+    if (dt.iso) { const d = cdDays(dt.iso); return { t: `Bis ${longDate(dt.iso)} sind es noch ${d} ${d === 1 ? 'Tag' : 'Tage'}.` }; }
+    const next = doc.items.map(it => ({ it, d: cdDays(cdNext(it)) })).filter(x => x.d >= 0).sort((a, b) => a.d - b.d);
+    return { t: next.length ? `Deine Countdowns:\n${next.map(x => `• ${x.it.title}: noch ${x.d} Tage`).join('\n')}` : 'Du hast noch keine Countdowns. Schreib zum Beispiel „Countdown Sommerferien am 2.7.“.' };
+  }
+  // mood
+  const mm = lower.match(/^(mir geht'?s|mir geht es|ich fühle mich|ich bin|heute war( es)?|mein tag war)\s+(richtig |sehr |echt |ziemlich |total )?(super|toll|großartig|gut|ganz gut|okay|ok|geht so|mittel|nicht so gut|nicht gut|schlecht|mies|traurig|müde)/);
+  if (mm) {
+    const w = mm[4], v = /super|toll|großartig/.test(w) ? 5 : /^gut|ganz gut/.test(w) ? 4 : /okay|ok|geht so|mittel/.test(w) ? 3 : /nicht so|müde/.test(w) ? 2 : 1;
+    await moodSet(v);
+    return { t: v >= 4 ? 'Das freut mich! Ich habe es in dein Stimmungs-Tagebuch geschrieben.' : v === 3 ? 'Okay, notiert. Morgen wird vielleicht noch besser.' : 'Oh nein. Ich habe es notiert. Magst du erzählen, was los ist? Oder soll ich dir Musik auflegen?', actions: v <= 2 ? [{ l: 'Musik auflegen', fn: async () => { const s = await recSuggest(); if (s) { asGo(() => recPutOnFromAnywhere(s.a)); } else asSay('Im Plattenregal ist noch nichts.'); } }] : [] };
+  }
+  // flashcards
+  if (/lernkarten|karteikarten|vokabeln (lernen|abfragen|üben)|abfragen|^lernen$/.test(lower)) {
+    const doc = await cardsDoc(), due = doc.decks.reduce((s, d) => s + d.cards.filter(isDue).length, 0);
+    asGo(openCards); return { t: due ? `${due} Karten sind heute fällig. Viel Erfolg!` : 'Ich öffne deine Lernkarten.' };
+  }
+  // music tip
+  if (/musik ?tipp|was soll ich hören|leg (mir )?(was|etwas|musik) auf|mach musik an|musik an\b/.test(lower)) {
+    const s = await recSuggest(); if (!s) return { t: 'Im Plattenregal ist noch nichts. Füg im Plattenspieler eine Playlist hinzu.', actions: [{ l: 'Plattenspieler', fn: () => asGo(openRecords) }] };
+    asGo(() => recPutOnFromAnywhere(s.a)); return { t: `${s.why}: Ich lege „${s.a.title}“ auf.` };
   }
   // records
   if (/\b(leg|lege|spiel|spiele|platte|auflegen|abspielen|hören|hoeren)\b/.test(lower) && /(\bauf\b|\bab\b|platte|auflegen|abspielen|hören)/.test(lower)) {
@@ -4815,6 +5007,7 @@ function renderRecords() {
   if (SP.onTable && !doc.albums.some(x => x.id === SP.onTable)) SP.onTable = null;
   $('#recPlatter').onclick = () => { if (SP.onTable) recToggle(); };
   recPaintDeck();
+  renderRecOfDay(b, doc);
   // the shelf
   const shelf = card(b, '', 'rec-shelf-card'), sh = el('div', 'rec-shelf-head', shelf);
   el('h3', '', sh).textContent = `Regal${doc.albums.length ? ' · ' + doc.albums.length : ''}`;
@@ -4909,7 +5102,17 @@ const AI_TOOLS = [
   { name: 'notizen_suchen', description: 'Sucht einen Begriff in allen Notizbüchern und liefert Fundstellen.', parameters: { type: 'object', properties: { begriff: { type: 'string' } }, required: ['begriff'] } },
   { name: 'platten_anzeigen', description: 'Zeigt die Schallplatten im Regal des Plattenspielers (eigene Spotify-Playlists und Alben).' },
   { name: 'platte_auflegen', description: 'Legt eine Platte aus dem Regal auf den Plattenspieler und spielt sie ab (über Spotify). Vorher mit platten_anzeigen den genauen Titel holen, wenn nötig.', parameters: { type: 'object', properties: { titel: { type: 'string' } }, required: ['titel'] } },
-  { name: 'bereich_oeffnen', description: 'Öffnet einen Bereich der App, nachdem du geantwortet hast.', parameters: { type: 'object', properties: { bereich: { type: 'string', enum: ['notizen', 'planer', 'ziele', 'wetter', 'rezepte', 'finanzen', 'fokus', 'plattenspieler'] } }, required: ['bereich'] } }
+  { name: 'schule_tag', description: 'Zeigt den Stundenplan eines Tages und die bald fälligen Hausaufgaben.', parameters: { type: 'object', properties: { datum: { type: 'string', description: 'YYYY-MM-DD' } }, required: ['datum'] } },
+  { name: 'hausaufgabe_eintragen', description: 'Trägt eine Hausaufgabe ein (steht dann auch im Planer). Ohne Datum: zur nächsten Stunde des Fachs.', parameters: { type: 'object', properties: { fach: { type: 'string' }, aufgabe: { type: 'string' }, faellig: { type: 'string', description: 'YYYY-MM-DD, optional' } }, required: ['fach', 'aufgabe'] } },
+  { name: 'hausaufgaben_anzeigen', description: 'Zeigt offene Hausaufgaben.' },
+  { name: 'note_eintragen', description: 'Trägt eine Schulnote ein, z. B. "2-", "1,5".', parameters: { type: 'object', properties: { fach: { type: 'string' }, note: { type: 'string' }, art: { type: 'string', enum: ['klausur', 'test', 'muendlich'] } }, required: ['fach', 'note'] } },
+  { name: 'noten_anzeigen', description: 'Zeigt Noten und Durchschnitte (Klausuren zählen doppelt).' },
+  { name: 'stimmung_eintragen', description: 'Trägt die Stimmung des Tages ins Stimmungs-Tagebuch ein: 1 schlecht, 2 nicht so, 3 okay, 4 gut, 5 super.', parameters: { type: 'object', properties: { stufe: { type: 'number' }, notiz: { type: 'string' } }, required: ['stufe'] } },
+  { name: 'countdown_eintragen', description: 'Legt einen Countdown auf der Startseite an.', parameters: { type: 'object', properties: { titel: { type: 'string' }, datum: { type: 'string', description: 'YYYY-MM-DD' }, jaehrlich: { type: 'boolean' } }, required: ['titel', 'datum'] } },
+  { name: 'countdowns_anzeigen', description: 'Zeigt Countdowns mit verbleibenden Tagen.' },
+  { name: 'sparziele_anzeigen', description: 'Zeigt Sparziele mit Stand.' },
+  { name: 'musik_tipp', description: 'Wählt passend zu Uhrzeit, Wetter und Stimmung eine Platte aus dem Regal und legt sie auf.' },
+  { name: 'bereich_oeffnen', description: 'Öffnet einen Bereich der App, nachdem du geantwortet hast.', parameters: { type: 'object', properties: { bereich: { type: 'string', enum: ['notizen', 'planer', 'ziele', 'wetter', 'rezepte', 'finanzen', 'fokus', 'plattenspieler', 'schule', 'lernkarten', 'einstellungen'] } }, required: ['bereich'] } }
 ];
 
 async function aiWeather(iso) {
@@ -4926,7 +5129,7 @@ async function aiWeather(iso) {
   return out;
 }
 const aiFindItem = async id => (await Docs.get('planner', { items: [] })).items.find(i => i.id === id);
-const aiOpen = { notizen: openNotebooks, planer: openPlanner, ziele: openHabits, wetter: openWeather, rezepte: openRecipes, finanzen: openFinance, fokus: openFocus, plattenspieler: openRecords };
+const aiOpen = { notizen: openNotebooks, planer: openPlanner, ziele: openHabits, wetter: openWeather, rezepte: openRecipes, finanzen: openFinance, fokus: openFocus, plattenspieler: openRecords, schule: openSchool, lernkarten: openCards, einstellungen: openSettings };
 
 /* Runs one tool. Returns { r: result for the model, undo?, after?, done? } */
 async function aiTool(name, a, turn) {
@@ -5018,6 +5221,24 @@ async function aiTool(name, a, turn) {
       turn.go = () => recPutOnFromAnywhere(al); turn.goNow = true;
       return { r: { ok: true, titel: al.title, kuenstler: al.artist } };
     }
+    case 'schule_tag': { const doc = await schDoc(), iso = /^\d{4}-\d{2}-\d{2}$/.test(a.datum || '') ? a.datum : todayISO(); return { r: { datum: iso, stunden: schLessons(doc, iso).map(l => ({ fach: schSub(doc, l.s).name, von: l.from, bis: l.to, raum: l.room })), hausaufgaben_bald: doc.hw.filter(h => !h.done && h.due <= isoD(addDays(parseD(iso), 2))).map(h => ({ fach: schSub(doc, h.s).name, aufgabe: h.title, faellig: h.due })) } }; }
+    case 'hausaufgabe_eintragen': {
+      const doc = await schDoc(), sub = schFind(doc, a.fach); if (!sub) return { r: { fehler: 'Fach unbekannt', faecher: doc.subjects.map(s => s.name) } };
+      const h = await hwAdd(sub.id, String(a.aufgabe || 'Hausaufgabe'), /^\d{4}-\d{2}-\d{2}$/.test(a.faellig || '') ? a.faellig : schNextLesson(doc, sub.id));
+      return { r: { ok: true, fach: sub.name, faellig: h.due }, done: true, undo: () => hwRemove(h) };
+    }
+    case 'hausaufgaben_anzeigen': { const doc = await schDoc(); return { r: { offen: doc.hw.filter(h => !h.done).map(h => ({ fach: schSub(doc, h.s).name, aufgabe: h.title, faellig: h.due })) } }; }
+    case 'note_eintragen': {
+      const doc = await schDoc(), sub = schFind(doc, a.fach), v = gradeValue(a.note); if (!sub) return { r: { fehler: 'Fach unbekannt', faecher: doc.subjects.map(s => s.name) } }; if (!Number.isFinite(v)) return { r: { fehler: 'Note ungültig' } };
+      const g = { id: uid(), s: sub.id, n: String(a.note), v: Math.round(v * 100) / 100, k: ['klausur', 'test', 'muendlich'].includes(a.art) ? a.art : 'test', d: todayISO() }; doc.grades.push(g); Docs.save('school');
+      return { r: { ok: true, schnitt_fach: Math.round(gradeAvg(doc.grades.filter(x => x.s === sub.id)) * 100) / 100 }, done: true, undo: () => { doc.grades = doc.grades.filter(x => x !== g); Docs.save('school'); } };
+    }
+    case 'noten_anzeigen': { const doc = await schDoc(); return { r: { gesamt: Math.round(gradeAvg(doc.grades) * 100) / 100 || null, faecher: doc.subjects.map(s => ({ fach: s.name, noten: doc.grades.filter(g => g.s === s.id).map(g => g.n), schnitt: Math.round(gradeAvg(doc.grades.filter(g => g.s === s.id)) * 100) / 100 || null })).filter(x => x.noten.length) } }; }
+    case 'stimmung_eintragen': { const v = clamp(Math.round(num(a.stufe) || 3), 1, 5), before = (await moodDoc()).days[todayISO()]; await moodSet(v, a.notiz || undefined); return { r: { ok: true }, done: true, undo: async () => { const d = await moodDoc(); if (before) d.days[todayISO()] = before; else delete d.days[todayISO()]; Docs.save('mood'); } }; }
+    case 'countdown_eintragen': { const doc = await cdDoc(); if (!/^\d{4}-\d{2}-\d{2}$/.test(a.datum || '')) return { r: { fehler: 'Datum fehlt' } }; const it = { id: uid(), title: String(a.titel), date: a.datum, yearly: !!a.jaehrlich }; doc.items.push(it); Docs.save('countdowns'); return { r: { ok: true, tage: cdDays(cdNext(it)) }, done: true, undo: () => { doc.items = doc.items.filter(x => x !== it); Docs.save('countdowns'); } }; }
+    case 'countdowns_anzeigen': { const doc = await cdDoc(); return { r: { countdowns: doc.items.map(it => ({ titel: it.title, tage: cdDays(cdNext(it)), datum: cdNext(it) })) } }; }
+    case 'sparziele_anzeigen': { const fs = await Docs.get('finset', { budget: 0 }); return { r: { ziele: (fs.goals || []).map(g => ({ name: g.n, ziel_euro: g.t, gespart_euro: g.s })) } }; }
+    case 'musik_tipp': { const s = await recSuggest(); if (!s) return { r: { fehler: 'Regal leer' } }; turn.go = () => recPutOnFromAnywhere(s.a); turn.goNow = true; return { r: { titel: s.a.title, grund: s.why } }; }
     case 'bereich_oeffnen': { const f = aiOpen[a.bereich]; if (f) { turn.go = f; turn.goNow = true; } return { r: { ok: !!f } }; }
   }
   return { r: { fehler: 'Unbekanntes Werkzeug' } };
@@ -5026,7 +5247,7 @@ async function aiTool(name, a, turn) {
 function aiSystem() {
   const now = new Date(), wd = now.toLocaleDateString('de-DE', { weekday: 'long' });
   const days = Array.from({ length: 8 }, (_, i) => { const d = addDays(now, i); return `${d.toLocaleDateString('de-DE', { weekday: 'long' })} = ${isoD(d)}`; }).join(', ');
-  return `Du bist ${PET.name}, eine kleine, freundliche Wolke, die in der App „Folio“ wohnt (Notizbücher, Planer, Ziele, Wetter, Fokus-Timer, Finanzen, Rezepte, Einkaufsliste und ein Plattenspieler, auf dem Spotify-Playlists und Alben als Schallplatten liegen).
+  return `Du bist ${PET.name}, eine kleine, freundliche Wolke, die in der App „Folio“ wohnt (Notizbücher, Planer, Ziele, Wetter, Fokus-Timer, Finanzen, Rezepte, Einkaufsliste, ein Plattenspieler mit Spotify-Playlists als Schallplatten, Schule mit Stundenplan, Hausaufgaben und Noten, Lernkarten, ein Stimmungs-Tagebuch, Countdowns und Sparziele).
 Du hilfst der Person, mit der du sprichst, im Alltag und erledigst Dinge direkt in der App über deine Werkzeuge.
 Heute ist ${wd}, der ${isoD(now)}, es ist ${pad2(now.getHours())}:${pad2(now.getMinutes())} Uhr. Die nächsten Tage: ${days}.
 Regeln:
@@ -5248,6 +5469,18 @@ function renderSettings() {
   sw('Farbiges Leuchten', 'Weiche Farbflecken hinter dem Glas', 'amb');
   sw(PET.name + ' anzeigen', 'Die kleine Wolke unten rechts', 'pet');
 
+  const cl = card(b, 'Sperre');
+  { const r = el('label', 'set-row', cl), tx = el('span', 'set-tx', r); el('b', '', tx).textContent = 'Folio mit Code sperren'; el('span', '', tx).textContent = 'Beim Öffnen und nach einer Minute im Hintergrund';
+    const i = el('input', 'set-toggle', r); i.type = 'checkbox'; i.setAttribute('role', 'switch'); lockLoad(); i.checked = LK.cfg.on;
+    i.onchange = () => { if (i.checked) { i.checked = false; lockSetup(); } else { LK.cfg = { on: false, salt: '', hash: '', cred: '' }; lockSave(); renderSettings(); } }; }
+  if (LK.cfg.on) {
+    const ch = el('button', 'set-link', cl); ch.type = 'button'; ch.innerHTML = `<span class="set-tx"><b>Code ändern</b><span>${LK.cfg.len || 4} Ziffern</span></span><span class="mt-go">${ICONS.next}</span>`; ch.onclick = lockSetup;
+    bioAvailable().then(ok => { if (!ok || !cl.isConnected) return;
+      const r = el('label', 'set-row', cl), tx = el('span', 'set-tx', r); el('b', '', tx).textContent = 'Face ID verwenden'; el('span', '', tx).textContent = 'Entsperren mit Gesicht oder Fingerabdruck, der Code geht weiterhin';
+      const i = el('input', 'set-toggle', r); i.type = 'checkbox'; i.setAttribute('role', 'switch'); i.checked = !!LK.cfg.cred;
+      i.onchange = () => { if (i.checked) bioRegister().then(() => toast('Face ID ist eingerichtet.')).catch(() => { i.checked = false; toast('Face ID konnte nicht eingerichtet werden.'); }); else { LK.cfg.cred = ''; lockSave(); } }; });
+    el('p', 'sub set-hint', cl).textContent = 'Wenn du den Code vergisst und Face ID nicht geht, kommst du nur mit einem Backup wieder an deine Daten. Mach also ab und zu eins.';
+  }
   const c4 = card(b, 'Verbindungen'), link = (ic, label, sub, fn) => {
     const r = el('button', 'set-link', c4); r.type = 'button';
     r.innerHTML = `<span class="set-ic">${ic}</span><span class="set-tx"><b>${esc(label)}</b><span>${esc(sub)}</span></span><span class="mt-go">${ICONS.next}</span>`; r.onclick = fn;
@@ -5262,6 +5495,428 @@ function renderSettings() {
 ['#gearLib', '#gearWx'].forEach(sel => { const g = $(sel); if (g) { g.innerHTML = SET_IC; g.onclick = openSettings; } });
 lookLoad(); lookApply();
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', lookApply);
+/* =================== SCHULE: Stundenplan, Hausaufgaben, Noten =================== */
+const SCH = { tab: 'plan', day: 0, open: null };
+const SCH_COLORS = ['#E5484D', '#2a78d6', '#2F9E6B', '#C99A00', '#8E4EC6', '#E8752A', '#0F9BB5', '#D6409F', '#6B7280', '#7C5C3B'];
+const SCH_SUGGEST = ['Mathe', 'Deutsch', 'Englisch', 'Bio', 'Physik', 'Chemie', 'Geschichte', 'Erdkunde', 'Politik', 'Informatik', 'Französisch', 'Spanisch', 'Latein', 'Kunst', 'Musik', 'Sport', 'Religion', 'Werte und Normen'];
+const WD_SHORT = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+const schDoc = () => Docs.get('school', { subjects: [], plan: {}, hw: [], grades: [] });
+const schSub = (doc, id) => doc.subjects.find(s => s.id === id) || { name: '?', color: '#888' };
+const schWeekday = iso => { const d = parseD(iso).getDay(); return d === 0 ? 7 : d; };
+function schLessons(doc, iso) { return (doc.plan[schWeekday(iso)] || []).slice().sort((a, b) => (a.from || '').localeCompare(b.from || '')); }
+function schNextLesson(doc, sid) {
+  for (let i = 1; i <= 14; i++) { const iso = isoD(addDays(new Date(), i)); if (schLessons(doc, iso).some(l => l.s === sid)) return iso; }
+  return isoD(addDays(new Date(), 1));
+}
+function schFind(doc, text) {
+  const t = String(text || '').toLowerCase();
+  return doc.subjects.find(s => t.includes(s.name.toLowerCase())) || doc.subjects.find(s => s.name.length >= 4 && t.includes(s.name.toLowerCase().slice(0, 4)));
+}
+/* grades: "2-" = 2,3 · "2+" = 1,7 · "1,5" = 1,5 */
+function gradeValue(s) {
+  const t = String(s).trim().replace(',', '.'), m = t.match(/^([1-6])\s*([+-])$/);
+  if (m) return +m[1] + (m[2] === '-' ? 0.3 : -0.3);
+  const v = parseFloat(t); return v >= 1 && v <= 6 ? v : NaN;
+}
+const GRADE_KIND = [{ v: 'klausur', l: 'Klausur', w: 2 }, { v: 'test', l: 'Test', w: 1 }, { v: 'muendlich', l: 'Mündlich', w: 1 }];
+function gradeAvg(list) { let s = 0, w = 0; list.forEach(g => { const kw = GRADE_KIND.find(k => k.v === g.k)?.w || 1; s += g.v * kw; w += kw; }); return w ? s / w : NaN; }
+async function schSync() {
+  // homework done in the planner counts here as well
+  const doc = await schDoc(), pl = await Docs.get('planner', { items: [] });
+  let ch = false; doc.hw.forEach(h => { const it = pl.items.find(i => i.id === h.pid); if (it && !!it.done !== !!h.done) { h.done = !!it.done; ch = true; } });
+  if (ch) Docs.save('school');
+}
+async function openSchool() { showView('school'); await Promise.all([schDoc(), Docs.get('planner', { items: [] })]); await schSync(); renderSchool(); }
+function schSubjectsForm() {
+  const doc = Docs.cache.get('school'), f = $('#formSheet'); f.innerHTML = ''; f.onsubmit = e => e.preventDefault();
+  el('h3', '', f).textContent = 'Deine Fächer';
+  el('p', 'store-note imp-note', f).textContent = 'Tippe an, welche Fächer du hast. Eigene kannst du unten hinzufügen.';
+  const chips = el('div', 'chips', f), names = new Set(doc.subjects.map(s => s.name));
+  const draw = () => { chips.innerHTML = ''; [...new Set([...SCH_SUGGEST, ...names])].forEach(n => { const c = el('button', 'chip', chips); c.type = 'button'; c.textContent = n; c.setAttribute('aria-pressed', names.has(n)); c.onclick = () => { names.has(n) ? names.delete(n) : names.add(n); draw(); }; }); };
+  draw();
+  const row = el('div', 'sch-add', f), inp = el('input', 'input', row); inp.placeholder = 'Eigenes Fach'; const ab = el('button', 'btn btn-soft', row); ab.type = 'button'; ab.textContent = 'Hinzufügen';
+  ab.onclick = () => { const v = inp.value.trim(); if (v) { names.add(v); inp.value = ''; draw(); } };
+  const r = el('div', 'sheet-actions', f), c = el('button', 'btn btn-ghost', r); c.type = 'button'; c.textContent = 'Abbrechen'; c.onclick = () => closeGenericSheet('#formSheet');
+  const s = el('button', 'btn btn-primary', r); s.type = 'button'; s.textContent = 'Sichern';
+  s.onclick = () => {
+    const keep = doc.subjects.filter(x => names.has(x.name)); let i = doc.subjects.length;
+    names.forEach(n => { if (!keep.some(x => x.name === n)) keep.push({ id: uid(), name: n, color: SCH_COLORS[i++ % SCH_COLORS.length] }); });
+    doc.subjects = keep; Docs.save('school'); closeGenericSheet('#formSheet'); renderSchool();
+  };
+  openGenericSheet('#formSheet');
+}
+const subjChips = doc => doc.subjects.map(s => ({ v: s.id, l: s.name }));
+function lessonForm(day, l) {
+  const doc = Docs.cache.get('school');
+  openForm({ title: l ? 'Stunde bearbeiten' : `Stunde am ${['', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'][day]}`, saveLabel: l ? 'Sichern' : 'Hinzufügen',
+    values: l ? { ...l } : { from: '', to: '' },
+    fields: [{ k: 's', label: 'Fach', type: 'chips', options: subjChips(doc) }, { k: 'from', label: 'Beginn', type: 'time' }, { k: 'to', label: 'Ende', type: 'time' }, { k: 'room', label: 'Raum (optional)', type: 'text', placeholder: 'z. B. B204' }],
+    onSave: v => { (doc.plan[day] ||= []); if (l) Object.assign(l, v); else doc.plan[day].push({ id: uid(), s: v.s, from: v.from || '', to: v.to || '', room: v.room || '' }); Docs.save('school'); renderSchool(); },
+    onDelete: l ? () => { doc.plan[day] = doc.plan[day].filter(x => x !== l); Docs.save('school'); renderSchool(); } : null });
+}
+async function hwAdd(sid, title, due) {
+  const doc = await schDoc(), pl = await Docs.get('planner', { items: [] }), sub = schSub(doc, sid);
+  const it = { id: uid(), done: false, title: `${sub.name}: ${title}`, kind: 'task', date: due, time: '', note: 'Hausaufgabe' };
+  pl.items.push(it); Docs.save('planner');
+  const h = { id: uid(), s: sid, title, due, done: false, pid: it.id }; doc.hw.push(h); Docs.save('school');
+  return h;
+}
+async function hwRemove(h) {
+  const doc = await schDoc(), pl = await Docs.get('planner', { items: [] });
+  doc.hw = doc.hw.filter(x => x !== h); pl.items = pl.items.filter(i => i.id !== h.pid); Docs.save('school'); Docs.save('planner');
+}
+async function hwToggle(h) {
+  const pl = await Docs.get('planner', { items: [] }); h.done = !h.done;
+  const it = pl.items.find(i => i.id === h.pid); if (it) it.done = h.done;
+  Docs.save('school'); Docs.save('planner');
+}
+function hwForm(h) {
+  const doc = Docs.cache.get('school');
+  if (!doc.subjects.length) return schSubjectsForm();
+  openForm({ title: h ? 'Hausaufgabe bearbeiten' : 'Neue Hausaufgabe', saveLabel: h ? 'Sichern' : 'Hinzufügen',
+    values: h ? { s: h.s, title: h.title, due: h.due } : { s: doc.subjects[0].id, due: schNextLesson(doc, doc.subjects[0].id) },
+    fields: [{ k: 's', label: 'Fach', type: 'chips', options: subjChips(doc), onPick: (v, form) => { if (!h) { const d = form.querySelector('#ff-due'); if (d) { d.value = schNextLesson(doc, v); d.dispatchEvent(new Event('input')); } } } },
+      { k: 'title', label: 'Aufgabe', type: 'text', required: true, placeholder: 'z. B. Buch S. 42, Nr. 3' }, { k: 'due', label: 'Fällig am', type: 'date', required: true }],
+    onSave: v => {
+      if (h) { Object.assign(h, { s: v.s, title: v.title.trim(), due: v.due }); const pl = Docs.cache.get('planner'), it = pl?.items.find(i => i.id === h.pid); if (it) Object.assign(it, { title: `${schSub(doc, v.s).name}: ${h.title}`, date: v.due }); Docs.save('school'); Docs.save('planner'); renderSchool(); }
+      else hwAdd(v.s, v.title.trim(), v.due).then(() => { renderSchool(); toast('Steht auch im Planer.'); });
+    },
+    onDelete: h ? () => hwRemove(h).then(renderSchool) : null });
+}
+function gradeForm(g) {
+  const doc = Docs.cache.get('school');
+  if (!doc.subjects.length) return schSubjectsForm();
+  openForm({ title: g ? 'Note bearbeiten' : 'Neue Note', saveLabel: g ? 'Sichern' : 'Hinzufügen',
+    values: g ? { s: g.s, n: g.n, k: g.k, d: g.d } : { s: doc.subjects[0].id, k: 'klausur', d: todayISO() },
+    fields: [{ k: 's', label: 'Fach', type: 'chips', options: subjChips(doc) }, { k: 'n', label: 'Note', type: 'text', required: true, placeholder: 'z. B. 2-, 1,5 oder 3+' },
+      { k: 'k', label: 'Art', type: 'chips', options: GRADE_KIND.map(k => ({ v: k.v, l: `${k.l}${k.w > 1 ? ' (zählt doppelt)' : ''}` })) }, { k: 'd', label: 'Datum', type: 'date' }],
+    onSave: v => {
+      const val = gradeValue(v.n); if (!Number.isFinite(val)) { toast('Bitte eine Note von 1 bis 6 eingeben, zum Beispiel 2- oder 1,5.'); return false; }
+      const body2 = { s: v.s, n: String(v.n).trim(), v: Math.round(val * 100) / 100, k: v.k, d: v.d || todayISO() };
+      if (g) Object.assign(g, body2); else doc.grades.push({ id: uid(), ...body2 });
+      Docs.save('school'); renderSchool();
+    },
+    onDelete: g ? () => { doc.grades = doc.grades.filter(x => x !== g); Docs.save('school'); renderSchool(); } : null });
+}
+function dueLabel(iso) { const t = todayISO(); if (iso < t) return 'überfällig'; if (iso === t) return 'heute'; if (iso === isoD(addDays(new Date(), 1))) return 'morgen'; return parseD(iso).toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'numeric' }); }
+function renderSchool() {
+  const doc = Docs.cache.get('school'); if (!doc) return;
+  const action = { plan: { label: 'Stunde', fn: () => doc.subjects.length ? lessonForm(SCH.day || Math.min(5, schWeekday(todayISO()))) : schSubjectsForm() }, hw: { label: 'Aufgabe', fn: () => hwForm(null) }, grades: { label: 'Note', fn: () => gradeForm(null) } }[SCH.tab];
+  head('school', 'Schule', 'Stundenplan, Hausaufgaben und Noten', null, true);
+  const ab = el('button', 'btn btn-primary hl-btn', $('#school .lib-head .head-r') || $('#school .lib-head')); ab.type = 'button'; ab.innerHTML = ICONS.plus + ' ' + action.label; ab.onclick = action.fn;
+  const b = body('school');
+  const seg = el('div', 'seg seg-wide', b);
+  const openHw = doc.hw.filter(h => !h.done).length;
+  [['plan', 'Stundenplan'], ['hw', `Aufgaben${openHw ? ' · ' + openHw : ''}`], ['grades', 'Noten']].forEach(([k, l]) => { const x = el('button', '', seg); x.type = 'button'; x.textContent = l; x.setAttribute('aria-pressed', SCH.tab === k); x.onclick = () => { SCH.tab = k; renderSchool(); }; });
+  if (!doc.subjects.length) {
+    const c = card(b, ''), st = el('div', 'state center', c); el('h2', '', st).textContent = 'Los geht’s'; el('p', '', st).textContent = 'Wähle zuerst deine Fächer aus. Danach kannst du Stundenplan, Hausaufgaben und Noten eintragen.';
+    const a = el('button', 'btn btn-primary', st); a.type = 'button'; a.textContent = 'Fächer auswählen'; a.onclick = schSubjectsForm; return;
+  }
+  if (SCH.tab === 'plan') {
+    const today = todayISO(), tw = schWeekday(today), tc = card(b, tw <= 5 ? 'Heute' : 'Nächster Schultag');
+    const showIso = tw <= 5 ? today : isoD(addDays(new Date(), 8 - tw));
+    if (tw > 5) el('p', 'sub', tc).textContent = longDate(showIso);
+    const ls = schLessons(doc, showIso);
+    if (!ls.length) el('p', 'empty-line', tc).textContent = 'Kein Unterricht eingetragen.';
+    ls.forEach(l => { const s = schSub(doc, l.s), r = el('div', 'sch-les', tc); r.innerHTML = `<span class="sch-time">${esc(l.from || '')}${l.to ? `<small>${esc(l.to)}</small>` : ''}</span><i style="background:${s.color}"></i><span class="sch-tx"><b>${esc(s.name)}</b>${l.room ? `<span>Raum ${esc(l.room)}</span>` : ''}</span>`; });
+    const due = doc.hw.filter(h => !h.done && h.due <= isoD(addDays(parseD(showIso), 1)));
+    if (due.length) { const d = el('p', 'sch-due', tc); d.textContent = `Fällig: ${due.map(h => `${schSub(doc, h.s).name} (${dueLabel(h.due)})`).join(', ')}`; }
+    const wc = card(b, 'Woche'), days = el('div', 'seg sch-days', wc);
+    SCH.day ||= Math.min(5, tw);
+    for (let d = 1; d <= 5; d++) { const x = el('button', '', days); x.type = 'button'; x.textContent = WD_SHORT[d]; x.setAttribute('aria-pressed', SCH.day === d); x.onclick = () => { SCH.day = d; renderSchool(); }; }
+    const list = (doc.plan[SCH.day] || []).slice().sort((a, b2) => (a.from || '').localeCompare(b2.from || ''));
+    if (!list.length) el('p', 'empty-line', wc).textContent = 'Noch keine Stunden an diesem Tag.';
+    list.forEach(l => { const s = schSub(doc, l.s), r = el('button', 'sch-les', wc); r.type = 'button'; r.innerHTML = `<span class="sch-time">${esc(l.from || '–')}${l.to ? `<small>${esc(l.to)}</small>` : ''}</span><i style="background:${s.color}"></i><span class="sch-tx"><b>${esc(s.name)}</b>${l.room ? `<span>Raum ${esc(l.room)}</span>` : ''}</span>`; r.onclick = () => lessonForm(SCH.day, l); });
+    const ad = el('button', 'btn btn-soft btn-sm', wc); ad.type = 'button'; ad.innerHTML = ICONS.plus + ' Stunde hinzufügen'; ad.style.marginTop = '10px'; ad.onclick = () => lessonForm(SCH.day);
+    const fb = el('button', 'btn btn-ghost btn-sm', b); fb.type = 'button'; fb.textContent = 'Fächer bearbeiten'; fb.onclick = schSubjectsForm;
+  } else if (SCH.tab === 'hw') {
+    const open = doc.hw.filter(h => !h.done).sort((a, c) => a.due.localeCompare(c.due)), done = doc.hw.filter(h => h.done).sort((a, c) => c.due.localeCompare(a.due));
+    const oc = card(b, 'Offen');
+    if (!open.length) el('p', 'empty-line', oc).textContent = 'Keine offenen Hausaufgaben. Gut gemacht!';
+    const row = (parent, h) => {
+      const s = schSub(doc, h.s), r = el('div', 'it' + (h.done ? ' done' : ''), parent);
+      const cb = el('button', 'cbx', r); cb.type = 'button'; cb.setAttribute('aria-pressed', !!h.done); cb.setAttribute('aria-label', 'Erledigt'); cb.onclick = () => hwToggle(h).then(renderSchool);
+      const m = el('button', 'it-main', r); m.type = 'button'; m.innerHTML = `<span class="it-t">${esc(h.title)}</span><span class="it-s"><i class="sch-dot" style="background:${s.color}"></i>${esc(s.name)} · ${esc(dueLabel(h.due))}</span>`; m.onclick = () => hwForm(h);
+      if (!h.done && h.due < todayISO()) r.classList.add('late');
+    };
+    open.forEach(h => row(oc, h));
+    if (done.length) { const dc = card(b, `Erledigt · ${done.length}`); done.slice(0, 20).forEach(h => row(dc, h)); }
+  } else {
+    const all = doc.grades, avg = gradeAvg(all);
+    const hc = el('div', 'card fin-hero sch-hero', b);
+    hc.innerHTML = `<span class="fh-l">Gesamtschnitt</span><span class="fh-v">${Number.isFinite(avg) ? fmt(avg, 2) : '–'}</span><span class="fh-s">${all.length ? `${all.length} ${all.length === 1 ? 'Note' : 'Noten'} in ${new Set(all.map(g => g.s)).size} Fächern · Klausuren zählen doppelt` : 'Trag deine erste Note ein.'}</span>`;
+    const sc = card(b, 'Nach Fach');
+    const subs = doc.subjects.map(s => ({ s, list: all.filter(g => g.s === s.id) })).filter(x => x.list.length).sort((a, c) => gradeAvg(a.list) - gradeAvg(c.list));
+    if (!subs.length) el('p', 'empty-line', sc).textContent = 'Noch keine Noten.';
+    subs.forEach(({ s, list }) => {
+      const a = gradeAvg(list), op = SCH.open === s.id, r = el('button', 'sch-grade', sc); r.type = 'button';
+      r.innerHTML = `<i style="background:${s.color}"></i><span class="sch-tx"><b>${esc(s.name)}</b><span>${list.length} ${list.length === 1 ? 'Note' : 'Noten'}: ${esc(list.map(g => g.n).join(', '))}</span></span><span class="sch-avg ${a <= 2.5 ? 'good' : a >= 4 ? 'bad' : ''}">${fmt(a, 2)}</span>`;
+      r.onclick = () => { SCH.open = op ? null : s.id; renderSchool(); };
+      if (op) { const dl = el('div', 'sch-glist', sc); list.slice().sort((x, y) => y.d.localeCompare(x.d)).forEach(g => { const gr = el('button', 'sch-gitem', dl); gr.type = 'button'; gr.innerHTML = `<span>${parseD(g.d).toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })} · ${esc(GRADE_KIND.find(k => k.v === g.k)?.l || '')}</span><b>${esc(g.n)}</b>`; gr.onclick = () => gradeForm(g); }); }
+    });
+  }
+}
+
+/* =================== LERNKARTEN (Wiederholung mit wachsenden Abständen) =================== */
+const CD = { deck: null, q: [], cur: null, flipped: false, done: 0 };
+const cardsDoc = () => Docs.get('cards', { decks: [] });
+const isDue = c => !c.due || c.due <= todayISO();
+async function openCards() { showView('cards'); await cardsDoc(); renderCards(); }
+function deckForm(dk) {
+  const doc = Docs.cache.get('cards');
+  openForm({ title: dk ? 'Stapel umbenennen' : 'Neuer Stapel', saveLabel: dk ? 'Sichern' : 'Anlegen', values: dk ? { n: dk.name } : {},
+    fields: [{ k: 'n', label: 'Name', type: 'text', required: true, placeholder: 'z. B. Englisch Unit 3' }],
+    onSave: v => { if (dk) dk.name = v.n.trim(); else { const nd = { id: uid(), name: v.n.trim(), cards: [] }; doc.decks.push(nd); CD.deck = nd.id; } Docs.save('cards'); renderCards(); },
+    onDelete: dk ? () => { doc.decks = doc.decks.filter(x => x !== dk); CD.deck = null; Docs.save('cards'); renderCards(); } : null });
+}
+function cardsAddForm(dk) {
+  openForm({ title: 'Karten hinzufügen', saveLabel: 'Hinzufügen',
+    fields: [{ k: 't', label: 'Eine Karte pro Zeile: Vorderseite = Rückseite', type: 'textarea', rows: 8, required: true, placeholder: 'apple = Apfel\nto borrow = ausleihen\nHauptstadt von Frankreich = Paris' }],
+    onSave: v => {
+      const lines = String(v.t).split('\n').map(l => l.split(/\s*(?:=|\t|;| - | – )\s*/)).filter(p => p.length >= 2 && p[0].trim() && p[1].trim());
+      if (!lines.length) { toast('Schreib jede Karte als „Vorderseite = Rückseite“.'); return false; }
+      lines.forEach(p => dk.cards.push({ id: uid(), f: p[0].trim(), b: p.slice(1).join(' = ').trim(), due: '', ivl: 0, ef: 2.5, n: 0 }));
+      Docs.save('cards'); renderCards(); toast(`${lines.length} ${lines.length === 1 ? 'Karte' : 'Karten'} hinzugefügt.`);
+    } });
+}
+function cardEditForm(dk, c) {
+  openForm({ title: 'Karte bearbeiten', values: { f: c.f, b: c.b }, fields: [{ k: 'f', label: 'Vorderseite', type: 'text', required: true }, { k: 'b', label: 'Rückseite', type: 'text', required: true }],
+    onSave: v => { c.f = v.f.trim(); c.b = v.b.trim(); Docs.save('cards'); renderCards(); },
+    onDelete: () => { dk.cards = dk.cards.filter(x => x !== c); Docs.save('cards'); renderCards(); } });
+}
+function renderCards() {
+  const doc = Docs.cache.get('cards'); if (!doc) return;
+  const dk = doc.decks.find(d => d.id === CD.deck);
+  if (CD.cur && dk) return renderStudy(dk);
+  head('cards', dk ? dk.name : 'Lernkarten', dk ? `${dk.cards.length} Karten · ${dk.cards.filter(isDue).length} fällig` : 'Lernen mit Karteikarten', null, true);
+  if (dk) { const bk = $('#cards .lib-head .icon-round'); if (bk) bk.onclick = () => { CD.deck = null; renderCards(); }; }
+  const ab = el('button', 'btn btn-primary hl-btn', $('#cards .lib-head .head-r')); ab.type = 'button'; ab.innerHTML = ICONS.plus + (dk ? ' Karten' : ' Stapel'); ab.onclick = () => dk ? cardsAddForm(dk) : deckForm(null);
+  const b = body('cards');
+  if (!dk) {
+    if (!doc.decks.length) { const c = card(b, ''), st = el('div', 'state center', c); el('h2', '', st).textContent = 'Noch keine Lernkarten'; el('p', '', st).textContent = 'Leg einen Stapel an, zum Beispiel für Vokabeln. Beim Lernen kommen Karten, die du gut kannst, seltener dran und schwierige öfter.'; const a = el('button', 'btn btn-primary', st); a.type = 'button'; a.textContent = 'Stapel anlegen'; a.onclick = () => deckForm(null); return; }
+    doc.decks.forEach(d => {
+      const due = d.cards.filter(isDue).length, t = el('button', 'more-tile', b); t.type = 'button';
+      t.innerHTML = `<span class="mt-ic cd-ic">${due || '✓'}</span><span class="mt-tx"><b>${esc(d.name)}</b><span>${d.cards.length} Karten · ${due ? due + ' heute fällig' : 'alles gelernt'}</span></span><span class="mt-go">${ICONS.next}</span>`;
+      t.onclick = () => { CD.deck = d.id; renderCards(); };
+    });
+    return;
+  }
+  const due = dk.cards.filter(isDue);
+  const sc = el('div', 'card cd-start', b);
+  sc.innerHTML = `<b>${due.length ? due.length + (due.length === 1 ? ' Karte' : ' Karten') + ' fällig' : 'Für heute alles gelernt'}</b><span>${due.length ? 'Ungefähr ' + Math.max(1, Math.round(due.length * 0.15)) + ' Minuten' : 'Morgen geht’s weiter. Du kannst trotzdem üben.'}</span>`;
+  const go = el('button', 'btn btn-big', sc); go.type = 'button'; go.textContent = due.length ? 'Lernen' : 'Trotzdem üben'; go.disabled = !dk.cards.length;
+  go.onclick = () => { CD.q = (due.length ? due : dk.cards.slice()).sort(() => Math.random() - .5).slice(0, 60); CD.done = 0; CD.cur = CD.q.shift(); CD.flipped = false; CD.practice = !due.length; renderCards(); };
+  const lc = card(b, 'Karten');
+  if (!dk.cards.length) el('p', 'empty-line', lc).textContent = 'Noch keine Karten. Tipp oben auf „Karten“.';
+  dk.cards.forEach(c => { const r = el('button', 'cd-row', lc); r.type = 'button'; r.innerHTML = `<b>${esc(c.f)}</b><span>${esc(c.b)}</span><small>${c.due && c.due > todayISO() ? 'in ' + Math.round((parseD(c.due) - parseD(todayISO())) / 864e5) + ' T.' : 'fällig'}</small>`; r.onclick = () => cardEditForm(dk, c); });
+  const rn = el('button', 'btn btn-ghost btn-sm', b); rn.type = 'button'; rn.textContent = 'Stapel umbenennen oder löschen'; rn.onclick = () => deckForm(dk);
+}
+function renderStudy(dk) {
+  const c = CD.cur, left = CD.q.length + 1;
+  head('cards', dk.name, `Noch ${left} ${left === 1 ? 'Karte' : 'Karten'}`, null, true);
+  const bk = $('#cards .lib-head .icon-round'); if (bk) bk.onclick = () => { CD.cur = null; Docs.save('cards'); renderCards(); };
+  const b = body('cards');
+  const fc = el('button', 'cd-card' + (CD.flipped ? ' flip' : ''), b); fc.type = 'button'; fc.setAttribute('aria-label', CD.flipped ? 'Rückseite' : 'Karte umdrehen');
+  fc.innerHTML = `<span class="cd-face cd-front"><small>Vorderseite</small><b>${esc(c.f)}</b><em>Tippen zum Umdrehen</em></span><span class="cd-face cd-back"><small>Rückseite</small><b>${esc(c.b)}</b><em>${esc(c.f)}</em></span>`;
+  fc.onclick = () => { CD.flipped = !CD.flipped; fc.classList.toggle('flip', CD.flipped); acts.hidden = !CD.flipped; };
+  const acts = el('div', 'cd-acts', b); acts.hidden = !CD.flipped;
+  [['again', 'Nochmal', '< 1 Min.'], ['hard', 'Schwer', ''], ['good', 'Gut', ''], ['easy', 'Leicht', '']].forEach(([k, l]) => {
+    const x = el('button', 'cd-btn cd-' + k, acts); x.type = 'button'; x.innerHTML = `<b>${l}</b><span>${cardNext(c, k).label}</span>`;
+    x.onclick = () => { if (!CD.practice) Object.assign(c, cardNext(c, k).set); if (k === 'again') CD.q.splice(Math.min(3, CD.q.length), 0, c); else CD.done++; CD.cur = CD.q.shift() || null; CD.flipped = false; Docs.save('cards'); if (!CD.cur) { toast(`Geschafft! ${CD.done} ${CD.done === 1 ? 'Karte' : 'Karten'} gelernt.`, 3000); petMood?.('happy', 2000); } renderCards(); };
+  });
+}
+function cardNext(c, k) {
+  let ivl = c.ivl || 0, ef = c.ef || 2.5, n = c.n || 0;
+  if (k === 'again') { n = 0; ivl = 0; ef = Math.max(1.3, ef - 0.2); }
+  else if (k === 'hard') { ivl = Math.max(1, Math.round(Math.max(ivl, 1) * 1.2)); ef = Math.max(1.3, ef - 0.15); n++; }
+  else if (k === 'good') { ivl = n === 0 ? 1 : n === 1 ? 3 : Math.round(ivl * ef); n++; }
+  else { ivl = n === 0 ? 4 : Math.round(Math.max(ivl, 1) * ef * 1.3); ef += 0.15; n++; }
+  const label = k === 'again' ? 'gleich nochmal' : ivl === 1 ? 'morgen' : ivl < 30 ? `in ${ivl} Tagen` : `in ${Math.round(ivl / 30)} Mon.`;
+  return { label, set: { ivl, ef: Math.round(ef * 100) / 100, n, due: k === 'again' ? todayISO() : isoD(addDays(new Date(), ivl)) } };
+}
+
+/* =================== SPARZIELE + WIEDERKEHRENDE ZAHLUNGEN (in Finanzen) =================== */
+function saveGoalForm(g) {
+  const fs = Docs.cache.get('finset'); fs.goals ||= [];
+  openForm({ title: g ? 'Sparziel bearbeiten' : 'Neues Sparziel', saveLabel: g ? 'Sichern' : 'Anlegen', values: g ? { n: g.n, t: String(g.t).replace('.', ','), s: String(g.s).replace('.', ',') } : { s: '0' },
+    fields: [{ k: 'n', label: 'Wofür?', type: 'text', required: true, placeholder: 'z. B. Kopfhörer' }, { k: 't', label: 'Ziel in €', type: 'money', required: true, placeholder: '120' }, { k: 's', label: 'Schon gespart in €', type: 'money', placeholder: '0' }],
+    onSave: v => { const t = num(String(v.t).replace(/\./g, '').replace(',', '.')), s0 = num(String(v.s || '0').replace(/\./g, '').replace(',', '.')) || 0; if (!(t > 0)) { toast('Bitte einen Zielbetrag eingeben.'); return false; } if (g) Object.assign(g, { n: v.n.trim(), t, s: s0 }); else fs.goals.push({ id: uid(), n: v.n.trim(), t, s: s0 }); Docs.save('finset'); finKeep(); },
+    onDelete: g ? () => { fs.goals = fs.goals.filter(x => x !== g); Docs.save('finset'); finKeep(); } : null });
+}
+function saveDepositForm(g) {
+  openForm({ title: `In „${g.n}“ einzahlen`, saveLabel: 'Einzahlen', fields: [{ k: 'a', label: 'Betrag in € (minus zum Abheben)', type: 'money', required: true, placeholder: '10' }],
+    onSave: v => { const a = num(String(v.a).replace(/\./g, '').replace(',', '.')); if (!Number.isFinite(a) || !a) return false; const before = g.s; g.s = Math.max(0, Math.round((g.s + a) * 100) / 100); Docs.save('finset'); finKeep(); if (before < g.t && g.s >= g.t) { toast(`Ziel erreicht: ${g.n}! 🎉`, 3500); petMood?.('love', 2500); } } });
+}
+function renderSavings(b) {
+  const fs = Docs.cache.get('finset'); fs.goals ||= [];
+  const c = card(b, '', 'sav-card'), h = el('div', 'rec-shelf-head', c); el('h3', '', h).textContent = 'Sparziele';
+  const ad = el('button', 'btn btn-soft btn-sm', h); ad.type = 'button'; ad.innerHTML = ICONS.plus + ' Ziel'; ad.onclick = () => saveGoalForm(null);
+  if (!fs.goals.length) { el('p', 'empty-line', c).textContent = 'Spar auf etwas hin, zum Beispiel Kopfhörer oder eine Reise.'; return; }
+  fs.goals.forEach(g => {
+    const pct = Math.min(1, g.s / g.t), r = el('div', 'goal', c);
+    r.innerHTML = ring(pct, 58, pct >= 1 ? '#2F9E6B' : 'var(--s1)', Math.round(pct * 100) + '%');
+    const info = el('button', 'goal-info', r); info.type = 'button'; info.onclick = () => saveGoalForm(g);
+    el('b', '', info).textContent = g.n; el('span', '', info).textContent = pct >= 1 ? `Geschafft! ${euro(g.s)}` : `${euro(g.s)} von ${euro(g.t)} · noch ${euro(g.t - g.s)}`;
+    const p = el('button', 'icon-round', r); p.type = 'button'; p.textContent = '+'; p.setAttribute('aria-label', 'Einzahlen'); p.style.fontSize = '20px'; p.onclick = () => saveDepositForm(g);
+  });
+}
+async function findRecurring(fromMonth) {
+  const [y, m] = fromMonth.split('-').map(Number), months = Array.from({ length: 6 }, (_, i) => isoD(new Date(y, m - 1 - i, 1)).slice(0, 7));
+  const docs = await Promise.all(months.map(mk => Docs.get('fin-' + mk, { e: [] })));
+  const groups = {};
+  docs.forEach((d, i) => d.e.filter(e => e.t !== 'in').forEach(e => { const k = e.p || (e.n || '').toLowerCase().replace(/[^a-zäöüß]+/g, ' ').trim(); if (!k) return; (groups[k] ||= []).push({ ...e, mi: i }); }));
+  const out = [];
+  Object.values(groups).forEach(list => {
+    const ms = new Set(list.map(e => e.mi)); if (ms.size < 2) return;
+    const amts = list.map(e => e.a).sort((a, b) => a - b), med = amts[Math.floor(amts.length / 2)];
+    if (!list.every(e => Math.abs(e.a - med) <= Math.max(1, med * 0.15))) return;
+    if (list.length > ms.size + 1) return; // several per month: shopping, not a subscription
+    out.push({ n: list[0].n || list[0].c, c: list[0].c, a: med, months: ms.size });
+  });
+  return out.sort((a, b) => b.a - a.a);
+}
+async function renderRecurring(b) {
+  const c = card(b, 'Wiederkehrende Zahlungen', 'rec-card');
+  const p = el('p', 'empty-line', c); p.textContent = 'Suche in den letzten sechs Monaten …';
+  const list = await findRecurring(FI.month);
+  if (!c.isConnected) return;
+  if (!list.length) { p.textContent = 'Noch nichts gefunden. Folio erkennt Abos, sobald eine Zahlung in mindestens zwei Monaten gleich auftaucht, am besten nach einem Import.'; return; }
+  p.remove();
+  const tot = list.reduce((s, x) => s + x.a, 0);
+  const sum = el('div', 'kpis', c); sum.innerHTML = `<div class="kpi"><b>${euro(tot)}</b><span>pro Monat</span></div><div class="kpi"><b>${euro(tot * 12)}</b><span>pro Jahr</span></div>`;
+  list.forEach(x => { const r = el('div', 'fin-row', c); r.innerHTML = `<span class="fr-ic">${esc(x.c.slice(0, 2))}</span><span class="fr-t"><b>${esc(x.n)}</b><span>${esc(x.c)} · ${euro(x.a * 12)} im Jahr</span></span><span class="fr-a">${euro(x.a)}</span>`; });
+}
+
+/* =================== STIMMUNG =================== */
+const MOOD5 = [{ v: 1, l: 'Schlecht', m: 'sad', c: '#6B7280' }, { v: 2, l: 'Nicht so', m: 'sleepy', c: '#8E9BB5' }, { v: 3, l: 'Okay', m: 'idle', c: '#C9B98A' }, { v: 4, l: 'Gut', m: 'happy', c: '#7BC47F' }, { v: 5, l: 'Super', m: 'love', c: '#F2A65A' }];
+const moodDoc = () => Docs.get('mood', { days: {} });
+async function moodSet(v, note) { const d = await moodDoc(), t = todayISO(); d.days[t] = { m: v, t: note ?? d.days[t]?.t ?? '' }; Docs.save('mood'); }
+function moodFace(m, k) { return cloudSVG('mood' + k).replace('class="cloud"', `class="cloud still" data-mood="${m}"`); }
+function renderMood(b) {
+  const doc = Docs.cache.get('mood'); if (!doc) return;
+  const t = todayISO(), today = doc.days[t];
+  const c = card(b, today ? 'Deine Stimmung heute' : 'Wie geht’s dir heute?', 'mood-card');
+  const row = el('div', 'mood-row', c);
+  MOOD5.forEach(mo => { const x = el('button', 'mood-btn', row); x.type = 'button'; x.setAttribute('aria-pressed', today?.m === mo.v); x.setAttribute('aria-label', mo.l); x.style.setProperty('--mc', mo.c); x.innerHTML = `<span class="mood-face">${moodFace(mo.m, mo.v)}</span><span>${mo.l}</span>`; x.onclick = () => moodSet(mo.v).then(() => renderHabits()); });
+  if (today) { const n = el('input', 'input mood-note', c); n.placeholder = 'Was war heute? (optional)'; n.value = today.t || ''; n.onchange = () => moodSet(today.m, n.value.trim()); }
+  const days = Array.from({ length: 35 }, (_, i) => isoD(addDays(new Date(), i - 34))), grid = el('div', 'mood-grid', c);
+  days.forEach(d => { const e = doc.days[d], i = el('i', '', grid); if (e) i.style.background = MOOD5[e.m - 1].c; i.title = `${parseD(d).toLocaleDateString('de-DE')}${e ? ': ' + MOOD5[e.m - 1].l + (e.t ? ' – ' + e.t : '') : ''}`; if (d === t) i.classList.add('t'); });
+  const vals = days.map(d => doc.days[d]?.m).filter(Boolean);
+  if (vals.length >= 3) el('p', 'sub', c).textContent = `Letzte 5 Wochen: meistens „${MOOD5[Math.round(vals.reduce((a, v) => a + v, 0) / vals.length) - 1].l}“ · ${vals.length} Tage eingetragen`;
+}
+
+/* =================== COUNTDOWNS (Startseite) =================== */
+const cdDoc = () => Docs.get('countdowns', { items: [] });
+function cdNext(it) {
+  if (!it.yearly) return it.date;
+  const t = todayISO(), [, m, d] = it.date.split('-'); let y = new Date().getFullYear();
+  if (`${y}-${m}-${d}` < t) y++; return `${y}-${m}-${d}`;
+}
+const cdDays = iso => Math.round((parseD(iso) - parseD(todayISO())) / 864e5);
+function cdForm(it) {
+  const doc = Docs.cache.get('countdowns');
+  openForm({ title: it ? 'Countdown bearbeiten' : 'Neuer Countdown', saveLabel: it ? 'Sichern' : 'Anlegen', values: it ? { ...it, rep: it.yearly ? 'y' : 'o' } : { rep: 'o' },
+    fields: [{ k: 'title', label: 'Wofür?', type: 'text', required: true, placeholder: 'z. B. Sommerferien' }, { k: 'date', label: 'Datum', type: 'date', required: true }, { k: 'rep', label: 'Wiederholen', type: 'chips', options: [{ v: 'o', l: 'Einmalig' }, { v: 'y', l: 'Jedes Jahr (z. B. Geburtstag)' }] }],
+    onSave: v => { const body2 = { title: v.title.trim(), date: v.date, yearly: v.rep === 'y' }; if (it) Object.assign(it, body2); else doc.items.push({ id: uid(), ...body2 }); Docs.save('countdowns'); renderCountdowns(); },
+    onDelete: it ? () => { doc.items = doc.items.filter(x => x !== it); Docs.save('countdowns'); renderCountdowns(); } : null });
+}
+async function renderCountdowns() {
+  const host = $('#cdRow'); if (!host) return;
+  const doc = await cdDoc(); host.innerHTML = '';
+  const list = doc.items.map(it => ({ it, d: cdDays(cdNext(it)) })).filter(x => x.d >= 0).sort((a, b) => a.d - b.d);
+  // past one-off countdowns tidy themselves up after a week
+  const old = doc.items.filter(it => !it.yearly && cdDays(it.date) < -7); if (old.length) { doc.items = doc.items.filter(x => !old.includes(x)); Docs.save('countdowns'); }
+  list.forEach(({ it, d }) => { const c = el('button', 'cd-chip' + (d === 0 ? ' now' : ''), host); c.type = 'button'; c.innerHTML = `<b>${d === 0 ? 'Heute!' : d}</b><span>${d === 0 ? '' : d === 1 ? 'Tag bis' : 'Tage bis'}</span><em>${esc(it.title)}</em>`; c.onclick = () => cdForm(it); });
+  const add = el('button', 'cd-chip cd-add', host); add.type = 'button'; add.innerHTML = `<b>+</b><em>Countdown</em>`; add.onclick = () => cdForm(null);
+}
+
+/* =================== SPERRE (Code und Face ID) =================== */
+const LOCK_KEY = 'folio:lock';
+const LK = { cfg: { on: false, salt: '', hash: '', cred: '' }, hiddenAt: 0, locked: false, entry: '' };
+function lockLoad() { try { Object.assign(LK.cfg, JSON.parse(localStorage.getItem(LOCK_KEY)) || {}); } catch (e) {} }
+function lockSave() { try { localStorage.setItem(LOCK_KEY, JSON.stringify(LK.cfg)); } catch (e) {} }
+const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function pinHash(pin, salt) { return b64(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(salt + ':' + pin))); }
+async function bioAvailable() { try { return !!(window.PublicKeyCredential && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); } catch (e) { return false; } }
+async function bioRegister() {
+  const cred = await navigator.credentials.create({ publicKey: { challenge: crypto.getRandomValues(new Uint8Array(32)), rp: { name: 'Folio', id: location.hostname }, user: { id: crypto.getRandomValues(new Uint8Array(16)), name: 'Folio-Sperre', displayName: 'Folio-Sperre' }, pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }], authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'discouraged' }, timeout: 60000 } });
+  LK.cfg.cred = b64(cred.rawId); lockSave();
+}
+async function bioUnlock() {
+  await navigator.credentials.get({ publicKey: { challenge: crypto.getRandomValues(new Uint8Array(32)), allowCredentials: [{ type: 'public-key', id: unb64(LK.cfg.cred) }], userVerification: 'required', rpId: location.hostname, timeout: 60000 } });
+  lockOpen();
+}
+function lockShow() {
+  if (!LK.cfg.on || LK.locked) return;
+  LK.locked = true; LK.entry = '';
+  let o = $('#lockScreen'); if (!o) { o = el('div', 'lock', document.body); o.id = 'lockScreen'; }
+  o.innerHTML = `<div class="lock-in"><div class="lock-cloud">${cloudSVG('lock').replace('class="cloud"', 'class="cloud" data-mood="sleepy"')}</div><b>Folio ist gesperrt</b><div class="lock-dots"></div><div class="lock-pad"></div><div class="lock-alt"></div></div>`;
+  const pad = o.querySelector('.lock-pad');
+  [1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, '⌫'].forEach(k => { const x = el('button', 'lock-key' + (k === '' ? ' none' : ''), pad); x.type = 'button'; x.textContent = k; if (k === '') x.disabled = true; x.onclick = () => lockKey(String(k)); });
+  const alt = o.querySelector('.lock-alt');
+  if (LK.cfg.cred) { const f = el('button', 'btn btn-soft', alt); f.type = 'button'; f.textContent = 'Mit Face ID entsperren'; f.onclick = () => bioUnlock().catch(() => {}); }
+  lockDots(); o.hidden = false; document.documentElement.classList.add('locked');
+}
+function lockDots() { const d = $('#lockScreen .lock-dots'); if (d) d.innerHTML = Array.from({ length: Math.max(4, LK.cfg.len || 4) }, (_, i) => `<i class="${i < LK.entry.length ? 'on' : ''}"></i>`).join(''); }
+async function lockKey(k) {
+  if (k === '⌫') LK.entry = LK.entry.slice(0, -1); else if (LK.entry.length < 6) LK.entry += k;
+  lockDots();
+  if (LK.entry.length >= (LK.cfg.len || 4)) {
+    if (await pinHash(LK.entry, LK.cfg.salt) === LK.cfg.hash) return lockOpen();
+    const d = $('#lockScreen .lock-dots'); d.classList.add('shake'); setTimeout(() => { d.classList.remove('shake'); LK.entry = ''; lockDots(); }, 450);
+  }
+}
+function lockOpen() { LK.locked = false; const o = $('#lockScreen'); if (o) { o.classList.add('out'); setTimeout(() => { o.hidden = true; o.classList.remove('out'); }, 250); } document.documentElement.classList.remove('locked'); }
+function lockSetup() {
+  openForm({ title: 'Code festlegen', saveLabel: 'Sperre einschalten', fields: [{ k: 'a', label: 'Neuer Code (4 bis 6 Ziffern)', type: 'number', required: true, placeholder: '••••' }, { k: 'b', label: 'Code wiederholen', type: 'number', required: true, placeholder: '••••' }],
+    onSave: v => {
+      const a = String(v.a).trim(), b2 = String(v.b).trim();
+      if (!/^\d{4,6}$/.test(a)) { toast('Der Code braucht 4 bis 6 Ziffern.'); return false; }
+      if (a !== b2) { toast('Die beiden Codes sind nicht gleich.'); return false; }
+      LK.cfg.salt = b64(crypto.getRandomValues(new Uint8Array(12))); LK.cfg.len = a.length;
+      pinHash(a, LK.cfg.salt).then(h => { LK.cfg.hash = h; LK.cfg.on = true; lockSave(); renderSettings(); toast('Folio ist jetzt gesperrt, wenn du es öffnest.'); });
+    } });
+  ['#ff-a', '#ff-b'].forEach(s => { const i = $(s); if (i) { i.type = 'password'; i.inputMode = 'numeric'; i.autocomplete = 'off'; i.maxLength = 6; } });
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden) LK.hiddenAt = Date.now(); else if (LK.cfg.on && LK.hiddenAt && Date.now() - LK.hiddenAt > 60000) lockShow(); });
+
+/* =================== PLATTE DES TAGES + MUSIK-TIPP =================== */
+function recOfDay(albums) { if (!albums.length) return null; const t = todayISO(); let h = 0; for (const c of t) h = (h * 31 + c.charCodeAt(0)) >>> 0; return albums[h % albums.length]; }
+async function recSuggest() {
+  const doc = await recDoc(); if (!doc.albums.length) return null;
+  const h = new Date().getHours(), mood = (await moodDoc()).days[todayISO()]?.m;
+  let wx = null; try { wx = await aiWeather(todayISO()); } catch (e) {}
+  const rainy = /regen|schauer|gewitter|niesel|schnee/i.test(wx?.wetter || ''), sunny = /klar|sonnig|überwiegend klar/i.test(wx?.wetter || '') && (wx?.max_grad ?? 0) >= 18;
+  const pools = [];
+  if (h >= 21 || h < 6) pools.push([/chill|night|nacht|abend|sleep|schlaf|ruhig|calm|lofi|piano/i, 'Es ist spät, also etwas Ruhiges']);
+  if (mood && mood <= 2) pools.push([/chill|cozy|gemütlich|sad|comfort|ruhig|acoustic|calm/i, 'Damit du dich ein bisschen besser fühlst']);
+  if (rainy) pools.push([/regen|rain|chill|cozy|gemütlich|lofi|acoustic|herbst/i, 'Passend zum Regen draußen']);
+  if (sunny) pools.push([/sommer|summer|sun|sonne|party|gute laune|happy|dance|road|auto/i, 'Die Sonne scheint, also gute Laune']);
+  if (h >= 6 && h < 10) pools.push([/morgen|morning|wach|energy|start|gute laune|happy/i, 'Für einen guten Start in den Tag']);
+  if (/lern|focus|fokus|study/i.test(doc.albums.map(a => a.title).join(' '))) pools.push([/lern|focus|fokus|study/i, 'Zum Konzentrieren']);
+  for (const [re, why] of pools) { const hits = doc.albums.filter(a => re.test(a.title)); if (hits.length) return { a: hits[Math.floor(Math.random() * hits.length)], why }; }
+  return { a: recOfDay(doc.albums), why: 'Meine Platte des Tages für dich' };
+}
+function renderRecOfDay(b, doc) {
+  const a = recOfDay(doc.albums); if (!a || doc.albums.length < 3) return;
+  const c = el('div', 'card rotd', b);
+  c.innerHTML = `<span class="rotd-cover"${a.cover ? ` style="background-image:url('${esc(a.cover)}')"` : ''}></span><span class="rotd-tx"><small>Platte des Tages</small><b>${esc(a.title)}</b><span>${esc(a.artist || '')}</span></span>`;
+  const go = el('button', 'btn btn-primary btn-sm', c); go.type = 'button'; go.textContent = 'Auflegen'; go.onclick = () => recPutOn(a, c.querySelector('.rotd-cover'));
+}
+
+/* =================== DIKTIEREN IN KRÜMELS CHAT =================== */
+function chatMic() {
+  const w = typeof webDictation === 'function' ? webDictation() : null, btn = $('#asMic');
+  if (!w || !btn) { if (btn) btn.hidden = true; return; }
+  let on = false;
+  w.onFinal(({ text }) => { const i = $('#asIn'); i.value = (i.value ? i.value.replace(/\s*$/, ' ') : '') + text.trim(); i.dispatchEvent(new Event('input')); });
+  w.onPartial(({ text }) => { if (text) $('#asIn').placeholder = text + ' …'; });
+  w.onState(({ state, reason }) => { on = state === 'listening'; btn.setAttribute('aria-pressed', on); if (!on) $('#asIn').placeholder = `Schreib ${PET.name} …`; if (on) petMood('listen'); if (reason === 'not_granted') toast('Bitte erlaube Folio das Mikrofon in den Einstellungen deines iPhones.', 4000); });
+  btn.hidden = false; btn.onclick = () => on ? w.stop() : w.start().catch(() => toast('Diktieren ist gerade nicht möglich.'));
+}
+
+lockLoad(); lockShow();
 /* =================== KRÜMEL, die kleine Wolke =================== */
 /* A quiet companion: a cloud with eyes. It reacts to what you write (listens, thinks,
    smiles, looks puzzled), likes being petted, and understands short sentences
@@ -5387,6 +6042,9 @@ async function asOpen() {
   let met = false; try { met = !!localStorage.getItem('folio:pet:met'); localStorage.setItem('folio:pet:met', '1'); } catch (e) {}
   if (!met) return setTimeout(() => asShow({ t: `Hallo, ich bin ${PET.name}. Sag mir einfach, was ansteht, zum Beispiel „Zahnarzt Freitag um 10 Uhr“ oder „Milch auf die Einkaufsliste“. Und wenn du magst, kannst du mich streicheln.` }, 'happy'), 500);
   if (!recent.length) setTimeout(async () => asShow(await asBrief(), 'happy'), 450);
+  const md = await moodDoc();
+  if (new Date().getHours() >= 18 && !md.days[todayISO()] && !AS.log.some(m => m.r === 'a' && isoD(new Date(m.at)) === todayISO() && /Wie war dein Tag/.test(m.t)))
+    setTimeout(() => asShow({ t: 'Wie war dein Tag?', actions: MOOD5.slice().reverse().map(mo => ({ l: mo.l, fn: () => moodSet(mo.v).then(() => asShow({ t: mo.v >= 4 ? 'Schön! Ich hab’s mir gemerkt.' : mo.v === 3 ? 'Okay, notiert.' : 'Das tut mir leid. Ich hab’s notiert. Morgen wird’s hoffentlich besser.' }, mo.v >= 4 ? 'love' : mo.v <= 2 ? 'sad' : 'happy')) })) }, 'idle'), 1400);
 }
 function asClose() {
   $('#asst').hidden = true; $('#aiPanel').hidden = true; $('#asIn').blur(); $('#asst').classList.remove('typing');
@@ -5423,7 +6081,7 @@ $('#asForm').addEventListener('submit', e => { e.preventDefault(); const i = $('
 window.visualViewport?.addEventListener('resize', asFit);
 window.visualViewport?.addEventListener('scroll', asFit);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#asst').hidden) asClose(); });
-aiLoad(); aiBadge(); petLoad(); petPaint(); petMood(petIdleMood());
+aiLoad(); aiBadge(); chatMic(); petLoad(); petPaint(); petMood(petIdleMood());
 setInterval(petLook, 3800);
 setInterval(() => { if (PET.mood === 'idle' || PET.mood === 'sleepy') petMood(petIdleMood()); }, 60000);
 
@@ -5461,7 +6119,7 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
   $('#storeNote').textContent = Store.mode === 'cloud'
     ? 'Privat in deinem Konto gespeichert, auf allen Geräten.'
     : STANDALONE ? 'Auf diesem iPhone gespeichert. Sichere ab und zu unter Mehr → Backup.' : 'Nur auf diesem Gerät gespeichert. Melde dich bei Claude an, damit deine Notizbücher überall verfügbar sind.';
-  renderShelf(); renderHintCard();
+  renderShelf(); renderHintCard(); renderCountdowns();
   spHandleRedirect();
 })();
 })();

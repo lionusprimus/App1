@@ -14,6 +14,22 @@ Notizbücher mit echtem Umblättern, Planer, Ziele, Wetter, Fokus-Timer, Finanze
 
 **Umsätze importieren:** In *Finanzen* bei „Einträge“ auf „Import“ tippen und Kontoauszüge als PDF oder ZIP (aus der Sparkassen-App: Auszüge teilen, In Dateien sichern) oder eine CSV-Datei aus dem Online-Banking wählen (Sparkasse: „CSV-CAMT V2“, die meisten anderen Banken klappen auch). Bei PDF-Auszügen rechnet Folio mit den Kontoständen nach, ob alle Umsätze erkannt wurden. Folio sortiert die Umsätze in Kategorien, überspringt schon vorhandene und vorgemerkte Umsätze und merkt sich korrigierte Kategorien pro Empfänger. Die Datei bleibt auf dem Gerät.
 
+**Schule:** Unter *Mehr → Schule* Fächer wählen, Stundenplan eintragen, Hausaufgaben erfassen (sie stehen automatisch auch im Planer) und Noten sammeln. Der Schnitt wird pro Fach und insgesamt berechnet, Klausuren zählen doppelt; „2-“ zählt als 2,3 und „2+“ als 1,7.
+
+**Lernkarten:** Unter *Mehr → Lernkarten* Stapel anlegen und Karten als „Vorderseite = Rückseite“ eintragen. Beim Lernen kommen Karten, die du gut kannst, seltener dran.
+
+**Sparziele und Abos:** In *Finanzen* gibt es Sparziele mit Fortschrittsring, und Folio erkennt wiederkehrende Zahlungen der letzten sechs Monate und zeigt, was sie im Jahr kosten.
+
+**Stimmung:** Oben in *Ziele* jeden Tag die Stimmung antippen, mit Verlauf der letzten fünf Wochen. Krümel fragt abends nach.
+
+**Countdowns:** Auf der Startseite, zum Beispiel bis zu den Ferien oder jährlich bis zu einem Geburtstag.
+
+**Sperre:** In den Einstellungen lässt sich Folio mit einem Code sperren, auf Wunsch mit Face ID.
+
+**Platte des Tages und Musik-Tipp:** Im Plattenspieler steht jeden Tag eine andere Platte bereit; „Musik-Tipp“ an Krümel wählt passend zu Uhrzeit, Wetter und Stimmung.
+
+**Diktieren:** Im Notizbuch beim Schreiben und in Krümels Chat über das Mikrofon.
+
 **Installieren:** Die Seite in Safari öffnen, auf „Teilen“ tippen und „Zum Home-Bildschirm“ wählen.
 
 - Alle Daten bleiben auf dem Gerät (localStorage und IndexedDB). Unter *Mehr → Backup* lässt sich alles als Datei sichern und wiederherstellen.
