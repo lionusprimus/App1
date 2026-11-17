@@ -697,6 +697,28 @@ body{font-family:var(--font-ui);letter-spacing:-.005em}
 .asst.typing .pet-stage{height:84px}
 .asst.typing .pet-big{width:96px;height:72px}
 @media (prefers-reduced-motion: reduce){.c-all,.c-open,.cloud[data-mood] .c-all,.cloud[data-mood] .c-body{animation:none!important}}
+/* ---------- Krümel: KI settings ---------- */
+.as-head-r{display:flex;align-items:center;gap:10px;flex:none}
+.ai-btn{width:36px;height:36px}
+.ai-btn svg{width:18px;height:18px;opacity:.55}
+.ai-btn.on svg{opacity:1;color:var(--s1)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .ai-btn.on svg{color:var(--accent)}}
+.ai-panel{position:absolute;inset:0;z-index:5;overflow-y:auto;display:flex;flex-direction:column;gap:14px;
+  padding:env(safe-area-inset-top,0px) max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 24px) max(16px,env(safe-area-inset-left,0px));
+  background:color-mix(in srgb,var(--desk) 90%,transparent);-webkit-backdrop-filter:saturate(180%) blur(30px);backdrop-filter:saturate(180%) blur(30px)}
+.asst>.ai-panel{box-sizing:border-box;width:auto;max-width:none;margin:0}
+.ai-panel>*{box-sizing:border-box;width:100%;max-width:600px;margin-inline:auto}
+.ai-head{display:flex;align-items:center;justify-content:space-between;height:56px;flex:none}
+.ai-head h3{margin:0;font-family:var(--font-display);font-size:22px;font-weight:700;letter-spacing:-.02em}
+.ai-note,.ai-how{margin:0;font-size:14px;line-height:1.5;color:var(--muted)}
+.ai-how{color:var(--fg)}
+.ai-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ai-switch{justify-content:space-between;padding:14px 16px;border-radius:20px;font-weight:600;background:var(--card);box-shadow:inset 0 0 0 1px var(--line)}
+.ai-switch input{width:22px;height:22px;accent-color:var(--accent)}
+.ai-seg button{font-size:13px}
+.ai-fields{display:flex;flex-direction:column;gap:12px}
+.ai-fields .input{box-sizing:border-box;width:100%}
+.ai-test{font-size:14px;color:var(--muted);flex:1;min-width:0}
 /* =================== Liquid Glass (Probe) =================== */
 :root{
   --gl:rgba(255,255,255,.42); --gl-strong:rgba(255,255,255,.62); --gl-edge:rgba(255,255,255,.75); --gl-hi:rgba(255,255,255,.95);
@@ -879,11 +901,13 @@ body{background:var(--desk)}
 <div class="asst" id="asst" hidden role="dialog" aria-label="Krümel">
   <div class="as-head">
     <button class="pet-name" id="petName" type="button" title="Namen ändern">Krümel</button>
-    <button class="as-done" id="asClose" type="button">Fertig</button>
+    <div class="as-head-r"><button class="icon-round ai-btn" id="aiBtn" type="button" aria-label="KI-Einstellungen" title="KI-Einstellungen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18.5 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg></button>
+    <button class="as-done" id="asClose" type="button">Fertig</button></div>
   </div>
   <div class="pet-stage" id="petStage"><button class="pet-big" type="button" aria-label="Streicheln"></button></div>
   <div class="as-list" id="asList" aria-live="polite"></div>
   <div class="as-chips" id="asChips"></div>
+  <div class="ai-panel" id="aiPanel" hidden></div>
   <form class="as-form" id="asForm" autocomplete="off"><input class="input" id="asIn" placeholder="Schreib Krümel …" enterkeyhint="send" aria-label="Nachricht"><button class="as-send" type="submit" aria-label="Senden"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg></button></form>
 </div>
 <div class="dict-partial" id="dictPartial" hidden></div>
@@ -3913,6 +3937,302 @@ async function asAnswer(raw) {
 }
 
 
+/* =================== KI für Krümel (optional) =================== */
+/* With an API key from a free provider, Krümel talks freely and acts in the app through
+   tools. The key stays on this device. Data only leaves the device when a tool needs it
+   (e.g. the planner entries when you ask what is coming up). Without a key, when offline
+   or when the daily limit is reached, the simple on-device understanding takes over. */
+const AI_KEY = 'folio:ai';
+const AI_PROVIDERS = {
+  gemini: { name: 'Google Gemini', how: 'Kostenlos: Auf aistudio.google.com mit einem Google-Konto anmelden, dann „Get API key“ und „Create API key“. Den Schlüssel hier einfügen.' },
+  openrouter: { name: 'OpenRouter', how: 'Kostenlos: Auf openrouter.ai registrieren, unter „Keys“ einen Schlüssel erstellen und hier einfügen. Krümel nutzt nur die kostenlosen Modelle.', base: 'https://openrouter.ai/api/v1', model: 'openrouter/free' },
+  custom: { name: 'Anderer', how: 'Jeder OpenAI-kompatible Dienst. Für Groq zum Beispiel die Adresse https://api.groq.com/openai/v1 und als Modell llama-3.3-70b-versatile.' }
+};
+const AI = { cfg: { on: false, provider: 'gemini', key: '', model: '', base: '', auto: '' }, warned: false };
+function aiLoad() { try { Object.assign(AI.cfg, JSON.parse(localStorage.getItem(AI_KEY)) || {}); } catch (e) {} }
+function aiSave() { try { localStorage.setItem(AI_KEY, JSON.stringify(AI.cfg)); } catch (e) {} }
+const aiConfigured = () => !!(AI.cfg.on && AI.cfg.key && (AI.cfg.provider !== 'custom' || (AI.cfg.base && AI.cfg.model)));
+const aiReady = () => aiConfigured() && !(AI.pause > Date.now());
+
+/* --- what the model may do --- */
+const AI_CATS = [...new Set([...FIN_CATS, ...FIN_IN])];
+const AI_TOOLS = [
+  { name: 'planer_anzeigen', description: 'Zeigt Termine und Aufgaben im Planer von einem Datum bis zu einem Datum (jeweils einschließlich). Liefert die ids, die zum Ändern und Löschen gebraucht werden. Mit ueberfaellig=true nur offene Aufgaben vor heute.', parameters: { type: 'object', properties: { von: { type: 'string', description: 'YYYY-MM-DD' }, bis: { type: 'string', description: 'YYYY-MM-DD' }, ueberfaellig: { type: 'boolean' } }, required: ['von', 'bis'] } },
+  { name: 'planer_eintragen', description: 'Trägt einen Termin oder eine Aufgabe in den Planer ein.', parameters: { type: 'object', properties: { titel: { type: 'string' }, art: { type: 'string', enum: ['termin', 'aufgabe'] }, datum: { type: 'string', description: 'YYYY-MM-DD' }, uhrzeit: { type: 'string', description: 'HH:MM im 24-Stunden-Format, leer lassen wenn ohne Uhrzeit' }, notiz: { type: 'string' } }, required: ['titel', 'art', 'datum'] } },
+  { name: 'planer_aendern', description: 'Ändert einen Planer-Eintrag anhand seiner id (vorher mit planer_anzeigen holen). Nur die Felder angeben, die sich ändern.', parameters: { type: 'object', properties: { id: { type: 'string' }, titel: { type: 'string' }, datum: { type: 'string', description: 'YYYY-MM-DD' }, uhrzeit: { type: 'string', description: 'HH:MM oder leer' }, notiz: { type: 'string' }, erledigt: { type: 'boolean' } }, required: ['id'] } },
+  { name: 'planer_loeschen', description: 'Löscht einen Planer-Eintrag anhand seiner id.', parameters: { type: 'object', properties: { id: { type: 'string' } }, required: ['id'] } },
+  { name: 'einkaufsliste_anzeigen', description: 'Zeigt die offenen Einträge der Einkaufsliste.' },
+  { name: 'einkaufsliste_hinzufuegen', description: 'Setzt Artikel auf die Einkaufsliste.', parameters: { type: 'object', properties: { artikel: { type: 'array', items: { type: 'string' } } }, required: ['artikel'] } },
+  { name: 'einkaufsliste_abhaken', description: 'Hakt Artikel auf der Einkaufsliste als gekauft ab.', parameters: { type: 'object', properties: { artikel: { type: 'array', items: { type: 'string' } } }, required: ['artikel'] } },
+  { name: 'geld_eintragen', description: 'Trägt eine Ausgabe oder Einnahme in Euro ein.', parameters: { type: 'object', properties: { betrag: { type: 'number' }, art: { type: 'string', enum: ['ausgabe', 'einnahme'] }, kategorie: { type: 'string', enum: AI_CATS }, datum: { type: 'string', description: 'YYYY-MM-DD' }, notiz: { type: 'string' } }, required: ['betrag', 'art', 'kategorie'] } },
+  { name: 'finanzen_monat', description: 'Fasst Ausgaben, Einnahmen, Kategorien und Budget eines Monats zusammen.', parameters: { type: 'object', properties: { monat: { type: 'string', description: 'YYYY-MM' } }, required: ['monat'] } },
+  { name: 'wetter', description: 'Wettervorhersage für den gespeicherten Ort, bis etwa 7 Tage im Voraus.', parameters: { type: 'object', properties: { datum: { type: 'string', description: 'YYYY-MM-DD' } }, required: ['datum'] } },
+  { name: 'gewohnheiten_anzeigen', description: 'Zeigt Gewohnheiten (heute erledigt oder offen, Serie) und Ziele mit Fortschritt.' },
+  { name: 'gewohnheit_abhaken', description: 'Markiert eine Gewohnheit für heute als erledigt.', parameters: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] } },
+  { name: 'fokus_starten', description: 'Startet den Fokus-Timer (Pomodoro).', parameters: { type: 'object', properties: { minuten: { type: 'number' }, thema: { type: 'string' } } } },
+  { name: 'notizen_suchen', description: 'Sucht einen Begriff in allen Notizbüchern und liefert Fundstellen.', parameters: { type: 'object', properties: { begriff: { type: 'string' } }, required: ['begriff'] } },
+  { name: 'bereich_oeffnen', description: 'Öffnet einen Bereich der App, nachdem du geantwortet hast.', parameters: { type: 'object', properties: { bereich: { type: 'string', enum: ['notizen', 'planer', 'ziele', 'wetter', 'rezepte', 'finanzen', 'fokus'] } }, required: ['bereich'] } }
+];
+
+async function aiWeather(iso) {
+  let places = W.places, active = W.active;
+  if (!places?.length) { const s = await WxStore.load(); places = s?.places || []; active = s?.active; }
+  const p = places.find(x => x.key === active) || places[0];
+  if (!p || p.lat == null) return { fehler: 'Kein Ort gespeichert. Der Nutzer kann im Wetter-Tab einen Ort hinzufügen.' };
+  const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&timezone=auto&forecast_days=8&current=temperature_2m,apparent_temperature,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,wind_speed_10m_max`);
+  if (!r.ok) return { fehler: 'Wetterdienst nicht erreichbar' };
+  const j = await r.json(), i = j.daily.time.indexOf(iso);
+  if (i < 0) return { fehler: 'Für dieses Datum gibt es keine Vorhersage (nur heute bis etwa 7 Tage).' };
+  const out = { ort: p.name, datum: iso, wetter: AS_WMO[j.daily.weather_code[i]] || 'wechselhaft', min_grad: Math.round(j.daily.temperature_2m_min[i]), max_grad: Math.round(j.daily.temperature_2m_max[i]), regenrisiko_prozent: j.daily.precipitation_probability_max[i], regen_mm: j.daily.precipitation_sum[i], wind_kmh: Math.round(j.daily.wind_speed_10m_max[i]) };
+  if (iso === todayISO() && j.current) Object.assign(out, { jetzt_grad: Math.round(j.current.temperature_2m), gefuehlt_grad: Math.round(j.current.apparent_temperature), jetzt_wetter: AS_WMO[j.current.weather_code] });
+  return out;
+}
+const aiFindItem = async id => (await Docs.get('planner', { items: [] })).items.find(i => i.id === id);
+const aiOpen = { notizen: openNotebooks, planer: openPlanner, ziele: openHabits, wetter: openWeather, rezepte: openRecipes, finanzen: openFinance, fokus: openFocus };
+
+/* Runs one tool. Returns { r: result for the model, undo?, after?, done? } */
+async function aiTool(name, a, turn) {
+  a = a || {};
+  switch (name) {
+    case 'planer_anzeigen': {
+      const doc = await Docs.get('planner', { items: [] }), today = todayISO();
+      const list = doc.items.filter(i => a.ueberfaellig ? (i.kind === 'task' && !i.done && i.date < today) : (i.date >= a.von && i.date <= a.bis))
+        .sort((x, y) => (x.date + (x.time || '99')).localeCompare(y.date + (y.time || '99')))
+        .map(i => ({ id: i.id, titel: i.title, art: i.kind === 'event' ? 'termin' : 'aufgabe', datum: i.date, uhrzeit: i.time || '', erledigt: !!i.done, notiz: i.note || '' }));
+      return { r: { eintraege: list } };
+    }
+    case 'planer_eintragen': {
+      const doc = await Docs.get('planner', { items: [] });
+      const it = { id: uid(), done: false, title: String(a.titel || '').trim() || 'Ohne Titel', kind: a.art === 'termin' ? 'event' : 'task', date: /^\d{4}-\d{2}-\d{2}$/.test(a.datum) ? a.datum : todayISO(), time: /^\d{2}:\d{2}$/.test(a.uhrzeit || '') ? a.uhrzeit : '', note: a.notiz || '' };
+      doc.items.push(it); Docs.save('planner'); turn.go = turn.go || (() => { PL.sel = it.date; const d = parseD(it.date); PL.month = new Date(d.getFullYear(), d.getMonth(), 1); openPlanner(); });
+      return { r: { ok: true, id: it.id }, done: true, undo: () => { doc.items = doc.items.filter(x => x !== it); Docs.save('planner'); } };
+    }
+    case 'planer_aendern': {
+      const it = await aiFindItem(a.id); if (!it) return { r: { fehler: 'Eintrag nicht gefunden' } };
+      const before = { ...it };
+      if (a.titel != null) it.title = a.titel; if (a.datum) it.date = a.datum; if (a.uhrzeit != null) it.time = a.uhrzeit; if (a.notiz != null) it.note = a.notiz; if (a.erledigt != null) it.done = !!a.erledigt;
+      Docs.save('planner');
+      return { r: { ok: true }, done: true, undo: () => { Object.assign(it, before); Docs.save('planner'); } };
+    }
+    case 'planer_loeschen': {
+      const doc = await Docs.get('planner', { items: [] }), it = doc.items.find(i => i.id === a.id); if (!it) return { r: { fehler: 'Eintrag nicht gefunden' } };
+      doc.items = doc.items.filter(x => x !== it); Docs.save('planner');
+      return { r: { ok: true }, done: true, undo: () => { doc.items.push(it); Docs.save('planner'); } };
+    }
+    case 'einkaufsliste_anzeigen': { const doc = await Docs.get('shopping', { items: [] }); return { r: { offen: doc.items.filter(i => !i.done).map(i => i.t) } }; }
+    case 'einkaufsliste_hinzufuegen': {
+      const doc = await Docs.get('shopping', { items: [] }), have = new Set(doc.items.filter(i => !i.done).map(i => i.t.toLowerCase()));
+      const made = (a.artikel || []).map(t => asCap(String(t).trim())).filter(t => t && !have.has(t.toLowerCase())).map(t => ({ id: uid(), t, done: false, src: '' }));
+      doc.items.unshift(...made); Docs.save('shopping');
+      return { r: { hinzugefuegt: made.map(m => m.t) }, done: made.length > 0, undo: () => { doc.items = doc.items.filter(x => !made.includes(x)); Docs.save('shopping'); } };
+    }
+    case 'einkaufsliste_abhaken': {
+      const doc = await Docs.get('shopping', { items: [] }), want = (a.artikel || []).map(s => String(s).toLowerCase());
+      const hit = doc.items.filter(i => !i.done && want.some(w => i.t.toLowerCase().includes(w) || w.includes(i.t.toLowerCase())));
+      hit.forEach(i => i.done = true); Docs.save('shopping');
+      return { r: { abgehakt: hit.map(i => i.t) }, done: hit.length > 0, undo: () => { hit.forEach(i => i.done = false); Docs.save('shopping'); } };
+    }
+    case 'geld_eintragen': {
+      const v = Math.round(num(a.betrag) * 100) / 100; if (!(v > 0)) return { r: { fehler: 'Betrag fehlt' } };
+      const d = /^\d{4}-\d{2}-\d{2}$/.test(a.datum || '') ? a.datum : todayISO(), mk = d.slice(0, 7), doc = await Docs.get('fin-' + mk, { e: [] });
+      const en = { id: uid(), a: v, t: a.art === 'einnahme' ? 'in' : 'out', c: AI_CATS.includes(a.kategorie) ? a.kategorie : 'Sonstiges', d, n: a.notiz || '' };
+      doc.e.push(en); Docs.save('fin-' + mk);
+      const fs = await Docs.get('finset', { budget: 0 }), spent = doc.e.filter(e => e.t !== 'in').reduce((s, e) => s + e.a, 0);
+      return { r: { ok: true, budget_rest_euro: fs.budget ? Math.round((fs.budget - spent) * 100) / 100 : null }, done: true, undo: () => { doc.e = doc.e.filter(x => x !== en); Docs.save('fin-' + mk); } };
+    }
+    case 'finanzen_monat': {
+      const mk = /^\d{4}-\d{2}$/.test(a.monat || '') ? a.monat : todayISO().slice(0, 7), doc = await Docs.get('fin-' + mk, { e: [] }), fs = await Docs.get('finset', { budget: 0 });
+      const by = {}; doc.e.filter(e => e.t !== 'in').forEach(e => by[e.c] = Math.round(((by[e.c] || 0) + e.a) * 100) / 100);
+      const out = doc.e.filter(e => e.t !== 'in').reduce((s, e) => s + e.a, 0), inn = doc.e.filter(e => e.t === 'in').reduce((s, e) => s + e.a, 0);
+      return { r: { monat: mk, ausgaben_euro: Math.round(out * 100) / 100, einnahmen_euro: Math.round(inn * 100) / 100, nach_kategorie: by, monatsbudget_euro: fs.budget || null, eintraege: doc.e.length } };
+    }
+    case 'wetter': return { r: await aiWeather(/^\d{4}-\d{2}-\d{2}$/.test(a.datum || '') ? a.datum : todayISO()) };
+    case 'gewohnheiten_anzeigen': {
+      const doc = await Docs.get('habits', { habits: [], goals: [] }), t = todayISO();
+      return { r: { gewohnheiten: doc.habits.map(h => ({ name: h.name, heute_erledigt: !!h.days[t], serie_tage: streak(h) })), ziele: doc.goals.map(g => ({ titel: g.title, stand: g.cur, ziel: g.target, einheit: g.unit })) } };
+    }
+    case 'gewohnheit_abhaken': {
+      const doc = await Docs.get('habits', { habits: [], goals: [] }), t = todayISO(), q = String(a.name || '').toLowerCase();
+      const h = doc.habits.find(x => x.name.toLowerCase() === q) || doc.habits.find(x => x.name.toLowerCase().includes(q) || q.includes(x.name.toLowerCase()));
+      if (!h) return { r: { fehler: 'Keine passende Gewohnheit', vorhanden: doc.habits.map(x => x.name) } };
+      const was = !!h.days[t]; h.days[t] = 1; Docs.save('habits');
+      return { r: { ok: true, name: h.name, serie_tage: streak(h) }, done: !was, undo: () => { if (!was) delete h.days[t]; Docs.save('habits'); } };
+    }
+    case 'fokus_starten':
+      turn.go = async () => { await openFocus(); if (a.thema) FO.label = String(a.thema); if (a.minuten > 0) { const doc = Docs.cache.get('focus'); doc.set.f = clamp(Math.round(a.minuten), 1, 180); Docs.save('focus'); FO.mode = 'f'; FO.remain = foLen('f'); } if (!FO.running) foToggle(); else renderFocus(); };
+      turn.goNow = true;
+      return { r: { ok: true, hinweis: 'Der Timer startet, sobald du geantwortet hast.' } };
+    case 'notizen_suchen': {
+      const q = String(a.begriff || '').toLowerCase().trim(); if (q.length < 2) return { r: { treffer: [] } };
+      const hits = [];
+      for (const nb of S.nbs) {
+        let pages; try { pages = await Store.pages(nb.id); } catch (e) { continue; }
+        [...pages.entries()].sort((x, y) => x[0] - y[0]).forEach(([idx, d]) => { const tx = pageText(d), at = tx.toLowerCase().indexOf(q); if (at >= 0 && hits.length < 8) hits.push({ notizbuch: nb.title, seite: idx + 1, auszug: tx.slice(Math.max(0, at - 60), at + 140).replace(/\s+/g, ' ') }); });
+      }
+      if (hits.length) turn.go = turn.go || (async () => { await openSearch(); $('#srQ').value = a.begriff; runSearch(); });
+      return { r: { treffer: hits } };
+    }
+    case 'bereich_oeffnen': { const f = aiOpen[a.bereich]; if (f) { turn.go = f; turn.goNow = true; } return { r: { ok: !!f } }; }
+  }
+  return { r: { fehler: 'Unbekanntes Werkzeug' } };
+}
+
+function aiSystem() {
+  const now = new Date(), wd = now.toLocaleDateString('de-DE', { weekday: 'long' });
+  const days = Array.from({ length: 8 }, (_, i) => { const d = addDays(now, i); return `${d.toLocaleDateString('de-DE', { weekday: 'long' })} = ${isoD(d)}`; }).join(', ');
+  return `Du bist ${PET.name}, eine kleine, freundliche Wolke, die in der App „Folio“ wohnt (Notizbücher, Planer, Ziele, Wetter, Fokus-Timer, Finanzen, Rezepte und Einkaufsliste).
+Du hilfst der Person, mit der du sprichst, im Alltag und erledigst Dinge direkt in der App über deine Werkzeuge.
+Heute ist ${wd}, der ${isoD(now)}, es ist ${pad2(now.getHours())}:${pad2(now.getMinutes())} Uhr. Die nächsten Tage: ${days}.
+Regeln:
+- Antworte immer auf Deutsch, duze, sei warm, ruhig und kurz: meist ein bis drei Sätze. Kein Markdown, keine Emojis. Für Listen nutze Zeilen, die mit „• “ beginnen.
+- Wenn du etwas einträgst, änderst oder löschst, nutze das passende Werkzeug und bestätige danach knapp, was du getan hast. Erfinde nie, dass du etwas getan hast.
+- Für Fragen nach Terminen, Aufgaben, Einkaufsliste, Geld, Wetter, Gewohnheiten oder Notizen schau mit dem Werkzeug nach, statt zu raten.
+- Uhrzeiten ohne Angabe wie „um 3“ oder „halb 4“ meinen am Nachmittag (15:00, 15:30), außer es ist klar morgens gemeint.
+- Wenn etwas unklar ist, frag kurz nach.
+- Du kannst auch einfach plaudern, trösten oder Fragen beantworten. Bleib dabei kurz.
+- Beginne jede Antwort mit genau einem Gefühls-Tag, das zu deiner Antwort passt: [happy], [love], [confused], [sad], [surprised] oder [idle]. Der Tag wird nicht angezeigt, er steuert deinen Gesichtsausdruck.`;
+}
+
+/* --- providers --- */
+function aiGeminiSchema(s) {
+  if (!s) return s;
+  const o = { ...s }; if (o.type) o.type = o.type.toUpperCase();
+  if (o.properties) o.properties = Object.fromEntries(Object.entries(o.properties).map(([k, v]) => [k, aiGeminiSchema(v)]));
+  if (o.items) o.items = aiGeminiSchema(o.items);
+  return o;
+}
+async function aiGeminiModel() {
+  if (AI.cfg.model) return AI.cfg.model;
+  if (AI.cfg.auto && AI.cfg.autoKey === AI.cfg.key.slice(-6)) return AI.cfg.auto;
+  const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', { headers: { 'x-goog-api-key': AI.cfg.key } });
+  if (!r.ok) throw aiErr(r.status, await r.text());
+  const ms = ((await r.json()).models || []).filter(m => (m.supportedGenerationMethods || []).includes('generateContent')).map(m => m.name.replace(/^models\//, ''))
+    .filter(n => /^gemini-[\d.]+-flash/.test(n) && !/(preview|exp|tts|image|live|audio|thinking|embedding|native)/.test(n));
+  const ver = n => parseFloat((n.match(/gemini-([\d.]+)/) || [])[1]) || 0;
+  const pick = ms.filter(n => /flash-lite/.test(n)).sort((a, b) => ver(b) - ver(a))[0] || ms.sort((a, b) => ver(b) - ver(a))[0];
+  if (!pick) throw new Error('Kein passendes Gemini-Modell gefunden.');
+  AI.cfg.auto = pick; AI.cfg.autoKey = AI.cfg.key.slice(-6); aiSave();
+  return pick;
+}
+function aiErr(status, body) {
+  const e = new Error(status === 429 ? 'limit' : status === 401 || status === 403 || status === 400 && /API key|API_KEY/i.test(body) ? 'key' : 'http ' + status);
+  e.status = status; e.body = String(body || '').slice(0, 300); return e;
+}
+async function aiFetch(url, opt) {
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 30000);
+  try { const r = await fetch(url, { ...opt, signal: ctl.signal }); if (!r.ok) throw aiErr(r.status, await r.text()); return await r.json(); }
+  finally { clearTimeout(t); }
+}
+function aiHistory() {
+  // the conversation of today, oldest first, ending with the new message
+  const day = todayISO();
+  return AS.log.filter(m => isoD(new Date(m.at)) === day).slice(-14).map(m => ({ role: m.r === 'u' ? 'user' : 'assistant', text: m.t }));
+}
+async function aiRunGemini(turn) {
+  const model = await aiGeminiModel();
+  const contents = aiHistory().map(m => ({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: m.text }] }));
+  const tools = [{ functionDeclarations: AI_TOOLS.map(t => ({ name: t.name, description: t.description, ...(t.parameters ? { parameters: aiGeminiSchema(t.parameters) } : {}) })) }];
+  for (let step = 0; step < 6; step++) {
+    const j = await aiFetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+      method: 'POST', headers: { 'content-type': 'application/json', 'x-goog-api-key': AI.cfg.key },
+      body: JSON.stringify({ systemInstruction: { parts: [{ text: aiSystem() }] }, contents, tools, generationConfig: { temperature: 0.6, maxOutputTokens: 600 } })
+    });
+    const parts = j.candidates?.[0]?.content?.parts || [];
+    const calls = parts.filter(p => p.functionCall);
+    if (!calls.length) return parts.map(p => p.text || '').join('').trim();
+    contents.push({ role: 'model', parts });
+    const res = [];
+    for (const p of calls) { const o = await aiTool(p.functionCall.name, p.functionCall.args, turn); turn.add(o); res.push({ functionResponse: { name: p.functionCall.name, response: o.r } }); }
+    contents.push({ role: 'user', parts: res });
+  }
+  return '';
+}
+async function aiRunOpenAI(turn) {
+  const pv = AI_PROVIDERS[AI.cfg.provider], base = (AI.cfg.provider === 'custom' ? AI.cfg.base : pv.base).replace(/\/+$/, ''), model = AI.cfg.model || pv.model;
+  const messages = [{ role: 'system', content: aiSystem() }, ...aiHistory().map(m => ({ role: m.role, content: m.text }))];
+  const tools = AI_TOOLS.map(t => ({ type: 'function', function: { name: t.name, description: t.description, parameters: t.parameters || { type: 'object', properties: {} } } }));
+  const headers = { 'content-type': 'application/json', authorization: 'Bearer ' + AI.cfg.key };
+  if (AI.cfg.provider === 'openrouter') headers['X-Title'] = 'Folio';
+  for (let step = 0; step < 6; step++) {
+    const j = await aiFetch(base + '/chat/completions', { method: 'POST', headers, body: JSON.stringify({ model, messages, tools, temperature: 0.6, max_tokens: 600 }) });
+    const msg = j.choices?.[0]?.message || {};
+    if (!msg.tool_calls?.length) return String(msg.content || '').trim();
+    messages.push({ role: 'assistant', content: msg.content || '', tool_calls: msg.tool_calls });
+    for (const c of msg.tool_calls) {
+      let args = {}; try { args = JSON.parse(c.function.arguments || '{}'); } catch (e) {}
+      const o = await aiTool(c.function.name, args, turn); turn.add(o);
+      messages.push({ role: 'tool', tool_call_id: c.id, content: JSON.stringify(o.r) });
+    }
+  }
+  return '';
+}
+
+/* One message to Krümel with AI. Falls back to the simple mode on any failure. */
+async function aiAnswer(text) {
+  const turn = { undos: [], done: false, go: null, goNow: false, add(o) { if (o.undo) this.undos.push(o.undo); if (o.done) this.done = true; } };
+  let reply;
+  try { reply = AI.cfg.provider === 'gemini' ? await aiRunGemini(turn) : await aiRunOpenAI(turn); }
+  catch (e) {
+    if (turn.undos.length) { /* some actions already happened: report them plainly */ reply = '[happy]Erledigt.'; }
+    else {
+      if (e.message === 'limit') AI.pause = Date.now() + 10 * 60000;
+      const why = e.message === 'limit' ? 'Mein KI-Kontingent für heute ist aufgebraucht' : e.message === 'key' ? 'Der KI-Schlüssel funktioniert nicht, schau bitte in den Einstellungen nach' : 'Ich erreiche die KI gerade nicht';
+      const r = await asAnswer(text);
+      if (!r) return null;
+      if (!AI.warned || e.message === 'key') { AI.warned = true; r.t = `${why}, deshalb antworte ich im einfachen Modus.\n\n` + r.t; }
+      return r;
+    }
+  }
+  let mood = null;
+  reply = String(reply || '').replace(/^\s*\[(happy|love|confused|sad|surprised|idle)\]\s*/i, (_, m) => { mood = m.toLowerCase(); return ''; }).replace(/\*\*(.+?)\*\*/g, '$1').replace(/^\s*[-*] /gm, '• ').trim();
+  if (!reply) reply = turn.done ? 'Erledigt.' : 'Hmm, dazu fällt mir gerade nichts ein.';
+  const actions = [];
+  if (turn.undos.length) actions.push({ l: 'Rückgängig', fn: () => { turn.undos.slice().reverse().forEach(u => u()); asShow({ t: 'Okay, ich habe es rückgängig gemacht.' }, 'idle'); } });
+  if (turn.go && !turn.goNow) actions.push({ l: 'Ansehen', fn: () => asGo(turn.go) });
+  if (turn.go && turn.goNow) setTimeout(() => asGo(turn.go), 1100);
+  return { t: reply, actions, mood: mood || (turn.done ? 'happy' : null) };
+}
+
+/* --- settings --- */
+function aiSettings() {
+  aiLoad();
+  const p = $('#aiPanel'); p.hidden = false; p.innerHTML = '';
+  const head = el('div', 'ai-head', p); el('h3', '', head).textContent = 'KI für ' + PET.name;
+  const x = el('button', 'as-done', head); x.type = 'button'; x.textContent = 'Fertig'; x.onclick = () => { p.hidden = true; AI.pause = 0; AI.warned = false; aiBadge(); };
+  el('p', 'ai-note', p).textContent = `Mit einem kostenlosen Schlüssel kann ${PET.name} frei mit dir reden und mehr verstehen. Der Schlüssel bleibt nur auf diesem Gerät. Was du ${PET.name} schreibst, geht dann an den Anbieter, und wenn nötig auch passende Daten aus der App, zum Beispiel deine Termine. Bei kostenlosen Angeboten darf der Anbieter Nachrichten oft zur Verbesserung seiner Modelle nutzen.`;
+  const sw = el('label', 'ai-row ai-switch', p); el('span', '', sw).textContent = 'KI verwenden';
+  const cb = el('input', '', sw); cb.type = 'checkbox'; cb.checked = AI.cfg.on; cb.onchange = () => { AI.cfg.on = cb.checked; aiSave(); };
+  const seg = el('div', 'seg ai-seg', p);
+  const how = el('p', 'ai-how', p);
+  const f = el('div', 'ai-fields', p);
+  const field = (label, type, k, ph) => { const w = el('label', 'field', f); el('span', '', w).textContent = label; const i = el('input', 'input', w); i.type = type; i.value = AI.cfg[k] || ''; i.placeholder = ph || ''; i.autocomplete = 'off'; i.spellcheck = false; i.oninput = () => { AI.cfg[k] = i.value.trim(); if (k === 'key') AI.cfg.auto = ''; aiSave(); }; return w; };
+  const draw = () => {
+    seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.p === AI.cfg.provider));
+    how.textContent = AI_PROVIDERS[AI.cfg.provider].how; f.innerHTML = '';
+    field('Schlüssel', 'password', 'key', 'Schlüssel einfügen');
+    if (AI.cfg.provider === 'custom') field('Adresse', 'url', 'base', 'https://…/v1');
+    field(AI.cfg.provider === 'custom' ? 'Modell' : 'Modell (leer = automatisch)', 'text', 'model', AI.cfg.provider === 'gemini' ? (AI.cfg.auto || 'automatisch') : AI.cfg.provider === 'openrouter' ? 'openrouter/free' : 'z. B. llama-3.3-70b-versatile');
+  };
+  Object.entries(AI_PROVIDERS).forEach(([k, v]) => { const b = el('button', '', seg); b.type = 'button'; b.dataset.p = k; b.textContent = v.name; b.onclick = () => { AI.cfg.provider = k; AI.cfg.model = ''; AI.cfg.auto = ''; aiSave(); draw(); }; });
+  draw();
+  const act = el('div', 'ai-row', p), test = el('button', 'btn btn-primary btn-sm', act), out = el('span', 'ai-test', act);
+  test.type = 'button'; test.textContent = 'Verbindung testen';
+  test.onclick = async () => {
+    if (!AI.cfg.key) { out.textContent = 'Bitte zuerst einen Schlüssel einfügen.'; return; }
+    out.textContent = 'Teste …'; test.disabled = true;
+    try {
+      const j = AI.cfg.provider === 'gemini'
+        ? await aiFetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(await aiGeminiModel())}:generateContent`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-goog-api-key': AI.cfg.key }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'Sag nur: ok' }] }], generationConfig: { maxOutputTokens: 5 } }) })
+        : await aiFetch((AI.cfg.provider === 'custom' ? AI.cfg.base : AI_PROVIDERS[AI.cfg.provider].base).replace(/\/+$/, '') + '/chat/completions', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + AI.cfg.key }, body: JSON.stringify({ model: AI.cfg.model || AI_PROVIDERS[AI.cfg.provider].model, messages: [{ role: 'user', content: 'Sag nur: ok' }], max_tokens: 5 }) });
+      out.textContent = 'Klappt' + (AI.cfg.provider === 'gemini' ? ` (Modell: ${AI.cfg.model || AI.cfg.auto})` : '') + '.';
+      if (!AI.cfg.on) { AI.cfg.on = true; cb.checked = true; aiSave(); }
+      void j;
+    } catch (e) { out.textContent = e.message === 'key' ? 'Der Schlüssel wird nicht akzeptiert.' : e.message === 'limit' ? 'Das Tageslimit ist erreicht, morgen geht es wieder.' : e.name === 'AbortError' ? 'Keine Antwort, versuch es später noch einmal.' : 'Hat nicht geklappt: ' + (e.message || 'unbekannter Fehler'); }
+    test.disabled = false;
+  };
+}
+function aiBadge() { const b = $('#aiBtn'); if (b) b.classList.toggle('on', aiConfigured()); }
+
 /* =================== KRÜMEL, die kleine Wolke =================== */
 /* A quiet companion: a cloud with eyes. It reacts to what you write (listens, thinks,
    smiles, looks puzzled), likes being petted, and understands short sentences
@@ -4008,11 +4328,11 @@ async function asSend(text) {
   const wait = asBubble('a', '…'); wait.classList.add('as-wait');
   const t0 = Date.now();
   try {
-    const r = await asAnswer(text);
+    const r = aiReady() ? await aiAnswer(text) : await asAnswer(text);
     await new Promise(res => setTimeout(res, Math.max(0, 450 - (Date.now() - t0)))); // a moment to "think"
     wait.remove();
     if (!r) { petMood('happy', 1500); AS.busy = false; return; }
-    const mood = r.actions?.some(a => a.l === 'Rückgängig') ? 'happy'
+    const mood = r.mood ? r.mood : r.actions?.some(a => a.l === 'Rückgängig') ? 'happy'
       : /^Hmm/.test(r.t) ? 'confused'
       : /^(Danke|Gern)/.test(r.t) ? 'love'
       : /nicht erreich|schiefgegangen|leider/.test(r.t) ? 'sad'
@@ -4040,7 +4360,7 @@ async function asOpen() {
   if (!recent.length) setTimeout(async () => asShow(await asBrief(), 'happy'), 450);
 }
 function asClose() {
-  $('#asst').hidden = true; $('#asIn').blur(); $('#asst').classList.remove('typing');
+  $('#asst').hidden = true; $('#aiPanel').hidden = true; $('#asIn').blur(); $('#asst').classList.remove('typing');
   const rer = { planner: () => Docs.cache.has('planner') && renderPlanner(), habits: () => Docs.cache.has('habits') && renderHabits(), finance: () => FI.month && Docs.cache.has('fin-' + FI.month) && renderFinance(), recipes: () => Docs.cache.has('recipes') && renderRecipes(), more: openMore, library: renderHintCard }[S.view];
   try { rer?.(); } catch (e) {}
 }
@@ -4055,6 +4375,7 @@ $('#asFab').innerHTML = cloudSVG('fab');
 $('#petStage .pet-big').innerHTML = cloudSVG('big');
 $('#asFab').onclick = asOpen;
 $('#asClose').onclick = asClose;
+$('#aiBtn').onclick = aiSettings;
 $('#petName').onclick = petRename;
 (() => {
   const big = $('#petStage .pet-big'); let down = false, lx = 0, ly = 0;
@@ -4073,7 +4394,7 @@ $('#asForm').addEventListener('submit', e => { e.preventDefault(); const i = $('
 window.visualViewport?.addEventListener('resize', asFit);
 window.visualViewport?.addEventListener('scroll', asFit);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#asst').hidden) asClose(); });
-petLoad(); petPaint(); petMood(petIdleMood());
+aiLoad(); aiBadge(); petLoad(); petPaint(); petMood(petIdleMood());
 setInterval(petLook, 3800);
 setInterval(() => { if (PET.mood === 'idle' || PET.mood === 'sleepy') petMood(petIdleMood()); }, 60000);
 
