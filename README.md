@@ -6,6 +6,8 @@ Notizbücher mit echtem Umblättern, Planer, Ziele, Wetter, Fokus-Timer, Finanze
 
 **KI für Krümel (optional):** Über den Glitzer-Knopf in Krümels Fenster lässt sich ein kostenloser Schlüssel von Google Gemini, OpenRouter oder einem anderen OpenAI-kompatiblen Anbieter eintragen. Dann redet Krümel frei und erledigt auch kompliziertere Wünsche in der App (Termine verschieben, mehrere Sachen auf einmal, Fragen zu Ausgaben). Der Schlüssel bleibt auf dem Gerät. Nachrichten und bei Bedarf passende App-Daten gehen an den gewählten Anbieter. Ist das Tageslimit erreicht oder kein Internet da, antwortet Krümel im einfachen Modus.
 
+**Plattenspieler:** Unter *Mehr → Plattenspieler* werden Alben zu Schallplatten. Zum Abspielen eine Platte aus dem Regal auf den Plattenspieler ziehen oder antippen. Ohne Spotify-Verbindung fügst du Alben über ihren Spotify-Link hinzu und hörst sie in der Spotify-App. Mit Verbindung (Spotify Premium und eine eigene Client ID aus dem Spotify-Dashboard, die Anleitung steht in der App) kommen die gespeicherten Alben von selbst ins Regal, und die Platte spielt direkt auf deinem Spotify, mit Pause, Zurück und Weiter. Krümel legt auf Zuruf auf: „Leg Rumours auf“.
+
 **Installieren:** Die Seite in Safari öffnen, auf „Teilen“ tippen und „Zum Home-Bildschirm“ wählen.
 
 - Alle Daten bleiben auf dem Gerät (localStorage und IndexedDB). Unter *Mehr → Backup* lässt sich alles als Datei sichern und wiederherstellen.

@@ -719,6 +719,67 @@ body{font-family:var(--font-ui);letter-spacing:-.005em}
 .ai-fields{display:flex;flex-direction:column;gap:12px}
 .ai-fields .input{box-sizing:border-box;width:100%}
 .ai-test{font-size:14px;color:var(--muted);flex:1;min-width:0}
+/* ---------- Plattenspieler ---------- */
+.rec-deck{display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px 16px 16px}
+@media (min-width:600px){.rec-plinth{width:min(100%,340px)!important}}
+.rec-bar{display:flex;align-items:center;gap:12px;width:100%;min-width:0}
+.rec-eject{position:absolute;left:5%;top:6%;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:#d8cfcc;background:rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.15)}
+.rec-eject svg{width:15px;height:15px}
+.rec-eject[hidden]{display:none}
+.rec-plinth{position:relative;width:min(100%,232px);aspect-ratio:1.22;border-radius:24px;
+  background:radial-gradient(120% 90% at 20% 0%,rgba(255,255,255,.10),transparent 60%),linear-gradient(155deg,#3b2a25,#1c1311 70%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 0 0 1px rgba(255,255,255,.06),0 18px 34px -16px rgba(30,0,4,.6)}
+.rec-platter{position:absolute;left:7%;top:9%;width:66%;aspect-ratio:1;border-radius:50%;cursor:pointer;
+  background:radial-gradient(circle,#4a4a4f 0 8%,#2b2b2f 9% 100%);box-shadow:0 0 0 3px #55555b,0 0 0 5px #2a2a2e,0 10px 18px rgba(0,0,0,.55);transition:box-shadow .2s}
+.rec-platter::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  background:conic-gradient(from 20deg,transparent 0 9%,rgba(255,255,255,.16) 13%,transparent 19% 50%,rgba(255,255,255,.10) 62%,transparent 69%)}
+.platter-mat{position:absolute;inset:4%;border-radius:50%;background:repeating-radial-gradient(circle,#222 0 2px,#262629 2px 6px)}
+.rec-deck.hover .rec-platter{box-shadow:0 0 0 3px var(--hl),0 0 0 9px color-mix(in srgb,var(--hl) 35%,transparent),0 10px 18px rgba(0,0,0,.55)}
+.vinyl{position:relative;width:100%;height:100%;border-radius:50%;background:#0c0c0d;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.vinyl-grooves{position:absolute;inset:3%;border-radius:50%;background:repeating-radial-gradient(circle,rgba(255,255,255,.055) 0 1px,transparent 1px 3px)}
+.vinyl-label{position:absolute;inset:32%;border-radius:50%;background:#7A1020 center/cover;box-shadow:0 0 0 2px rgba(0,0,0,.55)}
+.vinyl-hole{position:absolute;left:50%;top:50%;width:5%;height:5%;transform:translate(-50%,-50%);border-radius:50%;background:#d6d6da;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
+.rec-deck.spin .rec-platter .vinyl{animation:recSpin 1.8s linear infinite}
+@keyframes recSpin{to{transform:rotate(360deg)}}
+.rec-arm{position:absolute;right:3%;top:3%;height:86%;width:auto;transform-origin:70% 10%;transform:rotate(-6deg);transition:transform 1s cubic-bezier(.45,.05,.2,1);filter:drop-shadow(0 6px 6px rgba(0,0,0,.45));pointer-events:none}
+.rec-deck.loaded .rec-arm{transform:rotate(4deg)}
+.rec-deck.spin .rec-arm{transform:rotate(19deg)}
+.arm-base{fill:#5d5d63}.arm-pivot{fill:#c9c9cf}.arm-tube{fill:none;stroke:#dcdce1;stroke-width:5;stroke-linecap:round}.arm-head{fill:#1d1d20;stroke:#6b6b72;stroke-width:1}.arm-weight{fill:#8d8d94}
+.rec-led{position:absolute;left:6%;bottom:7%;width:7px;height:7px;border-radius:50%;background:#4a3c38;box-shadow:inset 0 1px 1px rgba(0,0,0,.5)}
+.rec-deck.spin .rec-led{background:#7CFF9A;box-shadow:0 0 8px #7CFF9A}
+.rec-now{flex:1;display:flex;flex-direction:column;gap:2px;text-align:left;min-width:0}
+.rec-now b{font-family:var(--font-display);font-size:17px;line-height:1.25;font-weight:700;letter-spacing:-.02em;overflow-wrap:anywhere}
+.rec-now span{font-size:13.5px;color:var(--muted);overflow-wrap:anywhere}
+.rec-ctl{display:flex;gap:8px;align-items:center;flex:none}
+.rec-ctl[hidden]{display:none}
+.rec-ctl .icon-round{width:38px;height:38px}
+.rec-ctl .icon-round svg{width:20px;height:20px}
+.rec-play{width:52px;height:52px;border-radius:50%;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 22px -10px var(--shadow)}
+.rec-play svg{width:22px;height:22px}
+.rec-play:active{transform:scale(.94)}
+.rec-open[hidden]{display:none}
+.rec-msg{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13.5px;line-height:1.45;text-align:center;max-width:320px}
+.rec-shelf-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.rec-shelf-head h3{margin:0}
+.rec-shelf{display:flex;gap:20px;overflow-x:auto;padding:4px 24px 6px 2px;margin-right:-16px;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.rec-shelf::-webkit-scrollbar{display:none}
+.rec-item{flex:none;width:100px;scroll-snap-align:start}
+.rec-sleeve{position:relative;display:block;width:100px;height:100px;padding:0;touch-action:pan-x;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.rec-peek{position:absolute;top:5%;left:5%;width:90%;height:90%;transform:translateX(16%);transition:transform .35s cubic-bezier(.3,1.3,.5,1),opacity .2s}
+.rec-sleeve:hover .rec-peek{transform:translateX(30%)}
+.rec-item.out .rec-peek,.rec-sleeve.lifted .rec-peek{opacity:0;transform:translateX(0)}
+.rec-cover{position:absolute;inset:0;border-radius:6px;background:linear-gradient(150deg,#7A1020,#2a0004) center/cover;display:flex;align-items:flex-end;padding:9px;color:#fff;font-size:12.5px;text-align:left;line-height:1.25;
+  box-shadow:0 8px 16px -8px rgba(30,0,4,.55),inset 0 0 0 1px rgba(255,255,255,.14),inset 0 1px 0 rgba(255,255,255,.25)}
+.rec-item.out .rec-cover{opacity:.55}
+.rec-meta{display:flex;flex-direction:column;gap:1px;margin-top:9px;width:100%;text-align:left;min-width:0}
+.rec-meta b,.rec-meta span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec-meta b{font-size:13.5px;font-weight:600}
+.rec-meta span{font-size:12px;color:var(--muted)}
+.rec-fly{position:fixed;z-index:60;pointer-events:none;border-radius:50%;filter:drop-shadow(0 12px 18px rgba(0,0,0,.45))}
+.rec-fly.go{transition:left .5s cubic-bezier(.3,.8,.3,1),top .5s cubic-bezier(.3,.8,.3,1),width .5s,height .5s,opacity .35s}
+.sp-uri{display:block;margin:6px 0;padding:8px 10px;border-radius:10px;background:var(--desk);font-size:13px;word-break:break-all;-webkit-user-select:all;user-select:all}
+.steps li .btn{margin-top:2px}
+@media (prefers-reduced-motion: reduce){.rec-deck.spin .rec-platter .vinyl{animation-duration:6s}}
 /* =================== Liquid Glass (Probe) =================== */
 :root{
   --gl:rgba(255,255,255,.42); --gl-strong:rgba(255,255,255,.62); --gl-edge:rgba(255,255,255,.75); --gl-hi:rgba(255,255,255,.95);
@@ -819,6 +880,7 @@ body{background:var(--desk)}
   <section class="view" id="focus" hidden><header class="lib-head"></header><div class="mod-scroll"><div class="mod-body"></div></div></section>
   <section class="view" id="finance" hidden><header class="lib-head"></header><div class="mod-scroll"><div class="mod-body"></div></div></section>
   <section class="view" id="recipes" hidden><header class="lib-head"></header><div class="mod-scroll"><div class="mod-body"></div></div></section>
+  <section class="view" id="records" hidden><header class="lib-head"></header><div class="mod-scroll"><div class="mod-body"></div></div></section>
   <nav class="tabbar" id="tabbar" role="tablist" aria-label="Bereiche">
     <button class="tab" type="button" role="tab" data-tab="books" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5A1.5 1.5 0 016.5 3H19v16H6.5A1.5 1.5 0 005 20.5z"/><path d="M5 20.5A1.5 1.5 0 006.5 22H19v-3"/><path d="M9 7h6"/></svg>Notizen</button>
     <button class="tab" type="button" role="tab" data-tab="planner" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8 14h3"/></svg>Planer</button>
@@ -2939,8 +3001,8 @@ function openForm(cfg) {
 }
 
 /* --- navigation --- */
-const VIEWS = ['library', 'planner', 'weather', 'habits', 'more', 'focus', 'finance', 'recipes'];
-const TAB_OF = { library: 'books', planner: 'planner', weather: 'weather', habits: 'habits', more: 'more', focus: 'more', finance: 'more', recipes: 'more' };
+const VIEWS = ['library', 'planner', 'weather', 'habits', 'more', 'focus', 'finance', 'recipes', 'records'];
+const TAB_OF = { library: 'books', planner: 'planner', weather: 'weather', habits: 'habits', more: 'more', focus: 'more', finance: 'more', recipes: 'more', records: 'more' };
 function showView(v) {
   VIEWS.forEach(x => { const e = document.getElementById(x); if (e) e.hidden = x !== v; });
   document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.tab === TAB_OF[v]));
@@ -3102,7 +3164,7 @@ function renderHabits() {
 /* =================== MEHR =================== */
 async function openMore() {
   showView('more');
-  head('more', 'Mehr', 'Fokus, Finanzen und Rezepte');
+  head('more', 'Mehr', 'Fokus, Finanzen, Rezepte und Musik');
   const b = body('more');
   const [fo, rc, sh] = await Promise.all([Docs.get('focus', { sessions: [], set: { f: 25, s: 5, l: 15 } }), Docs.get('recipes', { r: [] }), Docs.get('shopping', { items: [] })]);
   const fin = await Docs.get('fin-' + todayISO().slice(0, 7), { e: [] }), fs = await Docs.get('finset', { budget: 0 });
@@ -3113,6 +3175,8 @@ async function openMore() {
     { v: 'finance', t: 'Finanzen', s: fs.budget ? `${euro(Math.max(0, fs.budget - spent))} Budget übrig` : `Diesen Monat ${euro(spent)} ausgegeben`, ic: '<rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18M16 14.5h2"/>', fn: openFinance },
     { v: 'recipes', t: 'Rezepte', s: `${rc.r.length} ${rc.r.length === 1 ? 'Rezept' : 'Rezepte'} · ${sh.items.filter(i => !i.done).length} auf der Einkaufsliste`, ic: '<path d="M6 3v8a3 3 0 006 0V3M9 3v18M17 21V3c-2.5 1-4 3.5-4 7v3h4"/>', fn: openRecipes }
   ];
+  const recs = await Docs.get('records', { albums: [] });
+  tiles.splice(3, 0, { v: 'records', t: 'Plattenspieler', s: recs.albums.length ? `${recs.albums.length} ${recs.albums.length === 1 ? 'Platte' : 'Platten'} im Regal` : 'Deine Spotify-Alben als Schallplatten', ic: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3"/><path d="M12 6.5a5.5 5.5 0 015.5 5.5"/>', fn: openRecords });
   tiles.push({ v: 'backup', t: 'Backup', s: STANDALONE ? 'Alles sichern oder wiederherstellen' : 'Alles sichern, zum Beispiel für die iPhone-App', ic: '<path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v2.5A1.5 1.5 0 005.5 21h13a1.5 1.5 0 001.5-1.5V17"/>', fn: openBackup });
   tiles.forEach(t => { const c = el('button', 'more-tile', b); c.type = 'button'; c.innerHTML = `<span class="mt-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${t.ic}</svg></span><span class="mt-tx"><b>${t.t}</b><span>${esc(t.s)}</span></span><span class="mt-go">${ICONS.next}</span>`; c.onclick = t.fn; });
 }
@@ -3558,7 +3622,7 @@ const OM = {
 };
 
 /* --- backup: export everything to one file, and restore it --- */
-const DOC_NAMES = ['weather', 'planner', 'habits', 'focus', 'finset', 'recipes', 'shopping'];
+const DOC_NAMES = ['weather', 'planner', 'habits', 'focus', 'finset', 'recipes', 'shopping', 'records'];
 async function blobToB64(b) { return new Promise(res => { const f = new FileReader(); f.onload = () => res(f.result); f.readAsDataURL(b); }); }
 async function exportBackup() {
   const out = { app: 'folio', v: 1, at: new Date().toISOString(), nbs: [], docs: {} };
@@ -3891,6 +3955,7 @@ const asHelp = () => `Ich bin ${PET.name} und helfe dir gern! Ich wohne nur auf 
 • „Lesen erledigt“ – ich hake die Gewohnheit ab
 • „Starte Fokus für Mathe“
 • „Suche Lasagne“ – ich suche in deinen Notizbüchern
+• „Leg Rumours auf“ – ich lege die Platte auf den Plattenspieler
 • „Überblick“ – dein Tag auf einen Blick
 Und wenn du magst: Ich lasse mich gern streicheln.`;
 
@@ -3905,6 +3970,12 @@ async function asAnswer(raw) {
   if (op) {
     const k = op[1], map = [[/notiz|buch|bücher/, openNotebooks], [/planer|kalender|termin/, openPlanner], [/ziel|gewohn/, openHabits], [/wetter/, openWeather], [/rezept|einkauf/, openRecipes], [/finanz|budget|geld/, openFinance], [/fokus|timer|pomodoro/, openFocus], [/backup|sicherung/, () => { openMore(); openBackup(); }], [/mehr/, openMore]];
     const hit = map.find(([re]) => re.test(k)); if (hit) { asGo(hit[1]); return null; }
+  }
+  // records
+  if (/\b(leg|lege|spiel|spiele|platte|auflegen|abspielen|hören|hoeren)\b/.test(lower) && /(\bauf\b|\bab\b|platte|auflegen|abspielen|hören)/.test(lower)) {
+    const a = await recFind(raw);
+    if (a) { asGo(() => recPutOnFromAnywhere(a)); return { t: `Ich lege „${a.title}“ für dich auf.` }; }
+    if (/platte/.test(lower)) return { t: 'Diese Platte habe ich nicht im Regal gefunden.', actions: [{ l: 'Plattenspieler öffnen', fn: () => asGo(openRecords) }] };
   }
   // search notebooks
   const sr = raw.match(/^(?:such(?:e)?|find(?:e)?)\s+(?:nach\s+|in (?:meinen )?notizen\s+(?:nach\s+)?)?(.+)$/i) || raw.match(/wo\s+(?:habe|hab)\s+ich\s+(?:was |etwas )?(?:über |zu |von )?(.+?)\s+(?:notiert|geschrieben|aufgeschrieben)/i);
@@ -3936,6 +4007,330 @@ async function asAnswer(raw) {
   };
 }
 
+
+/* =================== PLATTENSPIELER (Spotify) =================== */
+/* Albums become records on a shelf. Drag one onto the turntable (or tap it) to put it on.
+   Without a Spotify connection the album opens in the Spotify app. With a connection
+   (needs Spotify Premium and your own Client ID, see the setup sheet) your saved albums
+   show up by themselves and the record plays and is controlled right here.
+   Tokens stay on this device; the record shelf is part of the backup. */
+const SP_KEY = 'folio:spotify';
+const SP = { cfg: { clientId: '', access: '', refresh: '', exp: 0, name: '' }, now: null, poll: 0, onTable: null, playing: false, q: '', busy: false };
+const SP_SCOPES = 'user-library-read user-read-playback-state user-modify-playback-state user-read-currently-playing';
+const spRedirect = () => location.origin + location.pathname;
+function spLoad() { try { Object.assign(SP.cfg, JSON.parse(localStorage.getItem(SP_KEY)) || {}); } catch (e) {} }
+function spSave() { try { localStorage.setItem(SP_KEY, JSON.stringify(SP.cfg)); } catch (e) {} }
+const spLinked = () => !!(SP.cfg.clientId && SP.cfg.refresh);
+const spAlbumId = s => (String(s).match(/album[/:]([A-Za-z0-9]{22})/) || [])[1] || null;
+const spOpenUrl = a => `https://open.spotify.com/album/${a.id}`;
+
+/* --- login with PKCE: no secret needed, works on a static page --- */
+const b64url = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+async function spLogin() {
+  const verifier = b64url(crypto.getRandomValues(new Uint8Array(48)));
+  const challenge = b64url(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)));
+  const state = b64url(crypto.getRandomValues(new Uint8Array(12)));
+  try { sessionStorage.setItem('folio:sp:pkce', JSON.stringify({ verifier, state })); localStorage.setItem('folio:sp:pkce', JSON.stringify({ verifier, state })); } catch (e) {}
+  const u = new URL('https://accounts.spotify.com/authorize');
+  Object.entries({ client_id: SP.cfg.clientId, response_type: 'code', redirect_uri: spRedirect(), code_challenge_method: 'S256', code_challenge: challenge, scope: SP_SCOPES, state }).forEach(([k, v]) => u.searchParams.set(k, v));
+  location.href = u.toString();
+}
+async function spToken(params) {
+  const r = await fetch('https://accounts.spotify.com/api/token', { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ client_id: SP.cfg.clientId, ...params }) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error_description || j.error || 'Anmeldung fehlgeschlagen');
+  SP.cfg.access = j.access_token; SP.cfg.exp = Date.now() + (j.expires_in - 60) * 1000; if (j.refresh_token) SP.cfg.refresh = j.refresh_token; spSave();
+}
+/* runs once at start: finishes the login when Spotify sends us back with ?code= */
+async function spHandleRedirect() {
+  const p = new URLSearchParams(location.search);
+  if (!p.has('code') && !p.has('error')) return false;
+  let saved = null; try { saved = JSON.parse(sessionStorage.getItem('folio:sp:pkce') || localStorage.getItem('folio:sp:pkce')); } catch (e) {}
+  history.replaceState(null, '', spRedirect());
+  try { localStorage.removeItem('folio:sp:pkce'); sessionStorage.removeItem('folio:sp:pkce'); } catch (e) {}
+  if (p.has('error')) { toast('Spotify-Verbindung abgebrochen.'); return true; }
+  if (!saved || saved.state !== p.get('state')) { toast('Spotify-Anmeldung ungültig, bitte noch einmal versuchen.'); return true; }
+  spLoad();
+  try {
+    await spToken({ grant_type: 'authorization_code', code: p.get('code'), redirect_uri: spRedirect(), code_verifier: saved.verifier });
+    const me = await spApi('/me').catch(() => null); if (me) { SP.cfg.name = me.display_name || me.id || ''; spSave(); }
+    toast('Mit Spotify verbunden.');
+    setTimeout(async () => { await openRecords(); spImport(); }, 200);
+  } catch (e) { toast('Spotify: ' + e.message, 4000); }
+  return true;
+}
+async function spApi(path, opt = {}) {
+  if (!spLinked()) throw Object.assign(new Error('nicht verbunden'), { code: 'nolink' });
+  if (!SP.cfg.access || Date.now() > SP.cfg.exp) await spToken({ grant_type: 'refresh_token', refresh_token: SP.cfg.refresh });
+  const go = () => fetch('https://api.spotify.com/v1' + path, { ...opt, headers: { authorization: 'Bearer ' + SP.cfg.access, ...(opt.body ? { 'content-type': 'application/json' } : {}) } });
+  let r = await go();
+  if (r.status === 401) { await spToken({ grant_type: 'refresh_token', refresh_token: SP.cfg.refresh }); r = await go(); }
+  if (r.status === 204 || r.status === 202) return null;
+  const j = await r.json().catch(() => null);
+  if (!r.ok) { const reason = j?.error?.reason || ''; throw Object.assign(new Error(j?.error?.message || 'Spotify-Fehler ' + r.status), { status: r.status, reason }); }
+  return j;
+}
+function spErrText(e) {
+  if (e.reason === 'PREMIUM_REQUIRED') return 'Zum Abspielen in Folio braucht Spotify ein Premium-Konto.';
+  if (e.reason === 'NO_ACTIVE_DEVICE' || e.status === 404) return 'Spotify ist gerade auf keinem Gerät aktiv. Öffne kurz die Spotify-App und versuch es dann noch einmal.';
+  if (e.status === 403) return 'Spotify lässt diese Verbindung nicht zu. Prüfe, ob dein Konto in deiner Spotify-App unter „User Management“ eingetragen ist und ob dein Premium aktiv ist.';
+  return e.message || 'Spotify ist gerade nicht erreichbar.';
+}
+
+/* --- the record shelf --- */
+const recDoc = () => Docs.get('records', { albums: [] });
+async function spImport(silent) {
+  if (SP.busy) return; SP.busy = true;
+  const doc = await recDoc(); let path = '/me/albums?limit=50', added = 0, n = 0;
+  try {
+    while (path && n < 12) {
+      const j = await spApi(path); n++;
+      for (const it of j.items || []) {
+        const a = it.album; if (!a || doc.albums.some(x => x.id === a.id)) continue;
+        doc.albums.push({ id: a.id, title: a.name, artist: (a.artists || []).map(x => x.name).join(', '), cover: (a.images || []).sort((x, y) => (y.width || 0) - (x.width || 0))[0]?.url || '', year: (a.release_date || '').slice(0, 4), src: 'spotify', at: Date.parse(it.added_at) || Date.now() });
+        added++;
+      }
+      path = j.next ? j.next.replace('https://api.spotify.com/v1', '') : null;
+    }
+    Docs.save('records');
+    if (!silent) toast(added ? `${added} ${added === 1 ? 'Platte' : 'Platten'} aus Spotify ins Regal gestellt.` : 'Alles aktuell, keine neuen Alben.');
+  } catch (e) { if (!silent) toast(spErrText(e), 4500); }
+  SP.busy = false;
+  if (S.view === 'records') renderRecords();
+}
+async function recAddByLink(link) {
+  const id = spAlbumId(link); if (!id) { toast('Das ist kein Spotify-Album-Link.'); return false; }
+  const doc = await recDoc(); if (doc.albums.some(a => a.id === id)) { toast('Die Platte steht schon im Regal.'); return false; }
+  const al = { id, title: 'Album', artist: '', cover: '', year: '', src: 'link', at: Date.now() };
+  try {
+    if (spLinked()) { const a = await spApi('/albums/' + id); Object.assign(al, { title: a.name, artist: a.artists.map(x => x.name).join(', '), cover: a.images?.[0]?.url || '', year: (a.release_date || '').slice(0, 4) }); }
+    else { const r = await fetch('https://open.spotify.com/oembed?url=' + encodeURIComponent('https://open.spotify.com/album/' + id)); const j = await r.json(); al.title = j.title || al.title; al.cover = j.thumbnail_url || ''; }
+  } catch (e) { /* keep the bare record; the title can be edited */ }
+  doc.albums.push(al); Docs.save('records'); renderRecords(); toast(`„${al.title}“ steht jetzt im Regal.`);
+  return true;
+}
+function recAddForm() {
+  openForm({ title: 'Platte hinzufügen', saveLabel: 'Hinzufügen', fields: [{ k: 'l', label: 'Spotify-Link zum Album', type: 'text', required: true, placeholder: 'https://open.spotify.com/album/…' }],
+    onSave: v => { recAddByLink(v.l); } });
+  const f = $('#formSheet'), n = el('p', 'store-note', f); n.style.padding = '0'; n.textContent = 'In Spotify beim Album auf „Teilen“ und „Link kopieren“ tippen, dann hier einfügen.';
+  f.insertBefore(n, f.querySelector('.sheet-actions'));
+}
+function recEditForm(a) {
+  openForm({ title: 'Platte bearbeiten', values: { t: a.title, ar: a.artist }, fields: [{ k: 't', label: 'Titel', type: 'text', required: true }, { k: 'ar', label: 'Künstler', type: 'text' }],
+    onSave: v => { a.title = v.t.trim(); a.artist = (v.ar || '').trim(); Docs.save('records'); renderRecords(); },
+    onDelete: () => { Docs.cache.get('records').albums = Docs.cache.get('records').albums.filter(x => x !== a); if (SP.onTable === a.id) recEject(true); Docs.save('records'); renderRecords(); } });
+}
+
+/* --- turntable --- */
+function vinylHTML(a) { return `<div class="vinyl"><div class="vinyl-grooves"></div><div class="vinyl-label"${a?.cover ? ` style="background-image:url('${esc(a.cover)}')"` : ''}></div><i class="vinyl-hole"></i></div>`; }
+function recPaintDeck() {
+  const doc = Docs.cache.get('records'), a = doc?.albums.find(x => x.id === SP.onTable);
+  const deck = $('#recDeck'); if (!deck) return;
+  deck.classList.toggle('loaded', !!a); deck.classList.toggle('spin', !!a && SP.playing);
+  $('#recPlatter').innerHTML = a ? vinylHTML(a) : '<div class="platter-mat"></div>';
+  const np = $('#recNow');
+  $('#recEject').hidden = !a;
+  if (!a) { np.innerHTML = `<b>Leg eine Platte auf</b><span>Zieh ein Album aus dem Regal auf den Plattenspieler oder tipp es an.</span>`; $('#recCtl').hidden = true; $('#recOpen').hidden = true; return; }
+  $('#recOpen').href = spOpenUrl(a);
+  const tr = SP.now?.item && SP.now.context?.uri === 'spotify:album:' + a.id ? SP.now.item : null;
+  np.innerHTML = `<b>${esc(tr ? tr.name : a.title)}</b><span>${esc(tr ? a.title + ' · ' + tr.artists.map(x => x.name).join(', ') : [a.artist, a.year].filter(Boolean).join(' · '))}</span>`;
+  $('#recCtl').hidden = false;
+  $('#recPlay').innerHTML = SP.playing ? REC_IC.pause : REC_IC.play; $('#recPlay').setAttribute('aria-label', SP.playing ? 'Pause' : 'Abspielen');
+  ['recPrev', 'recNext'].forEach(id => $('#' + id).hidden = !spLinked());
+  $('#recOpen').hidden = spLinked() && SP.playing;
+}
+const REC_IC = {
+  play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 001.5.86l10.5-6.5a1 1 0 000-1.72L9.5 4.64A1 1 0 008 5.5z"/></svg>',
+  pause: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6.5" y="5" width="4" height="14" rx="1.3"/><rect x="13.5" y="5" width="4" height="14" rx="1.3"/></svg>',
+  prev: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 6.2v11.6a1 1 0 01-1.5.86L7.4 13.7v4.3H5.5V6h1.9v4.3l8.1-4.96A1 1 0 0117 6.2z"/></svg>',
+  next: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 6.2v11.6a1 1 0 001.5.86l8.1-4.96v4.3h1.9V6h-1.9v4.3L8.5 5.34A1 1 0 007 6.2z"/></svg>',
+  eject: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5l7 8H5z"/><rect x="5" y="15.5" width="14" height="2.5" rx="1"/></svg>'
+};
+async function recPutOn(a, fromEl) {
+  if (SP.onTable === a.id) return recToggle();
+  // fly the record from its sleeve onto the platter
+  const target = $('#recPlatter').getBoundingClientRect();
+  if (fromEl) {
+    const r = fromEl.getBoundingClientRect(), g = el('div', 'rec-fly', document.body);
+    g.innerHTML = vinylHTML(a); Object.assign(g.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' });
+    requestAnimationFrame(() => { Object.assign(g.style, { left: target.left + 'px', top: target.top + 'px', width: target.width + 'px', height: target.height + 'px' }); g.classList.add('go'); });
+    await new Promise(res => setTimeout(res, 520)); g.remove();
+  }
+  SP.onTable = a.id; SP.playing = false; SP.now = null;
+  try { localStorage.setItem('folio:rec:on', a.id); } catch (e) {}
+  recPaintDeck(); try { Sound.unlock(); } catch (e) {}
+  setTimeout(() => recPlay(a), 350);
+}
+async function recPlay(a) {
+  if (!spLinked()) {
+    // without a connection the turntable just "drops the needle" and hands over to Spotify
+    SP.playing = true; recPaintDeck();
+    toast('Öffne das Album in Spotify zum Hören.');
+    return;
+  }
+  try {
+    const devs = (await spApi('/me/player/devices'))?.devices || [];
+    const dev = devs.find(d => d.is_active) || devs.find(d => /smartphone/i.test(d.type)) || devs[0];
+    if (!dev) throw Object.assign(new Error(''), { reason: 'NO_ACTIVE_DEVICE' });
+    await spApi('/me/player/play?device_id=' + encodeURIComponent(dev.id), { method: 'PUT', body: JSON.stringify({ context_uri: 'spotify:album:' + a.id }) });
+    SP.playing = true; recPaintDeck(); setTimeout(recPoll, 1200);
+  } catch (e) { SP.playing = false; recPaintDeck(); recMsg(spErrText(e), e.reason === 'NO_ACTIVE_DEVICE' || e.status === 404); }
+}
+async function recToggle() {
+  const a = Docs.cache.get('records')?.albums.find(x => x.id === SP.onTable); if (!a) return;
+  if (!spLinked()) { SP.playing = !SP.playing; recPaintDeck(); if (SP.playing) window.open(spOpenUrl(a), '_blank'); return; }
+  if (!SP.playing) {
+    if (SP.now?.context?.uri === 'spotify:album:' + a.id) { try { await spApi('/me/player/play', { method: 'PUT' }); SP.playing = true; recPaintDeck(); } catch (e) { recMsg(spErrText(e)); } }
+    else recPlay(a);
+    return;
+  }
+  try { await spApi('/me/player/pause', { method: 'PUT' }); } catch (e) {}
+  SP.playing = false; recPaintDeck();
+}
+async function recSkip(dir) { try { await spApi('/me/player/' + (dir > 0 ? 'next' : 'previous'), { method: 'POST' }); setTimeout(recPoll, 700); } catch (e) { recMsg(spErrText(e)); } }
+function recEject(silent) {
+  if (spLinked() && SP.playing) spApi('/me/player/pause', { method: 'PUT' }).catch(() => {});
+  SP.onTable = null; SP.playing = false; SP.now = null; try { localStorage.removeItem('folio:rec:on'); } catch (e) {}
+  if (!silent) recPaintDeck();
+}
+async function recPoll() {
+  clearTimeout(SP.poll);
+  if (S.view !== 'records' || !spLinked() || document.hidden) return;
+  try {
+    const j = await spApi('/me/player/currently-playing');
+    SP.now = j;
+    const onAlbum = j?.context?.uri?.startsWith('spotify:album:') ? j.context.uri.slice(14) : null;
+    if (onAlbum && Docs.cache.get('records')?.albums.some(x => x.id === onAlbum)) SP.onTable = onAlbum;
+    SP.playing = !!(j?.is_playing && onAlbum && onAlbum === SP.onTable);
+    recPaintDeck();
+  } catch (e) {}
+  SP.poll = setTimeout(recPoll, 5000);
+}
+function recMsg(t, openBtn) {
+  const m = $('#recMsg'); if (!m) return toast(t, 4000);
+  m.hidden = false; m.innerHTML = ''; el('span', '', m).textContent = t;
+  if (openBtn) { const b = el('a', 'btn btn-soft btn-sm', m); b.href = 'https://open.spotify.com/'; b.target = '_blank'; b.rel = 'noopener'; b.textContent = 'Spotify öffnen'; }
+  clearTimeout(recMsg.t); recMsg.t = setTimeout(() => { m.hidden = true; }, 9000);
+}
+
+/* --- setup sheet --- */
+function spSetup() {
+  const f = $('#formSheet'); f.innerHTML = ''; f.onsubmit = e => e.preventDefault();
+  el('h3', '', f).textContent = 'Mit Spotify verbinden';
+  if (spLinked()) {
+    el('p', 'store-note', f).textContent = `Verbunden${SP.cfg.name ? ' als ' + SP.cfg.name : ''}. Deine gespeicherten Alben kommen automatisch ins Regal, und Platten spielen direkt auf deinem Spotify.`;
+    const r = el('div', 'sheet-actions', f), off = el('button', 'btn btn-danger', r); off.type = 'button'; off.textContent = 'Trennen';
+    off.onclick = () => { Object.assign(SP.cfg, { access: '', refresh: '', exp: 0, name: '' }); spSave(); closeGenericSheet('#formSheet'); renderRecords(); toast('Spotify getrennt.'); };
+    const rr = el('div', '', r); rr.style.cssText = 'display:flex;gap:8px';
+    const imp = el('button', 'btn btn-soft', rr); imp.type = 'button'; imp.textContent = 'Alben neu laden'; imp.onclick = () => { closeGenericSheet('#formSheet'); spImport(); };
+    const c = el('button', 'btn btn-primary', rr); c.type = 'button'; c.textContent = 'Fertig'; c.onclick = () => closeGenericSheet('#formSheet');
+    return openGenericSheet('#formSheet');
+  }
+  el('p', 'store-note', f).textContent = 'Spotify verlangt dafür ein Premium-Konto und eine eigene kleine Spotify-App. Das geht einmalig in etwa zwei Minuten:';
+  const ol = el('ol', 'steps', f);
+  [`Öffne developer.spotify.com/dashboard und melde dich mit deinem Spotify-Konto an.`,
+   `Tippe auf „Create app“. Name: Folio. Beschreibung: beliebig.`,
+   `Bei „Redirect URIs“ genau diese Adresse eintragen und „Add“ tippen:`,
+   `Bei „Which API/SDKs are you planning to use?“ „Web API“ anhaken, den Bedingungen zustimmen und speichern.`,
+   `In der neuen App die „Client ID“ kopieren und unten einfügen.`].forEach((t, i) => {
+    const li = el('li', '', ol); li.textContent = t;
+    if (i === 2) { const c = el('code', 'sp-uri', li); c.textContent = spRedirect(); const cp = el('button', 'btn btn-soft btn-sm', li); cp.type = 'button'; cp.textContent = 'Kopieren'; cp.onclick = () => navigator.clipboard?.writeText(spRedirect()).then(() => cp.textContent = 'Kopiert', () => {}); }
+  });
+  const w = el('label', 'field', f); el('span', '', w).textContent = 'Client ID';
+  const inp = el('input', 'input', w); inp.value = SP.cfg.clientId; inp.placeholder = '32 Zeichen aus dem Spotify-Dashboard'; inp.autocomplete = 'off'; inp.spellcheck = false;
+  el('p', 'store-note', f).textContent = 'Die Client ID und die Anmeldung bleiben nur auf diesem Gerät. Folio liest deine gespeicherten Alben und steuert die Wiedergabe, sonst nichts.';
+  const r = el('div', 'sheet-actions', f); el('span', '', r);
+  const rr = el('div', '', r); rr.style.cssText = 'display:flex;gap:8px';
+  const c = el('button', 'btn btn-ghost', rr); c.type = 'button'; c.textContent = 'Abbrechen'; c.onclick = () => closeGenericSheet('#formSheet');
+  const go = el('button', 'btn btn-primary', rr); go.type = 'button'; go.textContent = 'Verbinden';
+  go.onclick = () => { const v = inp.value.trim(); if (!/^[0-9a-f]{32}$/i.test(v)) { toast('Die Client ID besteht aus 32 Zeichen (Ziffern und a–f).'); inp.focus(); return; } SP.cfg.clientId = v; spSave(); spLogin(); };
+  openGenericSheet('#formSheet');
+}
+
+/* --- view --- */
+async function recFind(text) {
+  const doc = await recDoc(), q = String(text || '').toLowerCase();
+  const norm = s => s.toLowerCase().replace(/\(.*?\)|\[.*?\]/g, '').replace(/[^a-z0-9äöüß ]+/g, ' ').trim();
+  let best = null, score = 0;
+  doc.albums.forEach(a => { const t = norm(a.title); if (!t) return; const sc = q.includes(t) ? 100 + t.length : t.split(' ').filter(w => w.length > 2 && q.includes(w)).length * 10 + (a.artist && q.includes(a.artist.toLowerCase()) ? 5 : 0); if (sc > score) { score = sc; best = a; } });
+  return score >= 10 ? best : null;
+}
+async function recPutOnFromAnywhere(a) { await openRecords(); setTimeout(() => { const c = document.querySelector(`.rec-item[data-id="${a.id}"] .rec-cover`); c?.scrollIntoView({ block: 'nearest', inline: 'center' }); recPutOn(a, c); }, 250); }
+async function openRecords() {
+  showView('records'); spLoad(); await recDoc();
+  try { SP.onTable ||= localStorage.getItem('folio:rec:on'); } catch (e) {}
+  renderRecords(); recPoll();
+}
+function renderRecords() {
+  const doc = Docs.cache.get('records'); if (!doc) return;
+  head('records', 'Plattenspieler', spLinked() ? `Verbunden mit Spotify${SP.cfg.name ? ' · ' + SP.cfg.name : ''}` : 'Deine Alben als Schallplatten', null, true);
+  const add = el('button', 'btn btn-primary hl-btn', $('#records .lib-head')); add.type = 'button'; add.innerHTML = ICONS.plus + ' Platte'; add.onclick = recAddForm;
+  const b = body('records');
+  // the turntable
+  const deck = el('div', 'rec-deck card', b); deck.id = 'recDeck';
+  deck.innerHTML = `<div class="rec-plinth"><div class="rec-platter" id="recPlatter"></div>
+    <svg class="rec-arm" viewBox="0 0 100 220" aria-hidden="true"><circle cx="70" cy="22" r="17" class="arm-base"/><circle cx="70" cy="22" r="7" class="arm-pivot"/><path d="M70 22 L74 150 Q75 170 62 186" class="arm-tube"/><rect x="50" y="180" width="18" height="28" rx="4" transform="rotate(28 59 194)" class="arm-head"/><rect x="62" y="0" width="16" height="12" rx="3" class="arm-weight"/></svg>
+    <span class="rec-led"></span><button class="rec-eject" id="recEject" type="button" aria-label="Platte zurück ins Regal" hidden>${REC_IC.eject}</button></div>
+    <div class="rec-bar"><div class="rec-now" id="recNow"></div>
+    <div class="rec-ctl" id="recCtl" hidden><button class="icon-round" id="recPrev" type="button" aria-label="Zurück">${REC_IC.prev}</button><button class="rec-play" id="recPlay" type="button"></button><button class="icon-round" id="recNext" type="button" aria-label="Weiter">${REC_IC.next}</button></div></div>
+    <a class="btn btn-soft btn-sm rec-open" id="recOpen" target="_blank" rel="noopener" hidden>In Spotify öffnen</a>
+    <div class="rec-msg" id="recMsg" hidden></div>`;
+  $('#recPlay').onclick = recToggle; $('#recPrev').onclick = () => recSkip(-1); $('#recNext').onclick = () => recSkip(1); $('#recEject').onclick = () => recEject();
+  if (SP.onTable && !doc.albums.some(x => x.id === SP.onTable)) SP.onTable = null;
+  $('#recPlatter').onclick = () => { if (SP.onTable) recToggle(); };
+  recPaintDeck();
+  // the shelf
+  const shelf = card(b, '', 'rec-shelf-card'), sh = el('div', 'rec-shelf-head', shelf);
+  el('h3', '', sh).textContent = `Regal${doc.albums.length ? ' · ' + doc.albums.length : ''}`;
+  const sp = el('button', 'btn btn-soft btn-sm', sh); sp.type = 'button'; sp.textContent = spLinked() ? 'Spotify' : 'Mit Spotify verbinden'; sp.onclick = spSetup;
+  if (!doc.albums.length) {
+    const st = el('div', 'state', shelf);
+    el('p', '', st).textContent = spLinked() ? 'Deine gespeicherten Spotify-Alben werden geladen …' : 'Noch keine Platten. Füge ein Album über seinen Spotify-Link hinzu, oder verbinde Spotify, dann kommen deine gespeicherten Alben von selbst ins Regal.';
+    if (spLinked() && !SP.busy) spImport(true);
+    return;
+  }
+  if (doc.albums.length > 8) { const s = el('input', 'input', shelf); s.type = 'search'; s.placeholder = 'Platten durchsuchen'; s.value = SP.q; s.setAttribute('aria-label', 'Platten durchsuchen'); s.oninput = () => { SP.q = s.value; fill(); }; s.style.marginBottom = '12px'; }
+  const row = el('div', 'rec-shelf', shelf);
+  const fill = () => {
+    row.innerHTML = ''; const q = SP.q.trim().toLowerCase();
+    doc.albums.filter(a => !q || (a.title + ' ' + a.artist).toLowerCase().includes(q)).sort((x, y) => (y.at || 0) - (x.at || 0)).forEach(a => {
+      const it = el('div', 'rec-item' + (a.id === SP.onTable ? ' out' : ''), row); it.dataset.id = a.id;
+      const sl = el('button', 'rec-sleeve', it); sl.type = 'button'; sl.setAttribute('aria-label', `${a.title} auflegen`);
+      sl.innerHTML = `<span class="rec-peek">${vinylHTML(a)}</span><span class="rec-cover"${a.cover ? ` style="background-image:url('${esc(a.cover)}')"` : ''}>${a.cover ? '' : `<b>${esc(a.title)}</b>`}</span>`;
+      const meta = el('button', 'rec-meta', it); meta.type = 'button'; meta.innerHTML = `<b>${esc(a.title)}</b><span>${esc(a.artist || ' ')}</span>`; meta.onclick = () => recEditForm(a);
+      recDrag(sl, a);
+    });
+    if (!row.children.length) el('p', 'empty-line', row).textContent = 'Keine Platte gefunden.';
+  };
+  fill();
+}
+/* drag a record from its sleeve onto the turntable; a plain tap puts it on as well */
+function recDrag(sl, a) {
+  let start = null, ghost = null;
+  sl.addEventListener('pointerdown', e => { if (e.button) return; start = { x: e.clientX, y: e.clientY, id: e.pointerId }; });
+  sl.addEventListener('pointermove', e => {
+    if (!start || e.pointerId !== start.id) return;
+    const dx = e.clientX - start.x, dy = e.clientY - start.y;
+    if (!ghost) {
+      if (Math.abs(dy) < 10 || Math.abs(dy) < Math.abs(dx)) { if (Math.abs(dx) > 12) start = null; return; } // sideways = scroll the shelf
+      const r = sl.getBoundingClientRect(); ghost = el('div', 'rec-fly drag', document.body); ghost.innerHTML = vinylHTML(a);
+      Object.assign(ghost.style, { width: r.width + 'px', height: r.width + 'px' }); sl.setPointerCapture?.(e.pointerId); sl.classList.add('lifted');
+    }
+    const w = parseFloat(ghost.style.width); ghost.style.left = e.clientX - w / 2 + 'px'; ghost.style.top = e.clientY - w / 2 + 'px';
+    const p = $('#recPlatter').getBoundingClientRect(), over = e.clientX > p.left && e.clientX < p.right && e.clientY > p.top && e.clientY < p.bottom;
+    $('#recDeck').classList.toggle('hover', over); e.preventDefault();
+  });
+  const end = e => {
+    if (!start) return; const s = start; start = null;
+    if (!ghost) { if (e.type === 'pointerup' && Math.hypot(e.clientX - s.x, e.clientY - s.y) < 10) recPutOn(a, sl.querySelector('.rec-cover')); return; }
+    const over = $('#recDeck').classList.contains('hover'); $('#recDeck').classList.remove('hover'); sl.classList.remove('lifted');
+    const g = ghost; ghost = null;
+    if (over) { const p = $('#recPlatter').getBoundingClientRect(); g.classList.add('go'); Object.assign(g.style, { left: p.left + 'px', top: p.top + 'px', width: p.width + 'px', height: p.height + 'px' }); setTimeout(() => { g.remove(); recPutOn(a); }, 380); }
+    else { const r = sl.getBoundingClientRect(); g.classList.add('go'); Object.assign(g.style, { left: r.left + 'px', top: r.top + 'px', opacity: '0' }); setTimeout(() => g.remove(), 380); }
+  };
+  sl.addEventListener('pointerup', end); sl.addEventListener('pointercancel', end);
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden && S.view === 'records') recPoll(); });
 
 /* =================== KI für Krümel (optional) =================== */
 /* With an API key from a free provider, Krümel talks freely and acts in the app through
@@ -3971,7 +4366,9 @@ const AI_TOOLS = [
   { name: 'gewohnheit_abhaken', description: 'Markiert eine Gewohnheit für heute als erledigt.', parameters: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] } },
   { name: 'fokus_starten', description: 'Startet den Fokus-Timer (Pomodoro).', parameters: { type: 'object', properties: { minuten: { type: 'number' }, thema: { type: 'string' } } } },
   { name: 'notizen_suchen', description: 'Sucht einen Begriff in allen Notizbüchern und liefert Fundstellen.', parameters: { type: 'object', properties: { begriff: { type: 'string' } }, required: ['begriff'] } },
-  { name: 'bereich_oeffnen', description: 'Öffnet einen Bereich der App, nachdem du geantwortet hast.', parameters: { type: 'object', properties: { bereich: { type: 'string', enum: ['notizen', 'planer', 'ziele', 'wetter', 'rezepte', 'finanzen', 'fokus'] } }, required: ['bereich'] } }
+  { name: 'platten_anzeigen', description: 'Zeigt die Schallplatten (Alben) im Regal des Plattenspielers.' },
+  { name: 'platte_auflegen', description: 'Legt eine Platte aus dem Regal auf den Plattenspieler und spielt sie ab (über Spotify). Vorher mit platten_anzeigen den genauen Titel holen, wenn nötig.', parameters: { type: 'object', properties: { titel: { type: 'string' } }, required: ['titel'] } },
+  { name: 'bereich_oeffnen', description: 'Öffnet einen Bereich der App, nachdem du geantwortet hast.', parameters: { type: 'object', properties: { bereich: { type: 'string', enum: ['notizen', 'planer', 'ziele', 'wetter', 'rezepte', 'finanzen', 'fokus', 'plattenspieler'] } }, required: ['bereich'] } }
 ];
 
 async function aiWeather(iso) {
@@ -3988,7 +4385,7 @@ async function aiWeather(iso) {
   return out;
 }
 const aiFindItem = async id => (await Docs.get('planner', { items: [] })).items.find(i => i.id === id);
-const aiOpen = { notizen: openNotebooks, planer: openPlanner, ziele: openHabits, wetter: openWeather, rezepte: openRecipes, finanzen: openFinance, fokus: openFocus };
+const aiOpen = { notizen: openNotebooks, planer: openPlanner, ziele: openHabits, wetter: openWeather, rezepte: openRecipes, finanzen: openFinance, fokus: openFocus, plattenspieler: openRecords };
 
 /* Runs one tool. Returns { r: result for the model, undo?, after?, done? } */
 async function aiTool(name, a, turn) {
@@ -4072,6 +4469,14 @@ async function aiTool(name, a, turn) {
       if (hits.length) turn.go = turn.go || (async () => { await openSearch(); $('#srQ').value = a.begriff; runSearch(); });
       return { r: { treffer: hits } };
     }
+    case 'platten_anzeigen': { const doc = await recDoc(); return { r: { platten: doc.albums.map(a => ({ titel: a.title, kuenstler: a.artist })) } }; }
+    case 'platte_auflegen': {
+      const doc = await recDoc(), q = String(a.titel || '').toLowerCase();
+      const al = doc.albums.find(x => x.title.toLowerCase() === q) || doc.albums.find(x => x.title.toLowerCase().includes(q) || q.includes(x.title.toLowerCase())) || await recFind(q);
+      if (!al) return { r: { fehler: 'Nicht im Regal', vorhanden: doc.albums.slice(0, 40).map(x => x.title) } };
+      turn.go = () => recPutOnFromAnywhere(al); turn.goNow = true;
+      return { r: { ok: true, titel: al.title, kuenstler: al.artist } };
+    }
     case 'bereich_oeffnen': { const f = aiOpen[a.bereich]; if (f) { turn.go = f; turn.goNow = true; } return { r: { ok: !!f } }; }
   }
   return { r: { fehler: 'Unbekanntes Werkzeug' } };
@@ -4080,7 +4485,7 @@ async function aiTool(name, a, turn) {
 function aiSystem() {
   const now = new Date(), wd = now.toLocaleDateString('de-DE', { weekday: 'long' });
   const days = Array.from({ length: 8 }, (_, i) => { const d = addDays(now, i); return `${d.toLocaleDateString('de-DE', { weekday: 'long' })} = ${isoD(d)}`; }).join(', ');
-  return `Du bist ${PET.name}, eine kleine, freundliche Wolke, die in der App „Folio“ wohnt (Notizbücher, Planer, Ziele, Wetter, Fokus-Timer, Finanzen, Rezepte und Einkaufsliste).
+  return `Du bist ${PET.name}, eine kleine, freundliche Wolke, die in der App „Folio“ wohnt (Notizbücher, Planer, Ziele, Wetter, Fokus-Timer, Finanzen, Rezepte, Einkaufsliste und ein Plattenspieler mit den Spotify-Alben als Schallplatten).
 Du hilfst der Person, mit der du sprichst, im Alltag und erledigst Dinge direkt in der App über deine Werkzeuge.
 Heute ist ${wd}, der ${isoD(now)}, es ist ${pad2(now.getHours())}:${pad2(now.getMinutes())} Uhr. Die nächsten Tage: ${days}.
 Regeln:
@@ -4361,7 +4766,7 @@ async function asOpen() {
 }
 function asClose() {
   $('#asst').hidden = true; $('#aiPanel').hidden = true; $('#asIn').blur(); $('#asst').classList.remove('typing');
-  const rer = { planner: () => Docs.cache.has('planner') && renderPlanner(), habits: () => Docs.cache.has('habits') && renderHabits(), finance: () => FI.month && Docs.cache.has('fin-' + FI.month) && renderFinance(), recipes: () => Docs.cache.has('recipes') && renderRecipes(), more: openMore, library: renderHintCard }[S.view];
+  const rer = { planner: () => Docs.cache.has('planner') && renderPlanner(), habits: () => Docs.cache.has('habits') && renderHabits(), finance: () => FI.month && Docs.cache.has('fin-' + FI.month) && renderFinance(), recipes: () => Docs.cache.has('recipes') && renderRecipes(), records: () => Docs.cache.has('records') && renderRecords(), more: openMore, library: renderHintCard }[S.view];
   try { rer?.(); } catch (e) {}
 }
 function petRename() {
@@ -4433,6 +4838,7 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
     ? 'Privat in deinem Konto gespeichert, auf allen Geräten.'
     : STANDALONE ? 'Auf diesem iPhone gespeichert. Sichere ab und zu unter Mehr → Backup.' : 'Nur auf diesem Gerät gespeichert. Melde dich bei Claude an, damit deine Notizbücher überall verfügbar sind.';
   renderShelf(); renderHintCard();
+  spHandleRedirect();
 })();
 })();
 </script>
