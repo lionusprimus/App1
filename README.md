@@ -16,6 +16,8 @@ Notizbücher mit echtem Umblättern, Planer, Ziele, Wetter, Fokus-Timer, Finanze
 
 **Schule:** Unter *Mehr → Schule* Fächer wählen, Stundenplan eintragen, Hausaufgaben erfassen (sie stehen automatisch auch im Planer) und Noten sammeln. Der Schnitt wird pro Fach und insgesamt berechnet, Klausuren zählen doppelt; „2-“ zählt als 2,3 und „2+“ als 1,7. Für die Oberstufe lässt sich auf Punkte (0 bis 15) umschalten; Noten und Punkte werden ineinander umgerechnet (Note = (17 − Punkte) / 3).
 
+**Untis:** In *Schule → Stundenplan* über „Aus Untis übernehmen“ den persönlichen iCal-Link aus Untis einfügen (oder eine .ics-Datei wählen). Folio übernimmt die Stunden, die sich jede Woche wiederholen, und ordnet Kürzel wie „M“ oder „D-LK“ Fächern zu. Ob der Link direkt abrufbar ist, entscheidet der Untis-Server; sonst geht es über die Datei.
+
 **Lernkarten:** Unter *Mehr → Lernkarten* Stapel anlegen und Karten als „Vorderseite = Rückseite“ eintragen. Beim Lernen kommen Karten, die du gut kannst, seltener dran.
 
 **Sparziele und Abos:** In *Finanzen* gibt es Sparziele mit Fortschrittsring, und Folio erkennt wiederkehrende Zahlungen der letzten sechs Monate und zeigt, was sie im Jahr kosten.

@@ -937,6 +937,13 @@ body{background:var(--desk)}
 .sch-avg.good{color:#2F9E6B}.sch-avg.bad{color:var(--danger)}
 .sch-glist{display:flex;flex-direction:column;gap:2px;margin:-4px 0 8px 22px}
 .sch-scale{margin-bottom:-2px}
+.sch-foot{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.untis-map{max-height:44vh}
+.untis-row{display:grid;grid-template-columns:auto 1fr;grid-template-areas:"c n" "s s";gap:4px 10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.untis-row:first-child{border-top:0}
+.untis-code{grid-area:c;font-weight:700;font-size:15px;padding:3px 9px;border-radius:8px;background:var(--grid)}
+.untis-n{grid-area:n;font-size:12.5px;color:var(--muted)}
+.untis-sel{grid-area:s;height:42px;width:100%;box-sizing:border-box}
 .sch-gitem{display:flex;justify-content:space-between;padding:7px 10px;border-radius:10px;background:var(--grid);font-size:13.5px;text-align:left}
 /* ---------- Lernkarten ---------- */
 .cd-ic{font-family:var(--font-display);font-size:20px;font-weight:700}
@@ -5621,7 +5628,7 @@ function renderSchool() {
   [['plan', 'Stundenplan'], ['hw', `Aufgaben${openHw ? ' · ' + openHw : ''}`], ['grades', 'Noten']].forEach(([k, l]) => { const x = el('button', '', seg); x.type = 'button'; x.textContent = l; x.setAttribute('aria-pressed', SCH.tab === k); x.onclick = () => { SCH.tab = k; renderSchool(); }; });
   if (!doc.subjects.length) {
     const c = card(b, ''), st = el('div', 'state center', c); el('h2', '', st).textContent = 'Los geht’s'; el('p', '', st).textContent = 'Wähle zuerst deine Fächer aus. Danach kannst du Stundenplan, Hausaufgaben und Noten eintragen.';
-    const a = el('button', 'btn btn-primary', st); a.type = 'button'; a.textContent = 'Fächer auswählen'; a.onclick = schSubjectsForm; return;
+    const a = el('button', 'btn btn-primary', st); a.type = 'button'; a.textContent = 'Fächer auswählen'; a.onclick = schSubjectsForm; const u = el('button', 'btn btn-soft', st); u.type = 'button'; u.textContent = 'Stundenplan aus Untis übernehmen'; u.onclick = untisSheet; return;
   }
   if (SCH.tab === 'plan') {
     const today = todayISO(), tw = schWeekday(today), tc = card(b, tw <= 5 ? 'Heute' : 'Nächster Schultag');
@@ -5639,7 +5646,8 @@ function renderSchool() {
     if (!list.length) el('p', 'empty-line', wc).textContent = 'Noch keine Stunden an diesem Tag.';
     list.forEach(l => { const s = schSub(doc, l.s), r = el('button', 'sch-les', wc); r.type = 'button'; r.innerHTML = `<span class="sch-time">${esc(l.from || '–')}${l.to ? `<small>${esc(l.to)}</small>` : ''}</span><i style="background:${s.color}"></i><span class="sch-tx"><b>${esc(s.name)}</b>${l.room ? `<span>Raum ${esc(l.room)}</span>` : ''}</span>`; r.onclick = () => lessonForm(SCH.day, l); });
     const ad = el('button', 'btn btn-soft btn-sm', wc); ad.type = 'button'; ad.innerHTML = ICONS.plus + ' Stunde hinzufügen'; ad.style.marginTop = '10px'; ad.onclick = () => lessonForm(SCH.day);
-    const fb = el('button', 'btn btn-ghost btn-sm', b); fb.type = 'button'; fb.textContent = 'Fächer bearbeiten'; fb.onclick = schSubjectsForm;
+    const fr = el('div', 'sch-foot', b), ub = el('button', 'btn btn-soft btn-sm', fr); ub.type = 'button'; ub.textContent = doc.untisUrl ? 'Aus Untis aktualisieren' : 'Aus Untis übernehmen'; ub.onclick = () => doc.untisUrl ? untisRefresh() : untisSheet();
+    const fb = el('button', 'btn btn-ghost btn-sm', fr); fb.type = 'button'; fb.textContent = 'Fächer bearbeiten'; fb.onclick = schSubjectsForm;
   } else if (SCH.tab === 'hw') {
     const open = doc.hw.filter(h => !h.done).sort((a, c) => a.due.localeCompare(c.due)), done = doc.hw.filter(h => h.done).sort((a, c) => c.due.localeCompare(a.due));
     const oc = card(b, 'Offen');
@@ -5668,6 +5676,131 @@ function renderSchool() {
       if (op) { const dl = el('div', 'sch-glist', sc); list.slice().sort((x, y) => y.d.localeCompare(x.d)).forEach(g => { const gr = el('button', 'sch-gitem', dl); gr.type = 'button'; gr.innerHTML = `<span>${parseD(g.d).toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })} · ${esc(GRADE_KIND.find(k => k.v === g.k)?.l || '')}</span><b>${esc(gLabel(g))}</b>`; gr.onclick = () => gradeForm(g); }); }
     });
   }
+}
+
+/* =================== UNTIS: Stundenplan aus dem iCal-Link oder einer .ics-Datei =================== */
+/* Untis gives every student a private iCal link. Folio reads the lessons, finds the ones
+   that repeat every week and turns them into the weekly timetable. Subject codes like
+   "M", "D-LK" or "bio2" are matched to subject names; you can check the matching first. */
+const UNTIS_CODES = [[/^(m|ma|mat|mathe|mathematik)$/, 'Mathe'], [/^(d|de|deu|deutsch)$/, 'Deutsch'], [/^(e|en|eng|englisch)$/, 'Englisch'], [/^(bi|bio|biologie)$/, 'Bio'], [/^(ph|phy|physik)$/, 'Physik'], [/^(ch|che|chemie)$/, 'Chemie'],
+  [/^(g|ge|ges|gesch|geschichte)$/, 'Geschichte'], [/^(ek|erd|erdkunde|geo|geographie)$/, 'Erdkunde'], [/^(po|pol|pw|politik|sowi|sw|gk|gemeinschaftskunde)$/, 'Politik'], [/^(if|inf|info|informatik)$/, 'Informatik'], [/^(f|fr|frz|französisch|franzoesisch)$/, 'Französisch'],
+  [/^(s|spa|span|spanisch)$/, 'Spanisch'], [/^(l|la|lat|latein)$/, 'Latein'], [/^(ku|kun|kunst|bk)$/, 'Kunst'], [/^(mu|mus|musik)$/, 'Musik'], [/^(sp|spo|sport)$/, 'Sport'], [/^(re|rel|er|kr|ev|kath|religion|rk|rev)$/, 'Religion'], [/^(wn|wun|wun|werte|ethik|eth|pp|philo|philosophie)$/, 'Werte und Normen'],
+  [/^(wi|wirt|wirtschaft|wat)$/, 'Wirtschaft'], [/^(nw|nawi)$/, 'Naturwissenschaften'], [/^(ds|dsp|theater)$/, 'Darstellendes Spiel'], [/^(psy|psychologie)$/, 'Psychologie'], [/^(pa|päd|paed|pädagogik)$/, 'Pädagogik']];
+function untisGuess(code) {
+  const c = String(code).toLowerCase().replace(/[-_ ].*$/, '').replace(/\d+$/, '').trim();
+  for (const [re, n] of UNTIS_CODES) if (re.test(c)) return n;
+  return code.length > 3 ? asCap(code.replace(/[-_]\w*$/, '')) : code.toUpperCase();
+}
+function icsParse(text) {
+  const lines = text.replace(/\r\n[ \t]/g, '').replace(/\n[ \t]/g, '').split(/\r?\n/), out = []; let ev = null;
+  const val = l => l.slice(l.indexOf(':') + 1).replace(/\\n/gi, ' ').replace(/\\,/g, ',').replace(/\\;/g, ';').trim();
+  const when = l => {
+    const v = val(l), m = v.match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?(Z)?)?$/); if (!m) return null;
+    if (!m[4]) return { allDay: true };
+    return m[7] ? new Date(Date.UTC(+m[1], m[2] - 1, +m[3], +m[4], +m[5])) : new Date(+m[1], m[2] - 1, +m[3], +m[4], +m[5]);
+  };
+  for (const l of lines) {
+    if (l === 'BEGIN:VEVENT') ev = {};
+    else if (l === 'END:VEVENT') { if (ev?.start && !ev.start.allDay && ev.end) out.push(ev); ev = null; }
+    else if (ev) {
+      const k = l.slice(0, l.search(/[;:]/)).toUpperCase();
+      if (k === 'DTSTART') ev.start = when(l); else if (k === 'DTEND') ev.end = when(l);
+      else if (k === 'SUMMARY') ev.summary = val(l); else if (k === 'LOCATION') ev.location = val(l);
+      else if (k === 'DESCRIPTION') ev.desc = val(l); else if (k === 'STATUS') ev.status = val(l).toUpperCase();
+    }
+  }
+  return out;
+}
+function untisWeekPlan(events) {
+  const hm = d => `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+  const weekKey = d => { const x = new Date(d); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return isoD(x); };
+  const groups = {}, weeks = new Set();
+  events.forEach(e => {
+    const wd = e.start.getDay(); if (wd < 1 || wd > 6) return;
+    const code = (e.summary || '').split(/[,;]/)[0].trim(); if (!code) return;
+    const wk = weekKey(e.start); weeks.add(wk);
+    const key = `${wd}|${hm(e.start)}|${hm(e.end)}|${code}`;
+    (groups[key] ||= { wd, from: hm(e.start), to: hm(e.end), code, weeks: new Set(), rooms: {} }).weeks.add(wk);
+    if (e.location) groups[key].rooms[e.location] = (groups[key].rooms[e.location] || 0) + 1;
+  });
+  // a regular lesson shows up in at least half of the weeks (and in two, once there are two)
+  const need = weeks.size >= 2 ? Math.max(2, Math.ceil(weeks.size / 2)) : 1;
+  const lessons = Object.values(groups).filter(g => g.weeks.size >= need).map(g => ({ wd: g.wd, from: g.from, to: g.to, code: g.code, room: Object.entries(g.rooms).sort((a, b) => b[1] - a[1])[0]?.[0] || '' }));
+  return { lessons, weeks: weeks.size, events: events.length };
+}
+async function untisLoadUrl(url) {
+  const u = String(url).trim().replace(/^webcal:\/\//i, 'https://');
+  if (!/^https:\/\//i.test(u)) throw new Error('Das ist kein gültiger Link.');
+  let r;
+  try { r = await fetch(u, { cache: 'no-store' }); }
+  catch (e) { throw Object.assign(new Error('blocked'), { blocked: true }); }
+  if (!r.ok) throw new Error(r.status === 401 || r.status === 403 ? 'Untis hat den Link abgelehnt. Ist er noch gültig?' : 'Untis antwortet gerade nicht (' + r.status + ').');
+  return r.text();
+}
+function untisSheet() {
+  const doc = Docs.cache.get('school'), f = $('#formSheet'); f.innerHTML = ''; f.onsubmit = e => e.preventDefault();
+  el('h3', '', f).textContent = 'Stundenplan aus Untis';
+  el('p', 'store-note imp-note', f).textContent = 'Folio übernimmt deine regelmäßigen Stunden als Wochenplan. Dafür brauchst du deinen persönlichen Kalender-Link (iCal) aus Untis.';
+  el('p', 'imp-h', f).textContent = 'So findest du den Link';
+  const ol = el('ol', 'steps', f);
+  ['In der Untis-App unten auf „Start“ und dann „Kalender“ tippen, oder auf WebUntis im Browser unter dem Stundenplan das Menü mit den drei Punkten öffnen.', 'Den iCal-Link (Kalender abonnieren) kopieren.', 'Hier einfügen und „Laden“ tippen.'].forEach(t => el('li', '', ol).textContent = t);
+  const w = el('label', 'field', f); el('span', '', w).textContent = 'iCal-Link';
+  const inp = el('input', 'input', w); inp.placeholder = 'https://…webuntis.com/WebUntis/Ical.do?…'; inp.value = doc.untisUrl || ''; inp.autocomplete = 'off'; inp.spellcheck = false;
+  const msg = el('p', 'imp-check warn', f); msg.hidden = true;
+  const file = el('input', '', f); file.type = 'file'; file.hidden = true;
+  const r = el('div', 'sheet-actions', f), fb = el('button', 'btn btn-soft', r); fb.type = 'button'; fb.textContent = '.ics-Datei wählen'; fb.onclick = () => file.click();
+  const go = el('button', 'btn btn-primary', r); go.type = 'button'; go.textContent = 'Laden';
+  go.onclick = async () => {
+    msg.hidden = true; go.disabled = true; go.textContent = 'Lade …';
+    try { const txt = await untisLoadUrl(inp.value); doc.untisUrl = inp.value.trim(); Docs.save('school'); untisPreview(txt, true); }
+    catch (e) {
+      msg.hidden = false;
+      msg.textContent = e.blocked ? 'Untis lässt Folio den Link leider nicht direkt abrufen (das entscheidet der Untis-Server). Nimm stattdessen eine Kalenderdatei: In WebUntis im Browser unter dem Stundenplan über die drei Punkte den Stundenplan als iCal/.ics exportieren und hier mit „.ics-Datei wählen“ öffnen.' : e.message;
+      go.disabled = false; go.textContent = 'Laden';
+    }
+  };
+  file.onchange = async () => { const fl = file.files[0]; if (!fl) return; try { untisPreview(await csvDecode(fl), false); } catch (e) { toast('Die Datei konnte ich nicht lesen.', 4000); } };
+  openGenericSheet('#formSheet');
+}
+function untisPreview(text, fromLink) {
+  const doc = Docs.cache.get('school'), ev = icsParse(text);
+  if (!ev.length) { toast('In der Datei habe ich keine Stunden gefunden.', 4000); return; }
+  const plan = untisWeekPlan(ev);
+  if (!plan.lessons.length) { toast('Ich habe keine regelmäßigen Stunden gefunden.', 4000); return; }
+  const codes = [...new Set(plan.lessons.map(l => l.code))].sort();
+  const map = {};
+  codes.forEach(c => { const g = untisGuess(c), ex = doc.subjects.find(s => s.name.toLowerCase() === g.toLowerCase()); map[c] = ex ? ex.id : 'new:' + g; });
+  const f = $('#formSheet'); f.innerHTML = ''; f.classList.add('tl-sheet');
+  el('h3', '', f).textContent = `${plan.lessons.length} Stunden pro Woche gefunden`;
+  el('p', 'store-note imp-note', f).textContent = `Aus ${plan.weeks} ${plan.weeks === 1 ? 'Woche' : 'Wochen'}. Prüfe kurz, welches Fach hinter welchem Kürzel steckt.`;
+  const list = el('div', 'tl-list untis-map', f);
+  codes.forEach(c => {
+    const row = el('div', 'untis-row', list), n = plan.lessons.filter(l => l.code === c).length;
+    row.innerHTML = `<span class="untis-code">${esc(c)}</span><span class="untis-n">${n}× pro Woche</span>`;
+    const sel = el('select', 'input untis-sel', row);
+    const g = untisGuess(c);
+    [...doc.subjects.map(s => [s.id, s.name]), ...(doc.subjects.some(s => s.name.toLowerCase() === g.toLowerCase()) ? [] : [['new:' + g, `Neu: ${g}`]]), ['skip', 'Nicht übernehmen']].forEach(([v, l]) => { const o = el('option', '', sel); o.value = v; o.textContent = l; o.selected = map[c] === v; });
+    sel.onchange = () => map[c] = sel.value;
+  });
+  const keep = el('label', 'set-row', f), tx = el('span', 'set-tx', keep); el('b', '', tx).textContent = 'Bisherigen Stundenplan ersetzen'; el('span', '', tx).textContent = 'Sonst kommen die Stunden dazu';
+  const rep = el('input', 'set-toggle', keep); rep.type = 'checkbox'; rep.checked = true;
+  const r = el('div', 'sheet-actions', f), c = el('button', 'btn btn-ghost', r); c.type = 'button'; c.textContent = 'Abbrechen'; c.onclick = () => { f.classList.remove('tl-sheet'); closeGenericSheet('#formSheet'); };
+  const go = el('button', 'btn btn-primary', r); go.type = 'button'; go.textContent = 'Übernehmen';
+  go.onclick = () => {
+    const before = JSON.stringify({ subjects: doc.subjects, plan: doc.plan });
+    let i = doc.subjects.length;
+    Object.keys(map).forEach(code => { if (map[code].startsWith('new:')) { const name = map[code].slice(4), ex = doc.subjects.find(s => s.name === name); const id = ex ? ex.id : uid(); if (!ex) doc.subjects.push({ id, name, color: SCH_COLORS[i++ % SCH_COLORS.length] }); map[code] = id; } });
+    if (rep.checked) doc.plan = {};
+    plan.lessons.forEach(l => { if (map[l.code] === 'skip') return; (doc.plan[l.wd] ||= []).push({ id: uid(), s: map[l.code], from: l.from, to: l.to, room: l.room, src: 'untis' }); });
+    doc.untisAt = Date.now(); Docs.save('school');
+    f.classList.remove('tl-sheet'); closeGenericSheet('#formSheet'); SCH.tab = 'plan'; renderSchool();
+    showUndo('Stundenplan übernommen', () => { const b = JSON.parse(before); doc.subjects = b.subjects; doc.plan = b.plan; Docs.save('school'); renderSchool(); });
+    if (fromLink) toast('Über „Aus Untis“ kannst du später mit einem Tipp aktualisieren.', 3500);
+  };
+}
+async function untisRefresh() {
+  const doc = Docs.cache.get('school');
+  try { untisPreview(await untisLoadUrl(doc.untisUrl), true); } catch (e) { untisSheet(); }
 }
 
 /* =================== LERNKARTEN (Wiederholung mit wachsenden Abständen) =================== */
