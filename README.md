@@ -1,26 +1,9 @@
 # Folio
 
-Ein schlanker Portfolio-Tracker als Web-App (React + TypeScript + Vite).
+Notizbücher mit echtem Umblättern, Planer, Ziele, Wetter, Fokus-Timer, Finanzen und Rezepte – als Web-App für den iPhone-Home-Bildschirm.
 
-## Funktionen
+**Installieren:** Die Seite in Safari öffnen, auf „Teilen“ tippen und „Zum Home-Bildschirm“ wählen.
 
-- Positionen erfassen (Aktie, ETF, Krypto, Anleihe, Sonstiges) mit Anzahl, Kaufkurs und aktuellem Kurs
-- Gesamtwert, investiertes Kapital, Gewinn/Verlust absolut und in Prozent
-- Bester und schwächster Wert
-- Aufteilung als Donut-Diagramm, nach Art oder nach Position
-- Kurse direkt in der Tabelle ändern (Klick auf den Kurs, Enter zum Speichern)
-- Suchen, Filtern, Sortieren
-- Export und Import als JSON
-- Daten bleiben lokal im Browser (localStorage)
-- Hell/Dunkel nach Systemeinstellung, für Handy optimiert
-
-## Starten
-
-```bash
-npm install
-npm run dev      # Entwicklungsserver
-npm run build    # Produktions-Build nach dist/
-npm run preview  # Build lokal ansehen
-```
-
-Beim ersten Start werden Beispieldaten geladen. Löschen oder überschreiben kannst du sie jederzeit.
+- Alle Daten bleiben auf dem Gerät (localStorage und IndexedDB). Unter *Mehr → Backup* lässt sich alles als Datei sichern und wiederherstellen.
+- Wetter: [Open-Meteo](https://open-meteo.com) (CC BY 4.0). Karte: [Natural Earth](https://www.naturalearthdata.com) über world-atlas.
+- PDF-Export: jsPDF. Schrift: Literata (SIL Open Font License).
