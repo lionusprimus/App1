@@ -1062,6 +1062,45 @@ html.locked .app,html.locked .as-fab{visibility:hidden}
 .set-foot{text-align:center;padding:4px 0 0}
 html.no-amb body::before{background:var(--desk)}
 html.no-pet .as-fab{display:none!important}
+.ph-empty{text-align:center;padding:28px 20px}
+.ph-hero{width:140px;margin:0 auto 6px}
+.ph-hero svg{width:100%;height:auto}
+.ph-empty h3{font-size:20px;margin:6px 0}
+.ph-note{color:var(--muted);font-size:13px;line-height:1.45;margin:6px 0 0}
+.ph-big{margin-top:16px;width:100%;height:50px;font-size:16px}
+.ph-stage{position:sticky;top:0;z-index:3;box-shadow:0 10px 24px -14px var(--shadow);display:flex;justify-content:center;align-items:center;margin:0 0 14px;border-radius:22px;overflow:hidden;background:repeating-conic-gradient(rgba(var(--b2-rgb),.05) 0 25%,transparent 0 50%) 0 0/18px 18px,var(--card);min-height:160px}
+.ph-canvas{display:block;max-width:100%;max-height:34vh;width:auto;height:auto;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.ph-hint{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;background:rgba(0,0,0,.38);color:#fff;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);pointer-events:none;transition:opacity .2s}
+.ph-stage.cmp .ph-hint{opacity:0}
+.ph-hint{animation:phHint 3.2s forwards}
+@keyframes phHint{0%,75%{opacity:1}100%{opacity:0}}
+.ph-busy{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:rgba(var(--b3-rgb),.45);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff;font-weight:700}
+.ph-busy svg{width:110px;height:auto}
+.ph-tabs{margin-bottom:12px}
+.ph-tabs button{font-size:12.5px}
+.ph-panel{display:flex;flex-direction:column;gap:12px}
+.ph-filters{display:flex;gap:10px;overflow-x:auto;margin:-4px -4px 0;padding:4px;scrollbar-width:none}
+.ph-filters::-webkit-scrollbar{display:none}
+.ph-flt{flex:none;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted)}
+.ph-flt canvas{width:68px;height:68px;object-fit:cover;border-radius:16px;box-shadow:0 0 0 2px transparent;transition:box-shadow .15s}
+.ph-flt[aria-pressed="true"]{color:var(--fg)}
+.ph-flt[aria-pressed="true"] canvas{box-shadow:0 0 0 2.5px var(--accent)}
+.ph-sl{display:flex;flex-direction:column;gap:4px}
+.ph-sl-t{display:flex;justify-content:space-between;font-size:13px;font-weight:600}
+.ph-sl-t b{color:var(--muted);font-variant-numeric:tabular-nums}
+.ph-sl input{width:100%;accent-color:var(--accent);height:28px}
+.ph-chips{display:flex;flex-wrap:wrap;gap:8px}
+.ph-lbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:-4px}
+.ph-row,.ph-own{display:flex;gap:8px}
+.ph-row .btn{flex:1}
+.ph-own .input{flex:1;min-width:0}
+.ph-panel textarea.input{height:auto;padding:12px 14px;resize:none;-webkit-user-select:text;user-select:text}
+.ph-colors{display:flex;gap:10px}
+.ph-col{width:34px;height:34px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.ph-col[aria-pressed="true"]{box-shadow:inset 0 0 0 1px rgba(0,0,0,.15),0 0 0 2px var(--card),0 0 0 4.5px var(--accent)}
+.ph-small{align-self:flex-start;height:34px;font-size:13px}
+.ph-foot{display:flex;gap:8px;margin:14px 0 8px}
+.ph-foot .btn{flex:1;height:46px}
 </style>
 
 <div class="app" id="app" lang="de">
@@ -1105,6 +1144,7 @@ html.no-pet .as-fab{display:none!important}
   <section class="view" id="recipes" hidden><header class="lib-head"></header><div class="mod-scroll"><div class="mod-body"></div></div></section>
   <section class="view" id="school" hidden><header class="lib-head"></header><div class="mod-scroll"><div class="mod-body"></div></div></section>
   <section class="view" id="cards" hidden><header class="lib-head"></header><div class="mod-scroll"><div class="mod-body"></div></div></section>
+  <section class="view" id="photos" hidden><header class="lib-head"></header><div class="mod-scroll"><div class="mod-body"></div></div></section>
   <section class="view" id="settings" hidden><header class="lib-head"></header><div class="mod-scroll"><div class="mod-body"></div></div></section>
   <section class="view" id="records" hidden><header class="lib-head"></header><div class="mod-scroll"><div class="mod-body"></div></div></section>
   <nav class="tabbar" id="tabbar" role="tablist" aria-label="Bereiche">
@@ -3227,8 +3267,8 @@ function openForm(cfg) {
 }
 
 /* --- navigation --- */
-const VIEWS = ['library', 'planner', 'weather', 'habits', 'more', 'focus', 'finance', 'recipes', 'records', 'settings', 'school', 'cards'];
-const TAB_OF = { library: 'books', planner: 'planner', weather: 'weather', habits: 'habits', more: 'more', focus: 'more', finance: 'more', recipes: 'more', records: 'more', school: 'more', cards: 'more' };
+const VIEWS = ['library', 'planner', 'weather', 'habits', 'more', 'focus', 'finance', 'recipes', 'records', 'settings', 'school', 'cards', 'photos'];
+const TAB_OF = { library: 'books', planner: 'planner', weather: 'weather', habits: 'habits', more: 'more', focus: 'more', finance: 'more', recipes: 'more', records: 'more', school: 'more', cards: 'more', photos: 'more' };
 function showView(v) {
   VIEWS.forEach(x => { const e = document.getElementById(x); if (e) e.hidden = x !== v; });
   document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.tab === TAB_OF[v]));
@@ -3408,6 +3448,7 @@ async function openMore() {
   tiles.unshift({ v: 'school', t: 'Schule', s: sch.subjects.length ? (hwOpen ? `${hwOpen} offene ${hwOpen === 1 ? 'Hausaufgabe' : 'Hausaufgaben'}` : 'Stundenplan, Hausaufgaben, Noten') : 'Stundenplan, Hausaufgaben und Noten', ic: '<path d="M3 9l9-5 9 5-9 5-9-5z"/><path d="M7 11.2V16c0 1.2 2.2 2.5 5 2.5s5-1.3 5-2.5v-4.8M21 9v5"/>', fn: openSchool },
     { v: 'cards', t: 'Lernkarten', s: cds.decks.length ? (cdDue ? `${cdDue} Karten heute fällig` : 'Alles gelernt') : 'Karteikarten, die sich anpassen', ic: '<rect x="3" y="6" width="14" height="11" rx="2"/><path d="M7 3.5h12a2 2 0 012 2V14"/>', fn: openCards });
   tiles.splice(3, 0, { v: 'records', t: 'Plattenspieler', s: recs.albums.length ? `${recs.albums.length} ${recs.albums.length === 1 ? 'Platte' : 'Platten'} im Regal` : 'Deine Playlists und Alben als Schallplatten', ic: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3"/><path d="M12 6.5a5.5 5.5 0 015.5 5.5"/>', fn: openRecords });
+  tiles.push({ v: 'photos', t: 'Foto-Studio', s: 'Filter, Haut weich, Text und KI-Effekte', ic: '<rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.6"/><path d="M8.5 6l1.4-2.5h4.2L15.5 6"/>', fn: openPhotos });
   tiles.push({ v: 'settings', t: 'Einstellungen', s: 'Design, Farben und Verbindungen', ic: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>', fn: openSettings });
   tiles.push({ v: 'backup', t: 'Backup', s: STANDALONE ? 'Alles sichern oder wiederherstellen' : 'Alles sichern, zum Beispiel für die iPhone-App', ic: '<path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v2.5A1.5 1.5 0 005.5 21h13a1.5 1.5 0 001.5-1.5V17"/>', fn: openBackup });
   tiles.forEach(t => { const c = el('button', 'more-tile', b); c.type = 'button'; c.innerHTML = `<span class="mt-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${t.ic}</svg></span><span class="mt-tx"><b>${t.t}</b><span>${esc(t.s)}</span></span><span class="mt-go">${ICONS.next}</span>`; c.onclick = t.fn; });
@@ -4520,7 +4561,7 @@ async function asAnswer(raw) {
   // open a section
   const op = lower.match(/^(?:öffne|zeig(?:e)?(?: mir)?|geh(?:e)? zu(?:m|r)?|wechsel(?:e)? zu(?:m|r)?)\s+(?:die |den |das |meine[n]? |mein )?(\S+)\s*$/);
   if (op) {
-    const k = op[1], map = [[/notiz|buch|bücher/, openNotebooks], [/planer|kalender|termin/, openPlanner], [/ziel|gewohn/, openHabits], [/wetter/, openWeather], [/rezept|einkauf/, openRecipes], [/finanz|budget|geld/, openFinance], [/fokus|timer|pomodoro/, openFocus], [/backup|sicherung/, () => { openMore(); openBackup(); }], [/einstellung|design|farbe/, openSettings], [/schule|stundenplan|hausaufgab|noten/, openSchool], [/lernkarte|karteikarte|vokabel/, openCards], [/mehr/, openMore]];
+    const k = op[1], map = [[/notiz|buch|bücher/, openNotebooks], [/planer|kalender|termin/, openPlanner], [/ziel|gewohn/, openHabits], [/wetter/, openWeather], [/rezept|einkauf/, openRecipes], [/finanz|budget|geld/, openFinance], [/fokus|timer|pomodoro/, openFocus], [/backup|sicherung/, () => { openMore(); openBackup(); }], [/einstellung|design|farbe/, openSettings], [/schule|stundenplan|hausaufgab|noten/, openSchool], [/lernkarte|karteikarte|vokabel/, openCards], [/foto|bild|studio/, openPhotos], [/mehr/, openMore]];
     const hit = map.find(([re]) => re.test(k)); if (hit) { asGo(hit[1]); return null; }
   }
   // school
@@ -5123,7 +5164,7 @@ const AI_TOOLS = [
   { name: 'countdowns_anzeigen', description: 'Zeigt Countdowns mit verbleibenden Tagen.' },
   { name: 'sparziele_anzeigen', description: 'Zeigt Sparziele mit Stand.' },
   { name: 'musik_tipp', description: 'Wählt passend zu Uhrzeit, Wetter und Stimmung eine Platte aus dem Regal und legt sie auf.' },
-  { name: 'bereich_oeffnen', description: 'Öffnet einen Bereich der App, nachdem du geantwortet hast.', parameters: { type: 'object', properties: { bereich: { type: 'string', enum: ['notizen', 'planer', 'ziele', 'wetter', 'rezepte', 'finanzen', 'fokus', 'plattenspieler', 'schule', 'lernkarten', 'einstellungen'] } }, required: ['bereich'] } }
+  { name: 'bereich_oeffnen', description: 'Öffnet einen Bereich der App, nachdem du geantwortet hast.', parameters: { type: 'object', properties: { bereich: { type: 'string', enum: ['notizen', 'planer', 'ziele', 'wetter', 'rezepte', 'finanzen', 'fokus', 'plattenspieler', 'schule', 'lernkarten', 'einstellungen', 'fotos'] } }, required: ['bereich'] } }
 ];
 
 async function aiWeather(iso) {
@@ -5140,7 +5181,7 @@ async function aiWeather(iso) {
   return out;
 }
 const aiFindItem = async id => (await Docs.get('planner', { items: [] })).items.find(i => i.id === id);
-const aiOpen = { notizen: openNotebooks, planer: openPlanner, ziele: openHabits, wetter: openWeather, rezepte: openRecipes, finanzen: openFinance, fokus: openFocus, plattenspieler: openRecords, schule: openSchool, lernkarten: openCards, einstellungen: openSettings };
+const aiOpen = { notizen: openNotebooks, planer: openPlanner, ziele: openHabits, wetter: openWeather, rezepte: openRecipes, finanzen: openFinance, fokus: openFocus, plattenspieler: openRecords, schule: openSchool, lernkarten: openCards, einstellungen: openSettings, fotos: openPhotos };
 
 /* Runs one tool. Returns { r: result for the model, undo?, after?, done? } */
 async function aiTool(name, a, turn) {
@@ -5942,6 +5983,305 @@ function untisPreviewPlan(plan, fromLink) {
 async function untisRefresh() {
   const doc = Docs.cache.get('school');
   try { untisPreview(await untisLoadUrl(doc.untisUrl), true); } catch (e) { untisSheet(); }
+}
+
+/* =================== FOTO-STUDIO =================== */
+/* Everything runs on a canvas in the browser; photos never leave the phone, except for
+   KI edits, which send the picture to Google Gemini with the user's own key. */
+const PH = { base: null, hist: [], tab: 'filter', preset: 'original', adj: null, crop: 'orig', rot: 0, flip: false,
+  text: { t: '', color: '#ffffff', pos: 'bottom', size: 8, font: 'sans' }, srcKey: '', src: null, blur: null, busy: false, raf: 0, cmp: false };
+const PH_ADJ = [
+  { k: 'bright', l: 'Helligkeit', min: -50, max: 50 }, { k: 'contrast', l: 'Kontrast', min: -50, max: 50 },
+  { k: 'sat', l: 'Sättigung', min: -100, max: 60 }, { k: 'warm', l: 'Wärme', min: -50, max: 50 },
+  { k: 'soft', l: 'Haut weich', min: 0, max: 100 }, { k: 'fade', l: 'Verblassen', min: 0, max: 100 },
+  { k: 'vign', l: 'Vignette', min: 0, max: 100 }, { k: 'grain', l: 'Körnung', min: 0, max: 100 }];
+const PH_PRESETS = [
+  { k: 'original', l: 'Original', a: {} },
+  { k: 'portrait', l: 'Porträt', a: { soft: 55, bright: 6, warm: 6, sat: 5 } },
+  { k: 'glow', l: 'Glow', a: { bright: 8, contrast: -6, sat: 12, soft: 30, warm: 10 } },
+  { k: 'warm', l: 'Sonne', a: { warm: 30, bright: 4, sat: 8 } },
+  { k: 'cool', l: 'Kühl', a: { warm: -30, contrast: 6, sat: 4 } },
+  { k: 'vintage', l: 'Vintage', a: { fade: 35, warm: 22, sat: -28, contrast: -8, vign: 35 } },
+  { k: 'film', l: 'Film', a: { fade: 18, contrast: 12, sat: -12, grain: 30, warm: 6 } },
+  { k: 'pastel', l: 'Pastell', a: { fade: 28, sat: -18, bright: 10, contrast: -16 } },
+  { k: 'drama', l: 'Drama', a: { contrast: 35, sat: -12, vign: 50, bright: -6 } },
+  { k: 'bw', l: 'S/W', a: { contrast: 18 }, gray: true },
+  { k: 'noir', l: 'Noir', a: { contrast: 40, vign: 45, grain: 20, bright: -4 }, gray: true }];
+const PH_CROPS = [{ k: 'orig', l: 'Original' }, { k: '1:1', l: '1:1' }, { k: '4:5', l: '4:5' }, { k: '9:16', l: '9:16' }, { k: '16:9', l: '16:9' }];
+const PH_FONTS = { sans: { l: 'Klar', f: '800 {s}px -apple-system, "SF Pro Display", Inter, sans-serif' }, serif: { l: 'Elegant', f: 'italic 600 {s}px "New York", Georgia, serif' },
+  hand: { l: 'Schreibschrift', f: '400 {s}px "Snell Roundhand", "Segoe Script", "Brush Script MT", cursive' }, mono: { l: 'Typewriter', f: '600 {s}px "American Typewriter", "Courier New", monospace' } };
+const PH_COLORS = ['#ffffff', '#111111', '#FECD00', '#ff8fa0', '#7A0A16'];
+const PH_AI = [
+  { l: 'Lächeln', p: 'Make the person smile naturally and warmly.' },
+  { l: 'Älter', p: 'Make the person look about 30 years older with realistic aging: wrinkles, grey hair.' },
+  { l: 'Jünger', p: 'Make the person look about 15 years younger.' },
+  { l: 'Als Kind', p: 'Show the person as a young child of about 6 years, clearly recognizable.' },
+  { l: 'Make-up', p: 'Apply natural, subtle and flattering makeup.' },
+  { l: 'Bart', p: 'Add a well-groomed full beard.' },
+  { l: 'Brille', p: 'Add stylish modern glasses.' },
+  { l: 'Locken', p: 'Change the hair to voluminous natural curls, same hair colour.' },
+  { l: 'Blond', p: 'Change the hair colour to natural blonde.' },
+  { l: 'Strand', p: 'Replace the background with a sunny beach at golden hour. Keep the person exactly as they are.' },
+  { l: 'Anime', p: 'Turn the whole photo into a high quality anime illustration of the same person and scene.', style: true },
+  { l: 'Gemälde', p: 'Turn the whole photo into a classical oil painting of the same person and scene.', style: true }];
+const PH_KEY = 'folio:imgkey', PH_MODEL = 'folio:imgmodel';
+const phAdj0 = () => Object.fromEntries(PH_ADJ.map(a => [a.k, 0]));
+PH.adj = phAdj0();
+
+async function openPhotos() { showView('photos'); renderPhotos(); }
+function phPick() {
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = async () => { const f = inp.files?.[0]; if (!f) return; try { await phLoad(f); } catch (e) { toast('Das Foto konnte ich nicht öffnen.'); } };
+  inp.click();
+}
+async function phLoad(file) {
+  let img;
+  try { img = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+  catch (e) { img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(file); }); }
+  const w = img.width, h = img.height, k = Math.min(1, 2048 / Math.max(w, h));
+  const c = document.createElement('canvas'); c.width = Math.round(w * k); c.height = Math.round(h * k);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  Object.assign(PH, { hinted: false, base: c, orig: c, hist: [], preset: 'original', adj: phAdj0(), crop: 'orig', rot: 0, flip: false, srcKey: '', tab: 'filter' });
+  PH.text.t = '';
+  renderPhotos();
+}
+function phPreset() { return PH_PRESETS.find(p => p.k === PH.preset) || PH_PRESETS[0]; }
+function phParams() { const p = phPreset(), o = {}; PH_ADJ.forEach(a => o[a.k] = (p.a[a.k] || 0) + PH.adj[a.k]); o.gray = !!p.gray; return o; }
+
+/* geometry: rotate, flip, then centre-crop to the chosen ratio, scaled to fit maxSide */
+function phGeom(maxSide) {
+  const b = PH.base, rw = PH.rot % 180 ? b.height : b.width, rh = PH.rot % 180 ? b.width : b.height;
+  let cw = rw, ch = rh;
+  if (PH.crop !== 'orig') { const [x, y] = PH.crop.split(':').map(Number), r = x / y; if (rw / rh > r) cw = Math.round(rh * r); else ch = Math.round(rw / r); }
+  const k = Math.min(1, maxSide / Math.max(cw, ch));
+  const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(cw * k)); c.height = Math.max(1, Math.round(ch * k));
+  const g = c.getContext('2d'); g.imageSmoothingQuality = 'high';
+  g.translate(c.width / 2, c.height / 2); g.scale(k, k); g.rotate(PH.rot * Math.PI / 180); if (PH.flip) g.scale(-1, 1);
+  g.drawImage(b, -b.width / 2, -b.height / 2);
+  return c;
+}
+function phBoxBlur(src, w, h, r) {
+  // two passes of a separable box blur ≈ gaussian
+  const a = new Float32Array(src.length), out = new Uint8ClampedArray(src.length); for (let i = 0; i < src.length; i++) a[i] = src[i];
+  const tmp = new Float32Array(src.length), d = 2 * r + 1;
+  for (let pass = 0; pass < 2; pass++) {
+    for (let y = 0; y < h; y++) for (let ch = 0; ch < 3; ch++) {
+      let s = 0; const row = y * w;
+      for (let x = -r; x <= r; x++) s += a[(row + Math.min(w - 1, Math.max(0, x))) * 4 + ch];
+      for (let x = 0; x < w; x++) { tmp[(row + x) * 4 + ch] = s / d; s += a[(row + Math.min(w - 1, x + r + 1)) * 4 + ch] - a[(row + Math.max(0, x - r)) * 4 + ch]; }
+    }
+    for (let x = 0; x < w; x++) for (let ch = 0; ch < 3; ch++) {
+      let s = 0;
+      for (let y = -r; y <= r; y++) s += tmp[(Math.min(h - 1, Math.max(0, y)) * w + x) * 4 + ch];
+      for (let y = 0; y < h; y++) { a[(y * w + x) * 4 + ch] = s / d; s += tmp[(Math.min(h - 1, y + r + 1) * w + x) * 4 + ch] - tmp[(Math.max(0, y - r) * w + x) * 4 + ch]; }
+    }
+  }
+  for (let i = 0; i < a.length; i++) out[i] = a[i];
+  return out;
+}
+function phProcess(c, p, cache) {
+  const w = c.width, h = c.height, g = c.getContext('2d'), id = g.getImageData(0, 0, w, h), d = id.data;
+  let blur = null;
+  if (p.soft > 0) { blur = cache?.blur || phBoxBlur(d, w, h, Math.max(2, Math.round(Math.max(w, h) / 180))); if (cache) cache.blur = blur; }
+  const soft = p.soft / 100, br = p.bright * 2.55, ct = p.contrast * 2.55, cf = (259 * (ct + 255)) / (255 * (259 - ct)), sat = 1 + p.sat / 100,
+    warm = p.warm * .6, fade = p.fade / 100 * 45, fk = 1 - fade / 255, vign = p.vign / 100 * .75, grain = p.grain * .9, cx = w / 2, cy = h / 2, md = Math.hypot(cx, cy);
+  for (let y = 0, i = 0; y < h; y++) for (let x = 0; x < w; x++, i += 4) {
+    let r = d[i], gg = d[i + 1], b = d[i + 2];
+    if (blur) { // edge-preserving: smooth only where the blurred value is close (skin), keep eyes and edges sharp
+      const diff = Math.abs(r + gg + b - blur[i] - blur[i + 1] - blur[i + 2]) / 3, k = soft * Math.max(0, 1 - diff / 38);
+      r += (blur[i] - r) * k; gg += (blur[i + 1] - gg) * k; b += (blur[i + 2] - b) * k;
+    }
+    r += br; gg += br; b += br;
+    if (ct) { r = (r - 128) * cf + 128; gg = (gg - 128) * cf + 128; b = (b - 128) * cf + 128; }
+    const L = .299 * r + .587 * gg + .114 * b;
+    if (p.gray) { r = gg = b = L; } else if (sat !== 1) { r = L + (r - L) * sat; gg = L + (gg - L) * sat; b = L + (b - L) * sat; }
+    if (warm) { r += warm; b -= warm; gg += warm * .15; }
+    if (fade) { r = fade + r * fk; gg = fade + gg * fk; b = fade + b * fk; }
+    if (vign) { const t = Math.hypot(x - cx, y - cy) / md, v = 1 - vign * Math.max(0, Math.min(1, (t - .35) / .65)) ** 1.6; r *= v; gg *= v; b *= v; }
+    if (grain) { const n = (Math.random() - .5) * grain; r += n; gg += n; b += n; }
+    d[i] = r; d[i + 1] = gg; d[i + 2] = b;
+  }
+  g.putImageData(id, 0, 0);
+  phDrawText(c);
+}
+function phDrawText(c) {
+  const t = PH.text; if (!t.t.trim()) return;
+  const g = c.getContext('2d'), s = Math.round(c.width * t.size / 100), lines = t.t.split('\n');
+  g.font = PH_FONTS[t.font].f.replace('{s}', s); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = t.color;
+  g.shadowColor = t.color === '#111111' ? 'rgba(255,255,255,.55)' : 'rgba(0,0,0,.45)'; g.shadowBlur = s * .25; g.shadowOffsetY = s * .04;
+  const lh = s * 1.15, total = lh * lines.length, y0 = t.pos === 'top' ? c.height * .08 + lh / 2 : t.pos === 'mid' ? c.height / 2 - total / 2 + lh / 2 : c.height * .92 - total + lh / 2;
+  lines.forEach((l, i) => g.fillText(l, c.width / 2, y0 + i * lh, c.width * .92));
+  g.shadowColor = 'transparent';
+}
+function phDraw() {
+  cancelAnimationFrame(PH.raf);
+  PH.raf = requestAnimationFrame(() => {
+    const cv = $('#photos .ph-canvas'); if (!cv || !PH.base) return;
+    const key = [PH.hist.length, PH.base.width, PH.rot, PH.flip, PH.crop].join('|');
+    if (PH.srcKey !== key) { PH.src = phGeom(1100); PH.srcKey = key; PH.blur = null; }
+    cv.width = PH.src.width; cv.height = PH.src.height;
+    const g = cv.getContext('2d'); g.drawImage(PH.src, 0, 0);
+    if (PH.cmp) return;
+    const cache = { blur: PH.blur }; phProcess(cv, phParams(), cache); PH.blur = cache.blur;
+  });
+}
+async function phExport() {
+  const c = phGeom(4096); phProcess(c, phParams());
+  const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', .92));
+  const file = new File([blob], `Folio-${todayISO()}.jpg`, { type: 'image/jpeg' });
+  if (navigator.canShare?.({ files: [file] })) { try { await navigator.share({ files: [file] }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name; document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  toast('Foto gespeichert');
+}
+function phSlider(parent, label, val, min, max, onInput, step = 1) {
+  const r = el('label', 'ph-sl', parent), top = el('span', 'ph-sl-t', r);
+  el('span', '', top).textContent = label; const v = el('b', '', top); v.textContent = val > 0 && min < 0 ? '+' + val : val;
+  const s = el('input', '', r); s.type = 'range'; s.min = min; s.max = max; s.step = step; s.value = val;
+  s.oninput = () => { const n = +s.value; v.textContent = n > 0 && min < 0 ? '+' + n : n; onInput(n); };
+  s.ondblclick = () => { s.value = min < 0 ? 0 : min; s.oninput(); };
+  return s;
+}
+function phChips(parent, items, cur, onPick, cls = '') {
+  const row = el('div', 'ph-chips ' + cls, parent);
+  items.forEach(it => { const b = el('button', 'chip', row); b.type = 'button'; b.textContent = it.l; b.setAttribute('aria-pressed', it.k === cur);
+    b.onclick = () => { row.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x === b)); onPick(it.k); }; });
+  return row;
+}
+function renderPhotos() {
+  head('photos', 'Foto-Studio', 'Fotos bearbeiten und verschönern', PH.base ? { label: 'Neues Foto', fn: phPick } : null, true);
+  const b = body('photos');
+  if (!PH.base) {
+    const c = card(b, '', 'ph-empty');
+    c.innerHTML = `<div class="ph-hero">${cloudSVG('ph').replace('class="cloud"', 'class="cloud still" data-mood="happy"')}</div><h3>Mach dein Foto schön</h3><p class="ph-note">Filter, Haut weich, Zuschneiden, Text und KI-Effekte wie älter, jünger oder lächeln. Deine Fotos bleiben auf deinem Handy.</p>`;
+    const p = el('button', 'btn btn-primary ph-big', c); p.type = 'button'; p.textContent = 'Foto auswählen'; p.onclick = phPick;
+    return;
+  }
+  const stage = el('div', 'ph-stage', b), cv = el('canvas', 'ph-canvas', stage);
+  if (!PH.hinted) { PH.hinted = true; const hint = el('span', 'ph-hint', stage); hint.textContent = 'Gedrückt halten: Original'; }
+  const down = () => { PH.cmp = true; stage.classList.add('cmp'); phDraw(); }, up = () => { if (!PH.cmp) return; PH.cmp = false; stage.classList.remove('cmp'); phDraw(); };
+  cv.addEventListener('pointerdown', down); ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => cv.addEventListener(ev, up));
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+  if (PH.busy) { const ov = el('div', 'ph-busy', stage); ov.innerHTML = `${cloudSVG('phb').replace('class="cloud"', 'class="cloud" data-mood="think"')}<span>Krümel zaubert …</span>`; }
+
+  const seg = el('div', 'seg seg-wide ph-tabs', b);
+  [['filter', 'Filter'], ['adj', 'Anpassen'], ['geo', 'Format'], ['text', 'Text'], ['ai', 'KI']].forEach(([k, l]) => {
+    const t = el('button', '', seg); t.type = 'button'; t.textContent = l; t.setAttribute('aria-pressed', PH.tab === k); t.onclick = () => { PH.tab = k; renderPhotos(); }; });
+  const panel = card(b, '', 'ph-panel');
+
+  if (PH.tab === 'filter') {
+    const row = el('div', 'ph-filters', panel);
+    const thumbSrc = (() => { const k = 120 / Math.max(PH.base.width, PH.base.height), c = document.createElement('canvas'); c.width = Math.round(PH.base.width * k); c.height = Math.round(PH.base.height * k); c.getContext('2d').drawImage(PH.base, 0, 0, c.width, c.height); return c; })();
+    PH_PRESETS.forEach(p => {
+      const bt = el('button', 'ph-flt', row); bt.type = 'button'; bt.setAttribute('aria-pressed', PH.preset === p.k);
+      const t = document.createElement('canvas'); t.width = thumbSrc.width; t.height = thumbSrc.height; t.getContext('2d').drawImage(thumbSrc, 0, 0);
+      const pp = Object.fromEntries(PH_ADJ.map(a => [a.k, p.a[a.k] || 0])); pp.gray = !!p.gray; const tt = PH.text.t; PH.text.t = ''; phProcess(t, pp); PH.text.t = tt;
+      bt.append(t); el('span', '', bt).textContent = p.l;
+      bt.onclick = () => { PH.preset = p.k; row.querySelectorAll('.ph-flt').forEach(x => x.setAttribute('aria-pressed', x === bt)); phDraw(); };
+    });
+    el('p', 'ph-note', panel).textContent = 'Unter „Anpassen“ kannst du jeden Filter noch feiner einstellen.';
+  }
+  if (PH.tab === 'adj') {
+    PH_ADJ.forEach(a => phSlider(panel, a.l, PH.adj[a.k], a.min, a.max, n => { PH.adj[a.k] = n; phDraw(); }));
+    const rs = el('button', 'btn btn-soft', panel); rs.type = 'button'; rs.textContent = 'Regler zurücksetzen'; rs.onclick = () => { PH.adj = phAdj0(); renderPhotos(); };
+  }
+  if (PH.tab === 'geo') {
+    el('div', 'ph-lbl', panel).textContent = 'Seitenverhältnis';
+    phChips(panel, PH_CROPS, PH.crop, k => { PH.crop = k; phDraw(); });
+    const row = el('div', 'ph-row', panel);
+    const rot = el('button', 'btn btn-soft', row); rot.type = 'button'; rot.textContent = '↻ Drehen'; rot.onclick = () => { PH.rot = (PH.rot + 90) % 360; phDraw(); };
+    const fl = el('button', 'btn btn-soft', row); fl.type = 'button'; fl.textContent = '⇋ Spiegeln'; fl.onclick = () => { PH.flip = !PH.flip; phDraw(); };
+  }
+  if (PH.tab === 'text') {
+    const ta = el('textarea', 'input', panel); ta.rows = 2; ta.placeholder = 'Text auf dem Foto …'; ta.value = PH.text.t; ta.oninput = () => { PH.text.t = ta.value; phDraw(); };
+    el('div', 'ph-lbl', panel).textContent = 'Schrift';
+    phChips(panel, Object.entries(PH_FONTS).map(([k, v]) => ({ k, l: v.l })), PH.text.font, k => { PH.text.font = k; phDraw(); });
+    el('div', 'ph-lbl', panel).textContent = 'Farbe';
+    const cr = el('div', 'ph-colors', panel);
+    PH_COLORS.forEach(col => { const s = el('button', 'ph-col', cr); s.type = 'button'; s.style.background = col; s.setAttribute('aria-label', 'Farbe ' + col); s.setAttribute('aria-pressed', PH.text.color === col);
+      s.onclick = () => { PH.text.color = col; cr.querySelectorAll('.ph-col').forEach(x => x.setAttribute('aria-pressed', x === s)); phDraw(); }; });
+    el('div', 'ph-lbl', panel).textContent = 'Position';
+    phChips(panel, [{ k: 'top', l: 'Oben' }, { k: 'mid', l: 'Mitte' }, { k: 'bottom', l: 'Unten' }], PH.text.pos, k => { PH.text.pos = k; phDraw(); });
+    phSlider(panel, 'Größe', PH.text.size, 3, 16, n => { PH.text.size = n; phDraw(); });
+  }
+  if (PH.tab === 'ai') renderPhotoAI(panel);
+
+  const foot = el('div', 'ph-foot', b);
+  if (PH.hist.length) { const u = el('button', 'btn btn-soft', foot); u.type = 'button'; u.textContent = 'KI rückgängig'; u.onclick = () => { Object.assign(PH, PH.hist.pop()); renderPhotos(); }; }
+  const rs = el('button', 'btn btn-soft', foot); rs.type = 'button'; rs.textContent = 'Alles zurück';
+  rs.onclick = () => { const before = { ...PH, adj: { ...PH.adj }, text: { ...PH.text }, hist: [...PH.hist] };
+    Object.assign(PH, { base: PH.orig, hist: [], preset: 'original', adj: phAdj0(), crop: 'orig', rot: 0, flip: false }); PH.text.t = ''; renderPhotos();
+    showUndo('Bearbeitung zurückgesetzt', () => { Object.assign(PH, before); renderPhotos(); }); };
+  const sv = el('button', 'btn btn-primary', foot); sv.type = 'button'; sv.textContent = 'Sichern'; sv.onclick = () => phExport().catch(() => toast('Speichern hat nicht geklappt.'));
+  phDraw();
+}
+
+/* --- KI edits with Gemini's image model --- */
+function phKey() { return AI.cfg.provider === 'gemini' && AI.cfg.key ? AI.cfg.key : (localStorage.getItem(PH_KEY) || ''); }
+function renderPhotoAI(panel) {
+  if (!phKey()) {
+    el('p', '', panel).innerHTML = 'Für KI-Effekte nutze ich Googles Bild-KI. Dafür brauchst du einen <b>Gemini-Schlüssel</b>: auf aistudio.google.com mit deinem Google-Konto anmelden, „Get API key“ und „Create API key“ tippen, Schlüssel hier einfügen.';
+    const inp = el('input', 'input', panel); inp.type = 'password'; inp.placeholder = 'Gemini-Schlüssel'; inp.autocomplete = 'off';
+    const sv = el('button', 'btn btn-primary', panel); sv.type = 'button'; sv.textContent = 'Speichern';
+    sv.onclick = () => { const v = inp.value.trim(); if (!v) return; localStorage.setItem(PH_KEY, v); localStorage.removeItem(PH_MODEL); renderPhotos(); };
+    return;
+  }
+  el('p', 'ph-note', panel).textContent = 'Tippe einen Effekt an. Das Foto geht dafür an Google und kommt bearbeitet zurück. Das dauert etwa 10 bis 30 Sekunden.';
+  const row = el('div', 'ph-chips', panel);
+  PH_AI.forEach(x => { const bt = el('button', 'chip', row); bt.type = 'button'; bt.textContent = x.l; bt.disabled = PH.busy; bt.onclick = () => phAI(x.p, x.style); });
+  const own = el('div', 'ph-own', panel), inp = el('input', 'input', own); inp.placeholder = 'Eigener Wunsch, z. B. „rote Haare“';
+  const go = el('button', 'btn btn-primary', own); go.type = 'button'; go.textContent = 'Los'; go.disabled = PH.busy;
+  const run = () => { const v = inp.value.trim(); if (v) phAI(`Edit the photo as requested (request is in German): "${v}"`); };
+  go.onclick = run; inp.onkeydown = e => { if (e.key === 'Enter') run(); };
+  if (localStorage.getItem(PH_KEY) && !(AI.cfg.provider === 'gemini' && AI.cfg.key)) {
+    const rm = el('button', 'btn btn-soft ph-small', panel); rm.type = 'button'; rm.textContent = 'Schlüssel entfernen';
+    rm.onclick = () => { localStorage.removeItem(PH_KEY); localStorage.removeItem(PH_MODEL); renderPhotos(); };
+  }
+}
+async function phImageModel(key) {
+  const cached = localStorage.getItem(PH_MODEL); if (cached) return cached;
+  let pick = 'gemini-2.5-flash-image';
+  try {
+    const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', { headers: { 'x-goog-api-key': key } });
+    if (!r.ok) throw aiErr(r.status, await r.text());
+    const ms = ((await r.json()).models || []).filter(m => (m.supportedGenerationMethods || []).includes('generateContent')).map(m => m.name.replace(/^models\//, ''))
+      .filter(n => /^gemini-.*image/.test(n) && !/(tts|live|audio|embedding)/.test(n));
+    const ver = n => parseFloat((n.match(/gemini-([\d.]+)/) || [])[1]) || 0, score = n => ver(n) * 10 + (/flash/.test(n) ? 2 : 0) - (/preview|exp/.test(n) ? 1 : 0);
+    if (ms.length) pick = ms.sort((a, b) => score(b) - score(a))[0];
+  } catch (e) { if (e.message === 'key') throw e; }
+  localStorage.setItem(PH_MODEL, pick); return pick;
+}
+async function phAI(prompt, style) {
+  if (PH.busy) return;
+  const key = phKey(); PH.busy = true; renderPhotos();
+  try {
+    const src = phGeom(1024), data = src.toDataURL('image/jpeg', .9).split(',')[1], model = await phImageModel(key);
+    const text = style ? prompt : `${prompt} Keep the person's identity, face shape, pose, framing, lighting and everything else unchanged. Photorealistic result.`;
+    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 120000);
+    let j;
+    try {
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, { method: 'POST', signal: ctl.signal,
+        headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ inline_data: { mime_type: 'image/jpeg', data } }, { text }] }], generationConfig: { responseModalities: ['TEXT', 'IMAGE'] } }) });
+      if (!r.ok) { if (r.status === 404) localStorage.removeItem(PH_MODEL); throw aiErr(r.status, await r.text()); }
+      j = await r.json();
+    } finally { clearTimeout(to); }
+    const parts = j.candidates?.[0]?.content?.parts || [], img = parts.find(p => (p.inlineData || p.inline_data)?.data);
+    if (!img) { const why = j.candidates?.[0]?.finishReason || j.promptFeedback?.blockReason || ''; throw new Error(/SAFETY|PROHIBITED|BLOCK/i.test(why) ? 'safety' : 'noimage'); }
+    const blob = await (await fetch(`data:${(img.inlineData || img.inline_data).mimeType || (img.inlineData || img.inline_data).mime_type || 'image/png'};base64,${(img.inlineData || img.inline_data).data}`)).blob();
+    const bmp = await createImageBitmap(blob), c = document.createElement('canvas'); c.width = bmp.width; c.height = bmp.height; c.getContext('2d').drawImage(bmp, 0, 0);
+    // the result already has rotation, flip and crop baked in
+    PH.hist.push({ base: PH.base, rot: PH.rot, flip: PH.flip, crop: PH.crop }); PH.base = c; PH.rot = 0; PH.flip = false; PH.crop = 'orig';
+    toast('Fertig! Gefällt es dir nicht, tippe „KI rückgängig“.', 3000);
+  } catch (e) {
+    const m = e.name === 'AbortError' ? 'Das hat zu lange gedauert. Versuch es gleich noch mal.'
+      : e.message === 'key' ? 'Der Gemini-Schlüssel stimmt nicht.'
+      : e.message === 'limit' || e.status === 429 ? 'Google lässt gerade keine Bild-Bearbeitung zu. Entweder ist das Tageslimit erreicht, oder die Bild-KI ist für deinen Schlüssel nur mit hinterlegter Zahlung freigeschaltet.'
+      : e.message === 'safety' ? 'Google hat diese Bearbeitung abgelehnt. Probier einen anderen Effekt.'
+      : e.message === 'noimage' ? 'Es kam kein Bild zurück. Probier es noch einmal oder formuliere den Wunsch anders.'
+      : 'Die KI-Bearbeitung hat nicht geklappt (' + e.message + ').';
+    toast(m, 6000);
+  } finally { PH.busy = false; if (S.view === 'photos') renderPhotos(); }
 }
 
 /* =================== LERNKARTEN (Wiederholung mit wachsenden Abständen) =================== */

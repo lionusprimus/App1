@@ -20,6 +20,8 @@ Notizbücher mit echtem Umblättern, Planer, Ziele, Wetter, Fokus-Timer, Finanze
 
 **Lernkarten:** Unter *Mehr → Lernkarten* Stapel anlegen und Karten als „Vorderseite = Rückseite“ eintragen. Beim Lernen kommen Karten, die du gut kannst, seltener dran.
 
+**Foto-Studio:** Unter *Mehr → Foto-Studio* ein Foto wählen. Es gibt Filter, Regler (auch „Haut weich“), Zuschneiden, Drehen, Spiegeln und Text. Gedrückt halten zeigt das Original. „Sichern“ legt das Foto über Teilen → „Bild sichern“ in deine Fotos. Für KI-Effekte (Lächeln, älter, jünger, Haare, Hintergrund, Anime …) brauchst du einen Gemini-Schlüssel. Nur dafür geht das Foto an Google.
+
 **Sparziele und Abos:** In *Finanzen* gibt es Sparziele mit Fortschrittsring, und Folio erkennt wiederkehrende Zahlungen der letzten sechs Monate und zeigt, was sie im Jahr kosten.
 
 **Stimmung:** Oben in *Ziele* jeden Tag die Stimmung antippen, mit Verlauf der letzten fünf Wochen. Krümel fragt abends nach.
